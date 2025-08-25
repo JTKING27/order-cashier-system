@@ -17,16 +17,26 @@
             background: #ff5722;
             color: white;
             padding: 10px 0;
+            position: relative;
         }
         .nav-item {
             flex: 1;
             text-align: center;
             cursor: pointer;
             padding: 8px 0;
+            position: relative;
         }
         .nav-item.active {
-            background: #e64a19;
             font-weight: bold;
+        }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #ffccbc;
         }
         .page {
             padding: 15px;
@@ -54,7 +64,7 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 8px;
             margin: 5px 0;
@@ -99,69 +109,28 @@
             border: 1px dashed #ccc;
             font-family: 宋体;
         }
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-        }
-        .category-selector {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .category-btn {
-            background: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 2px;
-        }
-        .category-btn.active {
-            background: #ff5722;
-            color: white;
-        }
-        .item-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
-        }
-        .item-card {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 8px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .item-card:hover {
-            background: #f8f8f8;
-        }
-        .item-name {
-            font-weight: bold;
-        }
-        .item-price {
-            color: #666;
-            font-size: 0.9em;
-        }
         .search-container {
             margin: 10px 0;
+            position: relative;
         }
         .search-results {
             position: absolute;
             background: white;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: calc(100% - 30px);
-            max-width: 570px;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
             z-index: 10;
             display: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .search-result-item {
             padding: 8px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
+            display: flex;
+            justify-content: space-between;
         }
         .search-result-item:hover {
             background: #f0f0f0;
@@ -171,14 +140,129 @@
             color: #ff5722;
             font-weight: normal;
         }
+        .search-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        .add-item-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .add-item-container input {
+            width: 80px;
+            margin: 0;
+        }
+        .add-item-container button {
+            flex: 1;
+        }
+        .item-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .item-name {
+            font-weight: bold;
+        }
+        .item-price {
+            color: #ff5722;
+        }
+        .item-category {
+            font-size: 12px;
+            color: #666;
+        }
+        .remove-btn {
+            background: #f44336;
+        }
+        .search-highlight {
+            background-color: #fff9c4;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .order-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+            font-weight: bold;
+        }
+        .no-items {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+        .order-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .order-nav button {
+            flex: 1;
+            background: #4CAF50;
+        }
+        .order-nav button:last-child {
+            background: #2196F3;
+        }
+        
+        /* 小票样式优化 */
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+        .receipt-section-title {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        /* 编辑表单样式 */
+        .edit-form {
+            background: #f0f8ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
+        .fee-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .fee-container > div {
+            flex: 1;
+        }
+        .rice-amount-container {
+            display: none;
+            margin-top: 10px;
+        }
+        .rice-amount-container input {
+            width: 100%;
+        }
+        
+        /* 保存图片按钮样式 */
+        .save-image-btn {
+            background: #4caf50;
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     <!-- 导航栏 -->
     <div class="navbar">
-        <div class="nav-item active" onclick="switchPage('order')">点单</div>
-        <div class="nav-item" onclick="switchPage('dish')">菜品管理</div>
-        <div class="nav-item" onclick="switchPage('drink')">酒水管理</div>
+        <div class="nav-item active" data-page="order">点单</div>
+        <div class="nav-item" data-page="dish">菜品管理</div>
+        <div class="nav-item" data-page="drink">酒水管理</div>
     </div>
 
     <!-- 点单页面 -->
@@ -186,42 +270,65 @@
         <div class="section">
             <h3>当前订单</h3>
             <div class="input-group">
-                <label for="peopleCount">客人人数</label>
-                <input type="number" id="peopleCount" placeholder="客人人数" min="1">
+                <label for="tableNumber">桌号</label>
+                <input type="text" id="tableNumber" placeholder="桌号">
             </div>
             
             <!-- 搜索框 -->
             <div class="search-container">
                 <input type="text" id="itemSearch" placeholder="搜索单品（如：鱼、啤酒）" oninput="searchItems()">
+                <div class="search-info">
+                    <span>提示：输入菜品或酒水名称</span>
+                    <span>共 <span id="totalItems">0</span> 个单品</span>
+                </div>
                 <div class="search-results" id="searchResults"></div>
             </div>
             
-            <!-- 两级选择系统 -->
-            <div class="input-group">
-                <div class="category-selector" id="categorySelector">
-                    <button class="category-btn active" data-type="all">全部</button>
-                    <button class="category-btn" data-type="dish">菜品</button>
-                    <button class="category-btn" data-type="drink">酒水</button>
+            <!-- 添加到订单区域 -->
+            <div id="addItemArea" style="display:none;">
+                <div class="add-item-container">
+                    <div class="item-details">
+                        <span class="item-name" id="selectedItemName">未选择</span>
+                        <div>
+                            <span class="item-price" id="selectedItemPrice">¥0.00</span>
+                            <span class="item-category" id="selectedItemCategory"></span>
+                        </div>
+                    </div>
+                    <input type="number" id="itemCount" min="1" placeholder="数量">
+                    <button onclick="addSelectedItem()">添加到订单</button>
                 </div>
-                <div class="category-selector" id="subCategorySelector"></div>
-                <div class="item-selector" id="itemSelector"></div>
+                
+                <!-- 米饭金额输入区域 -->
+                <div class="rice-amount-container" id="riceAmountContainer">
+                    <label for="riceAmount">米饭金额</label>
+                    <input type="number" id="riceAmount" step="0.1" placeholder="输入米饭金额">
+                </div>
             </div>
             
-            <div id="selectedItemInfo">
-                <label for="itemCount">几份 <span id="selectedItemName" class="selected-item-display"></span></label>
-                <input type="number" id="itemCount" min="1" placeholder="数量">
-                <button onclick="addSelectedItem()">添加到订单</button>
+            <!-- 订单项目列表 -->
+            <div id="orderItemsContainer">
+                <div id="orderItems"></div>
+                <div class="order-summary">
+                    <span>合计:</span>
+                    <span id="orderTotal">¥0.00</span>
+                </div>
             </div>
             
-            <div id="orderItems"></div>
-            
-            <!-- 备注和额外费用 -->
+            <!-- 额外费用和折扣费用 -->
             <div class="input-group">
-                <label for="orderRemark">备注信息</label>
-                <textarea id="orderRemark" placeholder="备注信息（如：免辣、加香菜等）"></textarea>
+                <label for="extraFeeNote">额外费用备注</label>
+                <input type="text" id="extraFeeNote" placeholder="额外费用备注（如：纸巾、服务费等）">
                 <label for="extraFee">额外费用</label>
-                <input type="number" id="extraFee" step="0.1" placeholder="额外费用（如：餐具费、服务费）">
-                <button onclick="printReceipt()">生成小票</button>
+                <input type="number" id="extraFee" step="0.1" placeholder="额外费用金额">
+                
+                <label for="discountFee">折扣费用</label>
+                <input type="number" id="discountFee" step="0.1" placeholder="折扣费用金额">
+                
+                <div class="order-nav">
+                    <button onclick="loadPrevOrder()">上一个订单</button>
+                    <button onclick="printReceipt()">生成小票</button>
+                    <button onclick="loadNextOrder()">下一个订单</button>
+                </div>
             </div>
         </div>
 
@@ -229,6 +336,8 @@
         <div class="section" id="receiptArea">
             <h3>打印小票</h3>
             <div id="receipt"></div>
+            <!-- 保存图片按钮 -->
+            <button class="save-image-btn" onclick="saveReceiptAsImage()">保存为图片</button>
         </div>
     </div>
 
@@ -246,10 +355,10 @@
                     <option value="烤鱼类">烤鱼类</option>
                     <option value="汤锅类">汤锅类</option>
                     <option value="炒菜类">炒菜类</option>
-                    <option value="干锅类">干锅类</option>
+                    <option value="干锅铁板">干锅铁板</option>
                     <option value="凉菜类">凉菜类</option>
-                    <option value="主食类">主食类</option>
-                    <option value="小吃类">小吃类</option>
+                    <option value="配菜类">配菜类</option>
+                    <option value="主食点心">主食点心</option>
                 </select>
                 <button onclick="addItem('dish')">添加菜品</button>
             </div>
@@ -278,13 +387,209 @@
         </div>
     </div>
 
+    <!-- 引入html2canvas库 -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
     <script>
+        // 预设菜品数据
+        const DEFAULT_DISHES = [
+            { name: '清江鱼', price: 69, category: '烤鱼类' },
+            { name: '巴沙鱼', price: 39, category: '烤鱼类' },
+            { name: '草鱼', price: 45, category: '烤鱼类' },
+            { name: '铁锅牛蛙小锅', price: 88, category: '汤锅类' },
+            { name: '铁锅牛蛙大锅', price: 118, category: '汤锅类' },
+            { name: '干锅蛙', price: 118, category: '汤锅类' },
+            { name: '干锅鸡', price: 98, category: '汤锅类' },
+            { name: '重庆烧鸡公小锅', price: 78, category: '汤锅类' },
+            { name: '重庆烧鸡公大锅', price: 128, category: '汤锅类' },
+            { name: '甲鱼鸡煲特价', price: 98, category: '汤锅类' },
+            { name: '甲鱼鸡煲中锅', price: 128, category: '汤锅类' },
+            { name: '猪肚鸡小锅', price: 88, category: '汤锅类' },
+            { name: '猪肚鸡大锅', price: 128, category: '汤锅类' },
+            { name: '黑山羊火锅', price: 118, category: '汤锅类' },
+            { name: '美蛙鱼火锅小锅', price: 88, category: '汤锅类' },
+            { name: '美蛙鱼火锅大锅', price: 128, category: '汤锅类' },
+            { name: '酸汤猪蹄小锅', price: 88, category: '汤锅类' },
+            { name: '酸汤猪蹄大锅', price: 138, category: '汤锅类' },
+            { name: '巴蜀腊猪脚小锅', price: 98, category: '汤锅类' },
+            { name: '巴蜀腊猪脚大锅', price: 128, category: '汤锅类' },
+            { name: '肥肠鸡小锅', price: 118, category: '汤锅类' },
+            { name: '肥肠鸡大锅', price: 158, category: '汤锅类' },
+            { name: '肥肠鱼小锅', price: 118, category: '汤锅类' },
+            { name: '肥肠鱼大锅', price: 158, category: '汤锅类' },
+            { name: '酸菜鱼/石锅鱼', price: 88, category: '汤锅类' },
+            { name: '牛腩牛杂煲小锅', price: 88, category: '汤锅类' },
+            { name: '牛腩牛杂煲大锅', price: 138, category: '汤锅类' },
+	    { name: '牛排火锅', price: 118, category: '汤锅类' },
+
+
+            { name: '魔芋', price: 8, category: '配菜类' },
+            { name: '鸭血', price: 8, category: '配菜类' },
+            { name: '黑毛肚', price: 25, category: '配菜类' },
+            { name: '牛肉丸', price: 20, category: '配菜类' },
+            { name: '猪肚', price: 32, category: '配菜类' },
+            { name: '香芋', price: 15, category: '配菜类' },
+            { name: '水豆腐', price: 8, category: '配菜类' },
+            { name: '土豆', price: 8, category: '配菜类' },
+            { name: '玉米', price: 10, category: '配菜类' },
+            { name: '豆皮', price: 12, category: '配菜类' },
+            { name: '冬瓜', price: 8, category: '配菜类' },
+            { name: '淮山', price: 15, category: '配菜类' },
+            { name: '豆芽', price: 6, category: '配菜类' },
+            { name: '莲藕', price: 12, category: '配菜类' },
+            { name: '油麦菜', price: 10, category: '配菜类' },
+            { name: '白萝卜', price: 6, category: '配菜类' },
+            { name: '红薯粉', price: 10, category: '配菜类' },
+            { name: '海带', price: 12, category: '配菜类' },
+            { name: '香菜', price: 12, category: '配菜类' },
+            { name: '生菜', price: 8, category: '配菜类' },
+            { name: '娃娃菜', price: 8, category: '配菜类' },
+            { name: '菠菜', price: 12, category: '配菜类' },
+            { name: '金针菇', price: 12, category: '配菜类' },
+            { name: '香菇', price: 12, category: '配菜类' },
+            { name: '炸腐竹', price: 12, category: '配菜类' },
+            { name: '紫苏', price: 10, category: '配菜类' },
+            // 凉菜类
+            { name: '凉拌牛肉', price: 38, category: '凉菜类' },
+            { name: '红油猪耳', price: 30, category: '凉菜类' },
+            { name: '脱骨凤爪', price: 28, category: '凉菜类' },
+            { name: '凉拌折耳根', price: 16, category: '凉菜类' },
+            { name: '卤水拼盘', price: 30, category: '凉菜类' },
+            { name: '凉拌鱼皮', price: 22, category: '凉菜类' },
+            { name: '香辣毛豆', price: 15, category: '凉菜类' },
+            { name: '凉拌皮蛋', price: 12, category: '凉菜类' },
+            { name: '凉拌/芥末秋葵', price: 18, category: '凉菜类' },
+            { name: '刀拍小青瓜', price: 12, category: '凉菜类' },
+            { name: '卤水花生', price: 15, category: '凉菜类' },
+            { name: '酸辣藕带', price: 15, category: '凉菜类' },
+
+            // 主食点心
+            { name: '老妈子炒饭', price: 15, category: '主食点心' },
+            { name: '三丝炒粉/河粉', price: 10, category: '主食点心' },
+            { name: '干炒牛河', price: 28, category: '主食点心' },
+            { name: '南瓜饼', price: 15, category: '主食点心' },
+            { name: '香芋地瓜丸', price: 12, category: '主食点心' },
+            { name: '金银小馒头', price: 15, category: '主食点心' },
+            { name: '脆皮香蕉', price: 16, category: '主食点心' },
+            { name: '香芋卷', price: 15, category: '主食点心' },
+            { name: '虾粥', price: 58, category: '主食点心' },
+            { name: '米饭', price: 2, category: '主食点心' },
+            { name: '皮蛋瘦肉粥', price: 58, category: '主食点心' },
+            
+            
+            // 炒菜类
+            { name: '火爆腰花', price: 36, category: '炒菜类' },
+            { name: '青椒回锅肉', price: 35, category: '炒菜类' },
+            { name: '巴蜀小酥肉', price: 32, category: '炒菜类' },
+            { name: '农家小炒肉', price: 38, category: '炒菜类' },
+            { name: '农家梅菜扣肉', price: 38, category: '炒菜类' },
+            { name: '鱼香肉丝', price: 35, category: '炒菜类' },
+            { name: '酸辣鸡杂', price: 32, category: '炒菜类' },
+            { name: '小炒黄牛肉', price: 48, category: '炒菜类' },
+            { name: '椒盐鸭下巴', price: 38, category: '炒菜类' },
+            { name: '孜然羊肉', price: 48, category: '炒菜类' },
+            { name: '青椒肉丝', price: 28, category: '炒菜类' },
+            { name: '鼓椒炒花甲', price: 25, category: '炒菜类' },
+            { name: '香辣田螺', price: 16, category: '炒菜类' },
+            { name: '清炒莴笋丝', price: 18, category: '炒菜类' },
+            { name: '干煸泥鳅', price: 48, category: '炒菜类' },
+            { name: '酸菜肥肠', price: 38, category: '炒菜类' },
+            { name: '蒜蓉菜心', price: 19, category: '炒菜类' },
+	    { name: '炒空心菜', price: 19, category: '炒菜类' },
+	    { name: '炒油麦菜', price: 19, category: '炒菜类' },
+            { name: '虎皮尖椒', price: 25, category: '炒菜类' },
+            { name: '香煎鸡蛋饼', price: 18, category: '炒菜类' },
+            { name: '手撕包菜', price: 18, category: '炒菜类' },
+            { name: '酸辣土豆丝', price: 15, category: '炒菜类' },
+            { name: '韭菜炒鸡蛋', price: 18, category: '炒菜类' },
+            
+            // 干锅铁板
+            { name: '干锅鸡翅虾', price: 48, category: '干锅铁板' },
+            { name: '干锅猪尾', price: 48, category: '干锅铁板' },
+            { name: '干锅香辣虾', price: 48, category: '干锅铁板' },
+            { name: '铁板牛肉', price: 48, category: '干锅铁板' },
+            { name: '干锅肥肠', price: 38, category: '干锅铁板' },
+            { name: '干锅牛杂', price: 38, category: '干锅铁板' },
+            { name: '干锅带皮牛肉', price: 38, category: '干锅铁板' },
+            { name: '干锅腌笋腊肉', price: 38, category: '干锅铁板' },
+            { name: '干锅花菜', price: 22, category: '干锅铁板' },
+            { name: '干锅土豆片', price: 22, category: '干锅铁板' }
+        ];
+
+        // 预设酒水数据
+        const DEFAULT_DRINKS = [
+            // 啤酒类
+            { name: '哈尔滨冰纯', price: 8, category: '啤酒类' },
+            { name: '漓泉', price: 10, category: '啤酒类' },
+            { name: '金标雪花', price: 10, category: '啤酒类' },
+            { name: '乌苏啤酒', price: 12, category: '啤酒类' },
+            { name: '珠江零度/0度', price: 6, category: '啤酒类' },
+            { name: '百威', price: 10, category: '啤酒类' },
+            
+            // 白酒类
+            { name: '小毛铺', price: 20, category: '白酒类' },
+            { name: '金荞大毛铺', price: 88, category: '白酒类' },
+            { name: '小百年糊涂33°/33度', price: 18, category: '白酒类' },
+            { name: '小百年糊涂52°/52度', price: 20, category: '白酒类' },
+            { name: '大百年糊涂33°/33度', price: 88, category: '白酒类' },
+            { name: '大百年糊涂52°/52度', price: 98, category: '白酒类' },
+            { name: '小劲酒', price: 20, category: '白酒类' },
+            { name: '大劲酒', price: 68, category: '白酒类' },
+            { name: '牛栏山', price: 20, category: '白酒类' },
+            { name: '江小白', price: 20, category: '白酒类' },
+            { name: '小郎酒', price: 22, category: '白酒类' },
+	    { name: '天龙泉22°', price: 18, category: '白酒类' },
+	    { name: '天龙泉28°', price: 20, category: '白酒类' },
+            
+            // 饮料类
+            { name: '小天地壹号', price: 6, category: '饮料类' },
+            { name: '大天地壹号', price: 20, category: '饮料类' },
+            { name: '小王老吉', price: 5, category: '饮料类' },
+            { name: '大王老吉', price: 16, category: '饮料类' },
+            { name: '小椰汁', price: 5, category: '饮料类' },
+            { name: '大椰汁', price: 20, category: '饮料类' },
+            { name: '大橙汁', price: 10, category: '饮料类' },
+            { name: '小可乐', price: 4, category: '饮料类' },
+            { name: '大可乐', price: 10, category: '饮料类' },
+            { name: '小雪碧', price: 4, category: '饮料类' },
+            { name: '大雪碧', price: 10, category: '饮料类' },
+            { name: '矿泉水', price: 3, category: '饮料类' }
+        ];
+
+
         // 初始化本地存储
-        let dishes = JSON.parse(localStorage.getItem('dishes')) || [];
-        let drinks = JSON.parse(localStorage.getItem('drinks')) || [];
+        let dishes = [];
+        let drinks = [];
         let currentOrder = [];
         let selectedItem = null;
-        const SEAT_FEE_PER_PERSON = 2; // 每人餐位费2元
+        let orderHistory = [];
+        let currentHistoryIndex = -1;
+
+        // 初始化数据
+        function initData() {
+            // 检查本地存储中是否已有数据
+            if (!localStorage.getItem('dishes')) {
+                localStorage.setItem('dishes', JSON.stringify(DEFAULT_DISHES));
+                dishes = [...DEFAULT_DISHES];
+            } else {
+                dishes = JSON.parse(localStorage.getItem('dishes'));
+            }
+            
+            if (!localStorage.getItem('drinks')) {
+                localStorage.setItem('drinks', JSON.stringify(DEFAULT_DRINKS));
+                drinks = [...DEFAULT_DRINKS];
+            } else {
+                drinks = JSON.parse(localStorage.getItem('drinks'));
+            }
+            
+            // 加载订单历史
+            if (localStorage.getItem('orderHistory')) {
+                orderHistory = JSON.parse(localStorage.getItem('orderHistory'));
+            }
+            
+            // 更新总项目数
+            document.getElementById('totalItems').textContent = dishes.length + drinks.length;
+        }
 
         // 切换页面
         function switchPage(pageId) {
@@ -300,18 +605,16 @@
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            document.querySelector(`.nav-item[data-page="${pageId}"]` || 
-                              document.querySelector(`.nav-item[onclick="switchPage('${pageId}')"]`))
-                   .classList.add('active');
-            
-            // 如果切换到点单页面，更新分类选择器
-            if (pageId === 'order') {
-                updateCategorySelectors();
-            }
+            document.querySelector(`.nav-item[data-page="${pageId}"]`).classList.add('active');
             
             // 隐藏搜索结果
             document.getElementById('searchResults').style.display = 'none';
             clearSelectedItemDisplay();
+            
+            // 如果切换到点单页面，更新订单合计
+            if (pageId === 'order') {
+                updateOrderTotal();
+            }
         }
 
         // 渲染菜品/酒水列表（按分类分组）
@@ -321,22 +624,22 @@
             
             // 按分类分组
             const categories = {};
-            list.forEach(item => {
+            list.forEach((item, index) => {
                 if (!categories[item.category]) {
                     categories[item.category] = [];
                 }
-                categories[item.category].push(item);
+                categories[item.category].push({...item, originalIndex: index});
             });
             
             // 按分类渲染
             container.innerHTML = Object.keys(categories).map(category => `
                 <div class="category-header">${category}</div>
-                ${categories[category].map((item, index) => `
-                    <div class="item" data-index="${index}" data-type="${type}" data-category="${category}">
+                ${categories[category].map(item => `
+                    <div class="item" data-original-index="${item.originalIndex}" data-type="${type}">
                         <span>${item.name} ¥${item.price}</span>
                         <div>
-                            <button class="edit-btn">修改</button>
-                            <button class="delete-btn">删除</button>
+                            <button class="edit-btn" data-original-index="${item.originalIndex}" data-type="${type}">修改</button>
+                            <button class="delete-btn" data-original-index="${item.originalIndex}" data-type="${type}">删除</button>
                         </div>
                     </div>
                 `).join('')}
@@ -360,10 +663,8 @@
             document.getElementById(`${type}Name`).value = '';
             document.getElementById(`${type}Price`).value = '';
             
-            // 如果是在点单页面添加，更新分类选择器
-            if (document.getElementById('orderPage').classList.contains('active')) {
-                updateCategorySelectors();
-            }
+            // 更新总项目数
+            document.getElementById('totalItems').textContent = dishes.length + drinks.length;
         }
 
         // 修改项目
@@ -373,68 +674,42 @@
             
             // 创建临时编辑表单
             const tempForm = document.createElement('div');
-            tempForm.className = 'input-group';
+            tempForm.className = 'edit-form';
             tempForm.innerHTML = `
-                <label for="tempName">名称</label>
-                <input type="text" id="tempName" value="${currentItem.name}" placeholder="名称">
-                <label for="tempPrice">价格</label>
-                <input type="number" id="tempPrice" value="${currentItem.price}" step="0.1" placeholder="价格">
-                <label for="tempCategory">分类</label>
-                <select id="tempCategory">
-                    ${type === 'dish' ? `
-                        <option value="烤鱼类" ${currentItem.category === '烤鱼类' ? 'selected' : ''}>烤鱼类</option>
-                        <option value="汤锅类" ${currentItem.category === '汤锅类' ? 'selected' : ''}>汤锅类</option>
-                        <option value="炒菜类" ${currentItem.category === '炒菜类' ? 'selected' : ''}>炒菜类</option>
-                        <option value="干锅类" ${currentItem.category === '干锅类' ? 'selected' : ''}>干锅类</option>
-                        <option value="凉菜类" ${currentItem.category === '凉菜类' ? 'selected' : ''}>凉菜类</option>
-                        <option value="主食类" ${currentItem.category === '主食类' ? 'selected' : ''}>主食类</option>
-                        <option value="小吃类" ${currentItem.category === '小吃类' ? 'selected' : ''}>小吃类</option>
-                    ` : `
-                        <option value="啤酒类" ${currentItem.category === '啤酒类' ? 'selected' : ''}>啤酒类</option>
-                        <option value="白酒类" ${currentItem.category === '白酒类' ? 'selected' : ''}>白酒类</option>
-                        <option value="饮料类" ${currentItem.category === '饮料类' ? 'selected' : ''}>饮料类</option>
-                    `}
-                </select>
-                <button onclick="saveEdit(${index}, '${type}')">保存</button>
-                <button onclick="cancelEdit('${type}')">取消</button>
+                <div class="input-group">
+                    <label for="tempName">名称</label>
+                    <input type="text" id="tempName" value="${currentItem.name}" placeholder="名称">
+                    <label for="tempPrice">价格</label>
+                    <input type="number" id="tempPrice" value="${currentItem.price}" step="0.1" placeholder="价格">
+                    <label for="tempCategory">分类</label>
+                    <select id="tempCategory">
+                        ${type === 'dish' ? `
+                            <option value="烤鱼类" ${currentItem.category === '烤鱼类' ? 'selected' : ''}>烤鱼类</option>
+                            <option value="汤锅类" ${currentItem.category === '汤锅类' ? 'selected' : ''}>汤锅类</option>
+                            <option value="炒菜类" ${currentItem.category === '炒菜类' ? 'selected' : ''}>炒菜类</option>
+                            <option value="干锅铁板" ${currentItem.category === '干锅铁板' ? 'selected' : ''}>干锅铁板</option>
+                            <option value="凉菜类" ${currentItem.category === '凉菜类' ? 'selected' : ''}>凉菜类</option>
+                            <option value="配菜类" ${currentItem.category === '配菜类' ? 'selected' : ''}>配菜类</option>
+                            <option value="主食点心" ${currentItem.category === '主食点心' ? 'selected' : ''}>主食点心</option>
+                        ` : `
+                            <option value="啤酒类" ${currentItem.category === '啤酒类' ? 'selected' : ''}>啤酒类</option>
+                            <option value="白酒类" ${currentItem.category === '白酒类' ? 'selected' : ''}>白酒类</option>
+                            <option value="饮料类" ${currentItem.category === '饮料类' ? 'selected' : ''}>饮料类</option>
+                        `}
+                    </select>
+                    <button onclick="saveEdit(${index}, '${type}')">保存</button>
+                    <button onclick="cancelEdit('${type}')">取消</button>
+                </div>
             `;
             
-            // 替换当前项为编辑表单
+            // 找到对应的项目元素
             const container = document.getElementById(`${type}List`);
-            container.innerHTML = '';
-            container.appendChild(tempForm);
+            const itemElement = container.querySelector(`.item[data-original-index="${index}"][data-type="${type}"]`);
             
-            // 重新渲染其他项（使用事件委托方式）
-            list.forEach((item, i) => {
-                if (i !== index) {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'item';
-                    itemDiv.dataset.index = i;
-                    itemDiv.dataset.type = type;
-                    itemDiv.dataset.category = item.category;
-                    
-                    const span = document.createElement('span');
-                    span.textContent = `${item.name} ¥${item.price}`;
-                    
-                    const buttonContainer = document.createElement('div');
-                    
-                    const editBtn = document.createElement('button');
-                    editBtn.className = 'edit-btn';
-                    editBtn.textContent = '修改';
-                    
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-btn';
-                    deleteBtn.textContent = '删除';
-                    
-                    buttonContainer.appendChild(editBtn);
-                    buttonContainer.appendChild(deleteBtn);
-                    
-                    itemDiv.appendChild(span);
-                    itemDiv.appendChild(buttonContainer);
-                    
-                    container.appendChild(itemDiv);
-                }
-            });
+            // 替换当前项为编辑表单
+            if (itemElement) {
+                itemElement.parentNode.replaceChild(tempForm, itemElement);
+            }
         }
 
         // 保存编辑
@@ -451,11 +726,6 @@
             (type === 'dish' ? dishes : drinks)[index] = { name, price, category };
             saveToLocalStorage();
             renderItems(type);
-            
-            // 如果是在点单页面修改，更新分类选择器
-            if (document.getElementById('orderPage').classList.contains('active')) {
-                updateCategorySelectors();
-            }
         }
 
         // 取消编辑
@@ -470,94 +740,9 @@
                 saveToLocalStorage();
                 renderItems(type);
                 
-                // 如果是在点单页面删除，更新分类选择器
-                if (document.getElementById('orderPage').classList.contains('active')) {
-                    updateCategorySelectors();
-                }
+                // 更新总项目数
+                document.getElementById('totalItems').textContent = dishes.length + drinks.length;
             }
-        }
-
-        // 更新分类选择器
-        function updateCategorySelectors() {
-            // 获取所有分类
-            const dishCategories = [...new Set(dishes.map(item => item.category))];
-            const drinkCategories = [...new Set(drinks.map(item => item.category))];
-            
-            // 获取当前选中的主分类
-            const activeType = document.querySelector('#categorySelector .active').dataset.type;
-            
-            // 渲染二级分类选择器
-            const subCategorySelector = document.getElementById('subCategorySelector');
-            
-            // 根据主分类筛选显示的子分类
-            let filteredCategories = [];
-            if (activeType === 'all') {
-                filteredCategories = [...new Set([...dishCategories, ...drinkCategories])];
-            } else if (activeType === 'dish') {
-                filteredCategories = dishCategories;
-            } else if (activeType === 'drink') {
-                filteredCategories = drinkCategories;
-            }
-            
-            // 渲染筛选后的分类按钮
-            subCategorySelector.innerHTML = `
-                <button class="category-btn active" data-category="all">全部</button>
-                ${filteredCategories.map(category => `
-                    <button class="category-btn" data-category="${category}">${category}</button>
-                `).join('')}
-            `;
-            
-            // 绑定分类按钮事件
-            document.querySelectorAll('#categorySelector .category-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('#categorySelector .category-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    updateCategorySelectors(); // 重新更新子分类
-                    updateItemSelector(btn.dataset.type, document.querySelector('#subCategorySelector .active').dataset.category);
-                });
-            });
-            
-            document.querySelectorAll('#subCategorySelector .category-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('#subCategorySelector .category-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    updateItemSelector(document.querySelector('#categorySelector .active').dataset.type, btn.dataset.category);
-                });
-            });
-            
-            // 初始化项目选择器
-            updateItemSelector(activeType, 'all');
-        }
-
-        // 更新项目选择器
-        function updateItemSelector(typeFilter, categoryFilter) {
-            const itemSelector = document.getElementById('itemSelector');
-            
-            // 筛选项目
-            let items = [];
-            if (typeFilter === 'all') {
-                items = [...dishes, ...drinks];
-            } else if (typeFilter === 'dish') {
-                items = [...dishes];
-            } else if (typeFilter === 'drink') {
-                items = [...drinks];
-            }
-            
-            if (categoryFilter !== 'all') {
-                items = items.filter(item => item.category === categoryFilter);
-            }
-            
-            // 渲染项目卡片
-            itemSelector.innerHTML = items.map(item => `
-                <div class="item-card" onclick="selectItem('${item.name}', ${item.price}, '${item.category}', '${typeFilter === 'dish' ? 'dish' : 'drink'}')">
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-price">¥${item.price}</div>
-                    <div class="item-category">${item.category}</div>
-                </div>
-            `).join('');
-            
-            // 重置选择
-            clearSelectedItemDisplay();
         }
 
         // 搜索单品
@@ -567,6 +752,7 @@
             
             if (searchTerm.length < 1) {
                 searchResults.style.display = 'none';
+                document.getElementById('addItemArea').style.display = 'none';
                 return;
             }
             
@@ -580,12 +766,30 @@
             
             // 渲染搜索结果
             if (matchedItems.length > 0) {
-                searchResults.innerHTML = matchedItems.map(item => `
-                    <div class="search-result-item" 
-                         onclick="selectItem('${item.name}', ${item.price}, '${item.category}', '${dishes.includes(item) ? 'dish' : 'drink'}')">
-                        ${item.name} (${item.category}) - ¥${item.price}
-                    </div>
-                `).join('');
+                searchResults.innerHTML = matchedItems.map(item => {
+                    // 高亮显示匹配部分
+                    const index = item.name.toLowerCase().indexOf(searchTerm);
+                    if (index !== -1) {
+                        const before = item.name.substring(0, index);
+                        const highlight = item.name.substring(index, index + searchTerm.length);
+                        const after = item.name.substring(index + searchTerm.length);
+                        
+                        return `
+                            <div class="search-result-item" 
+                                 onclick="selectItem('${item.name}', ${item.price}, '${item.category}', '${dishes.includes(item) ? 'dish' : 'drink'}')">
+                                <span>${before}<span class="search-highlight">${highlight}</span>${after}</span>
+                                <span>¥${item.price}</span>
+                        </div>
+                        `;
+                    }
+                    return `
+                        <div class="search-result-item" 
+                             onclick="selectItem('${item.name}', ${item.price}, '${item.category}', '${dishes.includes(item) ? 'dish' : 'drink'}')">
+                            <span>${item.name}</span>
+                            <span>¥${item.price}</span>
+                        </div>
+                    `;
+                }).join('');
                 searchResults.style.display = 'block';
             } else {
                 searchResults.innerHTML = '<div class="search-result-item">未找到匹配的单品</div>';
@@ -596,21 +800,44 @@
         // 选择项目
         function selectItem(name, price, category, type) {
             selectedItem = { name, price, category, type };
-            document.getElementById('itemCount').value = '1';
-            document.getElementById('itemCount').focus();
             
-            // 显示选中的单品名称
+            // 显示选中的单品信息
             document.getElementById('selectedItemName').textContent = name;
+            document.getElementById('selectedItemPrice').textContent = `¥${price.toFixed(2)}`;
+            document.getElementById('selectedItemCategory').textContent = category;
+            
+            // 显示添加区域
+            document.getElementById('addItemArea').style.display = 'block';
             
             // 隐藏搜索结果
             document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('itemSearch').value = name;
+            
+            // 如果是米饭，显示金额输入框，隐藏数量输入框
+            if (name === '米饭') {
+                document.getElementById('riceAmountContainer').style.display = 'block';
+                document.getElementById('itemCount').style.display = 'none';
+                document.getElementById('riceAmount').value = '';
+            } else {
+                document.getElementById('riceAmountContainer').style.display = 'none';
+                document.getElementById('itemCount').style.display = 'block';
+                
+                // 如果是啤酒类，清空数量框，否则设为默认1
+                if (category === '啤酒类') {
+                    document.getElementById('itemCount').value = '';
+                } else {
+                    document.getElementById('itemCount').value = '1';
+                }
+            }
         }
 
         // 清除选中单品显示
         function clearSelectedItemDisplay() {
             selectedItem = null;
-            document.getElementById('itemCount').value = '';
-            document.getElementById('selectedItemName').textContent = '';
+            document.getElementById('itemSearch').value = '';
+            document.getElementById('addItemArea').style.display = 'none';
+            document.getElementById('riceAmountContainer').style.display = 'none';
+            document.getElementById('itemCount').style.display = 'block';
         }
 
         // 添加选中的项目到订单
@@ -620,33 +847,73 @@
                 return;
             }
             
-            const count = parseInt(document.getElementById('itemCount').value);
-            if (!count || count < 1) {
-                alert('请输入有效数量（至少1份）');
-                return;
+            let count, finalPrice;
+            
+            // 处理米饭的特殊情况
+            if (selectedItem.name === '米饭') {
+                finalPrice = parseFloat(document.getElementById('riceAmount').value) || 0;
+                if (finalPrice <= 0) {
+                    alert('请输入有效的米饭金额');
+                    return;
+                }
+                count = 1;
+            } else {
+                count = parseInt(document.getElementById('itemCount').value) || 1;
+                if (count < 1) {
+                    alert('请输入有效数量（至少1份）');
+                    return;
+                }
+                finalPrice = selectedItem.price;
             }
             
-            currentOrder.push({
-                name: selectedItem.name,
-                price: selectedItem.price,
-                count: count,
-                category: selectedItem.category,
-                type: selectedItem.type
-            });
+            // 检查是否已经存在相同的项目
+            const existingItemIndex = currentOrder.findIndex(item => 
+                item.name === selectedItem.name && item.price === finalPrice
+            );
+            
+            if (existingItemIndex !== -1) {
+                // 如果已存在，增加数量
+                currentOrder[existingItemIndex].count += count;
+            } else {
+                // 否则添加新项目
+                currentOrder.push({
+                    name: selectedItem.name,
+                    price: finalPrice,
+                    count: count,
+                    category: selectedItem.category,
+                    type: selectedItem.type
+                });
+            }
             
             renderOrderItems();
             clearSelectedItemDisplay();
+            document.getElementById('itemCount').value = '';
         }
 
         // 渲染订单项目
         function renderOrderItems() {
             const container = document.getElementById('orderItems');
+            
+            if (currentOrder.length === 0) {
+                container.innerHTML = '<div class="no-items">当前没有订单项目</div>';
+                updateOrderTotal();
+                return;
+            }
+            
             container.innerHTML = currentOrder.map((item, index) => `
                 <div class="item">
-                    <span>${item.name} (${item.category}) ×${item.count} ¥${(item.price * item.count).toFixed(2)}</span>
-                    <button onclick="removeOrderItem(${index})">删除</button>
+                    <span>${item.name} (${item.category}) ${item.name === '米饭' ? '' : '×' + item.count} ¥${(item.price * item.count).toFixed(2)}</span>
+                    <button class="remove-btn" onclick="removeOrderItem(${index})">删除</button>
                 </div>
             `).join('');
+            
+            updateOrderTotal();
+        }
+
+        // 更新订单合计
+        function updateOrderTotal() {
+            const itemsTotal = currentOrder.reduce((sum, item) => sum + (item.price * item.count), 0);
+            document.getElementById('orderTotal').textContent = `¥${itemsTotal.toFixed(2)}`;
         }
 
         // 删除订单项目
@@ -657,21 +924,15 @@
 
         // 生成小票
         function printReceipt() {
-            const peopleCountInput = document.getElementById('peopleCount');
-            const peopleCount = peopleCountInput.value ? parseInt(peopleCountInput.value) : 0;
-            const remark = document.getElementById('orderRemark').value;
+            const tableNumber = document.getElementById('tableNumber').value;
+            const extraFeeNote = document.getElementById('extraFeeNote').value;
             const extraFeeInput = document.getElementById('extraFee');
             const extraFee = extraFeeInput.value ? parseFloat(extraFeeInput.value) : 0;
-            
-            if (peopleCount <= 0) {
-                alert('请输入有效的客人人数');
-                peopleCountInput.focus();
-                return;
-            }
+            const discountFeeInput = document.getElementById('discountFee');
+            const discountFee = discountFeeInput.value ? parseFloat(discountFeeInput.value) : 0;
             
             const itemsTotal = currentOrder.reduce((sum, item) => sum + (item.price * item.count), 0);
-            const seatFee = peopleCount * SEAT_FEE_PER_PERSON;
-            const grandTotal = itemsTotal + seatFee + extraFee;
+            const grandTotal = itemsTotal + extraFee - discountFee;
             const time = new Date().toLocaleString('zh-CN', { 
                 year: 'numeric', month: '2-digit', day: '2-digit',
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -695,56 +956,217 @@
                 }
             });
 
-            const receiptHtml = `
-                <div style="text-align: center;">**宵夜排档收据**</div>
-                <div>时间：${time}</div>
-                <div>人数：${peopleCount}人</div>
-                ${remark ? `<div>备注：${remark}</div>` : ''}
-                <div class="order-item">
-                    <span>餐位费 (${peopleCount}人 × ¥${SEAT_FEE_PER_PERSON})</span>
-                    <span>¥${seatFee.toFixed(2)}</span>
+            // 使用新的小票格式 - 价格右对齐
+            let receiptHtml = `
+                <div class="receipt-line">
+                    <span>时间：</span>
+                    <span>${time}</span>
                 </div>
-                ${extraFee > 0 ? `
-                <div class="order-item">
-                    <span>额外费用</span>
-                    <span>¥${extraFee.toFixed(2)}</span>
+                <div class="receipt-line">
+                    <span>桌号：</span>
+                    <span>${tableNumber || '未指定'}</span>
                 </div>
-                ` : ''}
-                
-                ${Object.keys(dishCategories).length > 0 ? `
-                <div style="margin: 10px 0;">---------- 菜品 ----------</div>
-                ${Object.keys(dishCategories).map(category => `
-                    <div class="order-item" style="font-weight: bold;">${category}</div>
-                    ${dishCategories[category].map(item => `
-                        <div class="order-item">
-                            <span>${item.name} ×${item.count}</span>
-                            <span>¥${(item.price * item.count).toFixed(2)}</span>
+            `;
+            
+            // 额外费用
+            if (extraFee > 0) {
+                if (extraFeeNote && extraFeeNote.length > 5) {
+                    receiptHtml += `
+                        <div class="receipt-line">
+                            <span>额外费用：</span>
+                            <span>¥${extraFee.toFixed(2)}</span>
                         </div>
-                    `).join('')}
-                `).join('')}
-                ` : ''}
-                
-                ${Object.keys(drinkCategories).length > 0 ? `
-                <div style="margin: 10px 0;">---------- 酒水 ----------</div>
-                ${Object.keys(drinkCategories).map(category => `
-                    <div class="order-item" style="font-weight: bold;">${category}</div>
-                    ${drinkCategories[category].map(item => `
-                        <div class="order-item">
-                            <span>${item.name} ×${item.count}</span>
-                            <span>¥${(item.price * item.count).toFixed(2)}</span>
+                        <div class="receipt-line">
+                            <span>${extraFeeNote}</span>
+                            <span></span>
                         </div>
+                    `;
+                } else {
+                    receiptHtml += `
+                        <div class="receipt-line">
+                            <span>额外费用${extraFeeNote ? ` (${extraFeeNote})` : ''}</span>
+                            <span>¥${extraFee.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            // 折扣费用
+            if (discountFee > 0) {
+                receiptHtml += `
+                    <div class="receipt-line">
+                        <span>折扣费用</span>
+                        <span>-¥${discountFee.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+            
+            // 菜品部分
+            if (Object.keys(dishCategories).length > 0) {
+                receiptHtml += `
+                    <div class="receipt-section-title">---------- 菜品 ----------</div>
+                    ${Object.keys(dishCategories).map(category => `
+                        <div style="font-weight: bold; margin-top: 8px;">${category}</div>
+                        ${dishCategories[category].map(item => `
+                            <div class="receipt-line">
+                                <span>${item.name} ${item.name === '米饭' ? '' : '×' + item.count}</span>
+                                <span>¥${(item.price * item.count).toFixed(2)}</span>
+                            </div>
+                        `).join('')}
                     `).join('')}
-                `).join('')}
-                ` : ''}
-                
-                <div style="margin: 10px 0; border-top: 1px dashed #666;"></div>
-                <div class="order-item" style="font-weight: bold;">
+                `;
+            }
+            
+            // 酒水部分
+            if (Object.keys(drinkCategories).length > 0) {
+                receiptHtml += `
+                    <div class="receipt-section-title">---------- 酒水 ----------</div>
+                    ${Object.keys(drinkCategories).map(category => `
+                        <div style="font-weight: bold; margin-top: 8px;">${category}</div>
+                        ${drinkCategories[category].map(item => `
+                            <div class="receipt-line">
+                                <span>${item.name} ×${item.count}</span>
+                                <span>¥${(item.price * item.count).toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    `).join('')}
+                `;
+            }
+            
+            // 总计
+            receiptHtml += `
+                <div style="margin: 15px 0; border-top: 1px dashed #666;"></div>
+                <div class="receipt-line" style="font-weight: bold; font-size: 1.1em;">
                     <span>总计</span>
                     <span>¥${grandTotal.toFixed(2)}</span>
                 </div>
             `;
             
             document.getElementById('receipt').innerHTML = receiptHtml;
+            
+            // 保存当前订单到历史记录
+            saveToOrderHistory({
+                tableNumber: tableNumber,
+                extraFeeNote: extraFeeNote,
+                extraFee: extraFee,
+                discountFee: discountFee,
+                items: [...currentOrder],
+                time: time,
+                receipt: receiptHtml
+            });
+        }
+        
+        // 保存订单到历史记录
+        function saveToOrderHistory(order) {
+            orderHistory.push(order);
+            if (orderHistory.length > 20) {
+                orderHistory.shift(); // 只保留最近20个订单
+            }
+            localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+            currentHistoryIndex = orderHistory.length - 1;
+        }
+        
+        // 加载上一个订单
+        function loadPrevOrder() {
+            if (orderHistory.length === 0) {
+                alert('没有历史订单记录');
+                return;
+            }
+            
+            if (currentHistoryIndex <= 0) {
+                currentHistoryIndex = 0;
+            } else {
+                currentHistoryIndex--;
+            }
+            
+            loadOrderFromHistory(currentHistoryIndex);
+        }
+        
+        // 加载下一个订单
+        function loadNextOrder() {
+            if (orderHistory.length === 0) {
+                resetOrder();
+                return;
+            }
+            
+            if (currentHistoryIndex >= orderHistory.length - 1) {
+                resetOrder();
+                return;
+            }
+            
+            currentHistoryIndex++;
+            loadOrderFromHistory(currentHistoryIndex);
+        }
+        
+        // 从历史记录加载订单
+        function loadOrderFromHistory(index) {
+            const order = orderHistory[index];
+            
+            // 填充数据
+            document.getElementById('tableNumber').value = order.tableNumber || '';
+            document.getElementById('extraFeeNote').value = order.extraFeeNote || '';
+            document.getElementById('extraFee').value = order.extraFee || '';
+            document.getElementById('discountFee').value = order.discountFee || '';
+            currentOrder = [...order.items];
+            
+            // 渲染订单和小票
+            renderOrderItems();
+            document.getElementById('receipt').innerHTML = order.receipt;
+        }
+        
+        // 重置订单
+        function resetOrder() {
+            document.getElementById('tableNumber').value = '';
+            document.getElementById('extraFeeNote').value = '';
+            document.getElementById('extraFee').value = '';
+            document.getElementById('discountFee').value = '';
+            currentOrder = [];
+            renderOrderItems();
+            document.getElementById('receipt').innerHTML = '';
+        }
+
+        // 保存小票为图片
+        function saveReceiptAsImage() {
+            const receiptElement = document.getElementById('receipt');
+            
+            // 检查是否有小票内容
+            if (!receiptElement.innerHTML.trim()) {
+                alert('请先生成小票');
+                return;
+            }
+            
+            // 临时保存原始样式
+            const originalBorder = receiptElement.style.border;
+            const originalPadding = receiptElement.style.padding;
+            const originalBackground = receiptElement.style.background;
+            const originalMargin = receiptElement.style.margin;
+            
+            // 设置适合截图的样式
+            receiptElement.style.border = 'none';
+            receiptElement.style.padding = '10px';
+            receiptElement.style.background = '#fff';
+            receiptElement.style.margin = '0';
+            
+            // 使用html2canvas截图
+            html2canvas(receiptElement, {
+                scale: 3, // 提高分辨率
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                // 恢复原始样式
+                receiptElement.style.border = originalBorder;
+                receiptElement.style.padding = originalPadding;
+                receiptElement.style.background = originalBackground;
+                receiptElement.style.margin = originalMargin;
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = '小票_' + new Date().toLocaleString('zh-CN').replace(/[/:\s]/g, '-') + '.png';
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
         }
 
         // 本地存储
@@ -757,17 +1179,15 @@
         document.addEventListener('click', function(e) {
             // 处理删除按钮
             if (e.target.classList.contains('delete-btn')) {
-                const item = e.target.closest('.item');
-                const index = parseInt(item.dataset.index);
-                const type = item.dataset.type;
+                const index = parseInt(e.target.dataset.originalIndex);
+                const type = e.target.dataset.type;
                 deleteItem(index, type);
             }
             
             // 处理编辑按钮
             if (e.target.classList.contains('edit-btn')) {
-                const item = e.target.closest('.item');
-                const index = parseInt(item.dataset.index);
-                const type = item.dataset.type;
+                const index = parseInt(e.target.dataset.originalIndex);
+                const type = e.target.dataset.type;
                 editItem(index, type);
             }
             
@@ -775,21 +1195,28 @@
             if (!e.target.closest('#itemSearch') && !e.target.closest('#searchResults')) {
                 document.getElementById('searchResults').style.display = 'none';
             }
-            
-            // 点击单品卡片或搜索结果时显示选中单品
-            if (e.target.closest('.item-card') || e.target.closest('.search-result-item')) {
-                const itemData = e.target.closest('.item-card') || e.target.closest('.search-result-item');
-                const name = itemData.querySelector('.item-name')?.textContent || 
-                            itemData.textContent.split('(')[0].trim();
-                document.getElementById('selectedItemName').textContent = name;
-            }
         });
 
-        // 初始化渲染
-        renderItems('dish');
-        renderItems('drink');
-        updateCategorySelectors();
+        // 初始化导航栏点击事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化数据
+            initData();
+            
+            // 初始化导航栏
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    switchPage(this.dataset.page);
+                });
+            });
+            
+            // 初始化渲染
+            renderItems('dish');
+            renderItems('drink');
+            renderOrderItems();
+            
+            // 设置默认点单页面
+            switchPage('order');
+        });
     </script>
 </body>
 </html>
-    
