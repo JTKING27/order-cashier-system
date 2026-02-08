@@ -210,7 +210,8 @@
         }
         .kitchen-btn {
             background: #ed8936;
-            color: white;
+            color: black !important; /* 改为黑色 */
+            text-decoration: underline; /* 添加下划线 */
         }
         .back-table-btn {
             background: white;
@@ -1077,7 +1078,7 @@
                 <div class="table-header-actions">
                     <button class="header-btn new-table-btn" onclick="clearTableDishes()">新桌</button>
                     <button class="header-btn print-ticket-btn" onclick="jumpToTicketPage()">小票</button>
-                    <button class="header-btn kitchen-btn" onclick="switchPage('overviewPage')">厨房出菜</button>
+                    <button class="header-btn kitchen-btn" onclick="switchPage('overviewPage')">厨房</button>
                     <button class="header-btn back-table-btn" onclick="switchPage('tablePage')">返回桌号</button>
                 </div>
             </div>
@@ -1175,15 +1176,18 @@
                 <div class="overview-grid-full">
                     <div class="cold-dish-section-full">
                         <div style="font-size: 16px; font-weight: bold; color: #3182ce; margin-bottom: 10px; border-bottom: 2px solid #4299e1; padding-bottom: 6px;">凉菜</div>
-                        <div id="coldDishListFull" style="max-height: 250px; overflow-y: auto; font-size: 14px;"></div>
+                        <!-- 修改1：去掉固定高度和滚动条 -->
+                        <div id="coldDishListFull" style="font-size: 14px;"></div>
                     </div>
                     <div class="side-dish-section-full">
                         <div style="font-size: 16px; font-weight: bold; color: #9f7aea; margin-bottom: 10px; border-bottom: 2px solid #9f7aea; padding-bottom: 6px;">配菜</div>
-                        <div id="sideDishListFull" style="max-height: 250px; overflow-y: auto; font-size: 14px;"></div>
+                        <!-- 修改2：去掉固定高度和滚动条 -->
+                        <div id="sideDishListFull" style="font-size: 14px;"></div>
                     </div>
                     <div class="main-dish-section-full">
                         <div style="font-size: 16px; font-weight: bold; color: #2d3748; margin-bottom: 10px; border-bottom: 2px solid #4a5568; padding-bottom: 6px;">主菜（按桌号）</div>
-                        <div id="mainDishListFull" style="max-height: 350px; overflow-y: auto; font-size: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;"></div>
+                        <!-- 修改3：去掉固定高度，保留grid布局 -->
+                        <div id="mainDishListFull" style="font-size: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;"></div>
                     </div>
                     <div class="multi-dish-section-full">
                         <div class="multi-title">点了多份的菜</div>
@@ -1274,6 +1278,7 @@
         // 全局数据：菜品分类列表
         const dishCategories = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类'];
         
+        // ===== 菜品数据区域开始 =====
         // 全局数据：菜品
         let dishData = [
             // ===== 烤鱼类 (101-103) =====
@@ -1438,6 +1443,7 @@
             { globalId: 1011, categoryId: 11, name: '大雪碧', price: 10, category: '饮料类', isDrink: true },
             { globalId: 1012, categoryId: 12, name: '矿泉水', price: 3, category: '饮料类', isDrink: true }
         ];
+        // ===== 菜品数据区域结束 =====
 
         // 全局状态
         const tableList = ["内1", "内2", "内3", "内4", "外1", "外2", "外3", "外4", "外5", "外6"];
@@ -1934,7 +1940,10 @@
             const containerEl = document.getElementById('quickOrderCategoryContainer');
             let html = "";
 
-            dishCategories.forEach(category => {
+            // 按要求的顺序：烤鱼类、汤锅类、凉菜类、炒菜类、干锅铁板、主食点心、配菜类
+            const quickOrderCategoryOrder = ['烤鱼类', '汤锅类', '凉菜类', '炒菜类', '干锅铁板', '主食点心', '配菜类'];
+            
+            quickOrderCategoryOrder.forEach(category => {
                 // 跳过酒水类
                 if (['啤酒类', '白酒类', '饮料类'].includes(category)) return;
                 
@@ -2242,7 +2251,7 @@
             coldDishes.sort(sortByQueueAndPrice);
             sideDishes.sort(sortByQueueAndPrice);
 
-            // 渲染凉菜区 - 菜名加粗
+            // 渲染凉菜区 - 菜名加粗，添加红色总份数
             let coldHtml = "";
             if (coldDishes.length === 0) {
                 coldHtml = "<div style='color: #999; padding: 10px;'>暂无凉菜待出餐</div>";
@@ -2256,13 +2265,15 @@
                 Object.keys(coldDishGroup).forEach(dishName => {
                     const items = coldDishGroup[dishName];
                     const tablesStr = items.map(item => `${item.table}(${item.unservedCount}份)`).join('、');
-                    coldHtml += `<div style="padding: 6px 0; border-bottom: 1px dashed #cbd5e0;"><strong>${dishName}</strong>：${tablesStr}</div>`;
+                    // 修改4：计算总份数并添加红色字体显示
+                    const totalCount = items.reduce((sum, item) => sum + item.unservedCount, 0);
+                    coldHtml += `<div style="padding: 6px 0; border-bottom: 1px dashed #cbd5e0;"><strong>${dishName}</strong> <span style="color: red; font-weight: bold;">总${totalCount}份</span>：${tablesStr}</div>`;
                 });
             }
             const coldDishListFullEl = document.getElementById('coldDishListFull');
             if (coldDishListFullEl) coldDishListFullEl.innerHTML = coldHtml;
 
-            // 渲染配菜区 - 菜名加粗
+            // 渲染配菜区 - 菜名加粗，添加红色总份数
             let sideHtml = "";
             if (sideDishes.length === 0) {
                 sideHtml = "<div style='color: #999; padding: 10px;'>暂无配菜待出餐</div>";
@@ -2276,7 +2287,9 @@
                 Object.keys(sideDishGroup).forEach(dishName => {
                     const items = sideDishGroup[dishName];
                     const tablesStr = items.map(item => `${item.table}(${item.unservedCount}份)`).join('、');
-                    sideHtml += `<div style="padding: 6px 0; border-bottom: 1px dashed #cbd5e0;"><strong>${dishName}</strong>：${tablesStr}</div>`;
+                    // 修改5：计算总份数并添加红色字体显示
+                    const totalCount = items.reduce((sum, item) => sum + item.unservedCount, 0);
+                    sideHtml += `<div style="padding: 6px 0; border-bottom: 1px dashed #cbd5e0;"><strong>${dishName}</strong> <span style="color: red; font-weight: bold;">总${totalCount}份</span>：${tablesStr}</div>`;
                 });
             }
             const sideDishListFullEl = document.getElementById('sideDishListFull');
