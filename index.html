@@ -12,6 +12,13 @@
             box-sizing: border-box;
             font-family: "Microsoft YaHei", sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        input, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
         }
         body {
             background-color: #f5f5f5;
@@ -91,6 +98,9 @@
             position: relative;
             border: 3px solid transparent;
             transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         .table-card:active {
             transform: scale(0.98);
@@ -101,36 +111,58 @@
         .table-card.outer-table {
             border-color: #38a169;
         }
-        .table-card.recent-table {
-            border-color: #ed8936;
-            background: #fffaf0;
-        }
         .table-card h3 {
             font-size: 22px;
-            margin-bottom: 12px;
+            margin: 0;
             font-weight: bold;
         }
-        .recent-badge {
-            display: inline-block;
-            background: #ed8936;
+        .recent-circle {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: #9f7aea;
             color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-bottom: 8px;
             font-weight: bold;
+            z-index: 10;
+        }
+        .table-card-actions {
+            display: flex;
+            gap: 6px;
+            width: 100%;
         }
         .enter-table-btn {
             background: #4299e1;
             color: white;
-            width: 100%;
-            margin-top: 10px;
-            font-size: 16px;
-            padding: 10px;
+            flex: 1;
+            font-size: 14px;
+            padding: 8px;
             font-weight: bold;
+            margin: 0;
         }
         .enter-table-btn.active-table-btn {
             background: #ed8936;
+        }
+        .new-table-card-btn {
+            background: #f56565;
+            color: white;
+            font-size: 16px;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
         /* 二级界面：桌号点菜页 */
@@ -315,13 +347,6 @@
             margin-bottom: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .dish-count {
-            font-size: 15px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            text-align: center;
-            color: #333;
-        }
         .to-ticket-btn {
             width: 100%;
             background: #48bb78;
@@ -366,6 +391,23 @@
         .category-group-啤酒类 { border-color: #f6ad55; background: #fffaf0; }
         .category-group-白酒类 { border-color: #fc8181; background: #fff5f5; }
         .category-group-饮料类 { border-color: #63b3ed; background: #ebf8ff; }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            padding: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 4px;
+        }
+        .category-count {
+            font-weight: normal;
+            color: #999;
+            font-size: 13px;
+        }
 
         /* 三级界面：快捷点菜页 */
         .quick-order-header {
@@ -406,6 +448,51 @@
             font-weight: bold;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             letter-spacing: 2px;
+        }
+        
+        /* 快捷点菜分类折叠样式 */
+        .quick-category-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .quick-category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-bottom: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-category-header:active {
+            background: #edf2f7;
+        }
+        .quick-category-header.expanded {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .quick-category-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .quick-category-arrow {
+            font-size: 20px;
+            color: #718096;
+            transition: transform 0.3s;
+        }
+        .quick-category-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        .quick-category-content {
+            display: none;
+            padding: 12px;
+            background: white;
+        }
+        .quick-category-content.expanded {
+            display: block;
         }
         
         /* 分类内预览区 */
@@ -458,21 +545,22 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+        
+        /* 快捷点菜按钮新样式 - 上下布局显示编号和提示字 */
         .number-item {
             height: 50px;
             border: 2px solid #ddd;
             border-radius: 8px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
             cursor: pointer;
             transition: all 0.2s;
             background: white;
-            user-select: none;
-            -webkit-user-select: none;
             position: relative;
             overflow: hidden;
+            padding: 2px;
         }
         .number-item:active {
             transform: scale(0.95);
@@ -488,6 +576,20 @@
             background: #ebf8ff;
             border-color: #4299e1;
             transform: scale(0.95);
+        }
+        .number-item .category-id {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .number-item .prompt-text {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 2px;
+            line-height: 1;
+        }
+        .number-item.selected .prompt-text {
+            color: rgba(255,255,255,0.9);
         }
         .number-item .qty-badge {
             position: absolute;
@@ -521,42 +623,77 @@
             top: 0;
             z-index: 100;
         }
-        .add-dish-form {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .form-item {
+        
+        /* 菜品管理操作按钮区域 */
+        .dish-edit-actions {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 0 5px;
         }
-        .form-item label {
+        .dish-edit-action-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
             font-weight: bold;
-            font-size: 13px;
-            color: #555;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .form-item input, .form-item select {
-            height: 40px;
-            padding: 0 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            background: white;
-        }
-        .form-submit-btn {
-            grid-column: 1 / -1;
+        .btn-modify {
             background: #48bb78;
             color: white;
-            height: 44px;
-            font-size: 16px;
-            font-weight: bold;
         }
+        .btn-add {
+            background: #f56565;
+            color: white;
+        }
+        
+        /* 折叠分类样式 */
+        .edit-category-section-fold {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .edit-category-header-fold {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid transparent;
+        }
+        .edit-category-header-fold:active {
+            background: #edf2f7;
+        }
+        .edit-category-header-fold.expanded {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .edit-category-title-fold {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .edit-category-arrow {
+            font-size: 20px;
+            color: #718096;
+            transition: transform 0.3s;
+        }
+        .edit-category-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        .edit-category-content {
+            display: none;
+            padding: 12px;
+        }
+        .edit-category-content.expanded {
+            display: block;
+        }
+        
         .edit-category-section {
             background: white;
             border-radius: 12px;
@@ -578,21 +715,22 @@
             overflow: hidden;
             border: 1px solid #eee;
         }
+        /* 修改列宽以适应提示字列 */
         .dish-edit-item {
             display: grid;
-            grid-template-columns: 50px 1fr 60px 60px 60px;
-            gap: 6px;
+            grid-template-columns: 45px 1fr 50px 50px 50px 50px;
+            gap: 4px;
             align-items: center;
-            padding: 10px 6px;
+            padding: 10px 4px;
             border-bottom: 1px solid #eee;
             font-size: 14px;
         }
         @media (max-width: 400px) {
             .dish-edit-item {
-                grid-template-columns: 40px 1fr 50px 50px 50px;
+                grid-template-columns: 35px 1fr 40px 40px 40px 40px;
                 font-size: 12px;
-                padding: 8px 4px;
-                gap: 4px;
+                padding: 8px 2px;
+                gap: 2px;
             }
         }
         .dish-edit-item.header {
@@ -603,10 +741,19 @@
         .dish-edit-item:last-child {
             border-bottom: none;
         }
+        .dish-edit-item .prompt-input {
+            width: 100%;
+            height: 32px;
+            padding: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
         .edit-btn {
             background: #4299e1;
             color: white;
-            padding: 6px 4px;
+            padding: 6px 2px;
             font-size: 12px;
             min-width: 0;
             border-radius: 4px;
@@ -614,7 +761,7 @@
         .remove-btn {
             background: #f56565;
             color: white;
-            padding: 6px 4px;
+            padding: 6px 2px;
             font-size: 12px;
             min-width: 0;
             border-radius: 4px;
@@ -637,16 +784,24 @@
         }
         .ticket-page-content {
             max-width: 100%;
+            padding-bottom: 100px;
         }
-        .generate-ticket-fixed {
-            position: sticky;
+        .ticket-float-bar {
+            position: fixed;
             top: 70px;
+            left: 10px;
+            right: 10px;
             background: white;
-            padding: 12px 15px;
+            padding: 10px;
             border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 99;
+            display: flex;
+            gap: 8px;
+        }
+        .ticket-float-bar button {
+            flex: 1;
+            margin: 0;
         }
         .ticket-info-section {
             background: white;
@@ -654,6 +809,7 @@
             padding: 15px;
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 80px;
         }
         .ticket-input-group {
             margin-bottom: 12px;
@@ -674,45 +830,134 @@
             background: white;
         }
         
-        /* 快捷添加按钮 */
-        .quick-add-btn {
-            width: 100%;
+        /* 搜索框虚线 */
+        .dashed-search {
+            border: 2px dashed #999 !important;
+            background: #fafafa;
+        }
+        
+        /* 快捷添加按钮红色版 */
+        .quick-add-btn-bar {
             background: #f56565;
             color: white;
             font-size: 16px;
-            padding: 12px;
             font-weight: bold;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
-        /* 额外费用区域样式 */
-        .extra-fees-section {
-            background: white;
-            border-radius: 12px;
+        /* 生成小票按钮绿色 */
+        .generate-btn {
+            background: #48bb78;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        /* 额外费用区域样式 - 移到预览区内 */
+        .extra-fees-inline {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #e2e8f0;
+            background: #f0fff4;
             padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            margin: 15px -8px -8px -8px;
         }
-        .extra-fee-input-row {
+        
+        /* 预设费用横向标签云 - 紧凑布局 */
+        .preset-fees-container {
             display: flex;
+            flex-direction: column;
             gap: 8px;
-            margin-bottom: 10px;
-            align-items: flex-end;
+            margin-bottom: 12px;
         }
-        .extra-fee-name {
-            flex: 1.5;
+        
+        .preset-fee-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #c6f6d5;
         }
-        .extra-fee-amount {
+        
+        .preset-fee-name {
+            width: 80px;
+            font-weight: bold;
+            color: #2d3748;
+            flex-shrink: 0;
+        }
+        
+        .preset-fee-input {
             flex: 1;
+        }
+        
+        .preset-fee-input input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .preset-fee-add-btn {
+            width: 60px;
+            background: #718096;
+            color: white;
+            padding: 6px 0;
+            font-size: 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* 添加常用按钮 - 改为行内样式 */
+        .manage-preset-btn {
+            background: #718096;
+            color: white;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        
+        /* 自定义添加单行紧凑布局 */
+        .extra-fee-input-row {
+            display: grid;
+            grid-template-columns: 1fr 100px 60px;
+            gap: 8px;
+            align-items: end;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+            border: 1px solid #c6f6d5;
+        }
+        .extra-fee-input-row input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
         }
         .extra-fee-add-btn {
             background: #48bb78;
             color: white;
-            height: 44px;
-            padding: 0 16px;
+            height: 36px;
+            padding: 0;
             font-weight: bold;
+            font-size: 13px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
+        
         .extra-fee-list {
             margin-top: 10px;
         }
@@ -720,11 +965,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background: #f0fff4;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 4px solid #48bb78;
+            padding: 4px 10px;
+            background: #fff;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            border: 1px solid #c6f6d5;
         }
         .extra-fee-item-name {
             font-weight: bold;
@@ -733,26 +979,21 @@
         .extra-fee-item-amount {
             color: #f56565;
             font-weight: bold;
-            font-size: 16px;
         }
         .extra-fee-delete {
             color: #f56565;
             background: #fff5f5;
             border: none;
-            padding: 4px 10px;
+            padding: 2px 8px;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
-            margin-left: 10px;
-        }
-        .extra-fee-delete:active {
-            background: #f56565;
-            color: white;
+            margin-left: 8px;
         }
         .extra-fee-empty {
             text-align: center;
             color: #999;
-            padding: 15px;
+            padding: 10px;
             font-size: 14px;
         }
         
@@ -771,6 +1012,9 @@
             color: #333;
             padding-bottom: 8px;
             border-bottom: 2px solid #f5576c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .preview-list {
             overflow-y: visible;
@@ -781,20 +1025,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px;
+            padding: 8px;
             border-bottom: 1px solid #eee;
             background: #f9f9f9;
             border-radius: 6px;
             margin-bottom: 6px;
+            font-size: 14px;
         }
         .preview-item-info {
             flex: 1;
-            font-size: 14px;
         }
         .preview-item-name {
             font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 14px;
+            margin-bottom: 2px;
         }
         .preview-item-details {
             color: #666;
@@ -808,15 +1051,17 @@
         .preview-delete-btn {
             background: #f56565;
             color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
         }
         .preview-category-title {
             font-size: 15px;
             font-weight: bold;
-            margin: 15px 0 8px 0;
-            padding-bottom: 5px;
+            margin: 12px 0 6px 0;
+            padding-bottom: 4px;
             border-bottom: 1px solid #ddd;
             color: #333;
         }
@@ -827,67 +1072,61 @@
             font-size: 15px;
         }
         
-        /* 小票显示样式 - 打印优化版 */
+        /* 小票显示样式 - 纯文本优化版 */
         .ticket-display {
             background: #fff;
-            padding: 20px;
+            padding: 15px;
             margin: 8px 0;
             font-family: "Microsoft YaHei", sans-serif;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.5;
+            color: #000;
+            font-weight: bold;
             border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .receipt-line {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
-            font-weight: bold;
+            margin-bottom: 4px;
             font-size: 14px;
         }
-        .receipt-section-title {
+        .receipt-category-title {
             font-weight: bold;
-            margin: 12px 0 6px 0;
+            margin: 8px 0 4px 0;
+            padding-left: 0;
             font-size: 14px;
-            padding: 0;
-            border: none;
         }
         .receipt-total {
-            margin-top: 12px;
+            margin-top: 10px;
             padding-top: 8px;
-            border-top: 2px solid #333;
+            border-top: 1px solid #333;
             font-weight: bold;
             font-size: 14px;
         }
         
-        /* 小票操作按钮区域 - 5:1比例 */
+        /* 小票操作按钮区域 */
         .ticket-actions {
             display: flex;
             gap: 8px;
             margin-top: 15px;
         }
-        .save-img-btn {
-            background: #48bb78;
-            color: white;
-            flex: 5;
+        .ticket-actions button {
+            flex: 1;
             padding: 12px;
             font-size: 15px;
             font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .save-img-btn {
+            background: #48bb78;
+            color: white;
         }
         .copy-text-btn {
             background: #4299e1;
             color: white;
-            flex: 1;
-            padding: 12px 4px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-        .generate-btn {
-            background: #48bb78;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            width: 100%;
         }
         
         /* 数量输入弹窗 */
@@ -968,6 +1207,9 @@
             padding: 12px;
             font-size: 15px;
             font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
         .cancel-btn {
             background: #a0aec0;
@@ -993,7 +1235,18 @@
             font-size: 16px;
         }
         
-        /* 换桌弹窗样式 */
+        /* 管理固定项弹窗 */
+        .preset-manage-modal .preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f7fafc;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+        
+        /* 换桌弹窗 */
         .change-table-modal {
             display: none;
             position: fixed;
@@ -1109,6 +1362,102 @@
             background: #805ad5;
         }
         
+        /* 菜品管理搜索弹窗样式 */
+        .dish-search-modal-content {
+            max-width: 400px;
+            max-height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .dish-search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .dish-search-results {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .dish-search-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .dish-search-item:hover, .dish-search-item:active {
+            background: #ebf8ff;
+        }
+        .dish-search-item-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        .dish-search-item-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #718096;
+        }
+        
+        /* 添加菜品步骤1 - 选择分类 */
+        .category-select-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .category-select-item {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            background: white;
+        }
+        .category-select-item:active {
+            transform: scale(0.95);
+            background: #ebf8ff;
+            border-color: #4299e1;
+        }
+        
+        /* 添加菜品步骤2 - 表单 */
+        .add-dish-form-modal .form-item {
+            margin-bottom: 15px;
+        }
+        .add-dish-form-modal label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #555;
+            font-size: 14px;
+        }
+        .add-dish-form-modal input, .add-dish-form-modal select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .add-dish-form-modal .id-display {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
         /* 底部安全区域（针对iPhone X等全面屏） */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
             body {
@@ -1161,6 +1510,27 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 10000;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -1189,7 +1559,7 @@
             </div>
             
             <div class="quick-order-btn-container">
-                <button class="quick-order-btn-red" onclick="switchPage('quickOrderPage')">⚡ 快捷点菜</button>
+                <button class="quick-order-btn-red" onclick="enterQuickOrderFromOrder()">⚡ 快捷点菜</button>
             </div>
             
             <div class="dish-search-wrapper">
@@ -1202,7 +1572,6 @@
             </div>
             
             <div class="order-footer">
-                <div class="dish-count">已点菜品：<span id="totalCount">0</span>份</div>
                 <button class="to-ticket-btn" onclick="jumpToTicketPage()">🧾 生成小票</button>
             </div>
         </div>
@@ -1211,10 +1580,10 @@
         <div id="quickOrderPage" class="page">
             <div class="quick-order-header">
                 <h2>快捷点菜</h2>
-                <button class="back-table-btn" onclick="switchPage('orderPage')">返回桌号</button>
+                <button class="back-table-btn" onclick="backFromQuickOrder()" style="font-size: 20px; padding: 8px 16px;">返回</button>
             </div>
             <div class="quick-order-content" id="quickOrderContent">
-                <!-- 动态生成分类区域 -->
+                <!-- 动态生成分类区域（默认折叠） -->
             </div>
             <div class="confirm-add-footer">
                 <button class="confirm-add-btn" onclick="confirmQuickOrder()">确认加菜</button>
@@ -1228,39 +1597,13 @@
                 <button class="back-table-btn" onclick="switchPage('tablePage')">返回桌号</button>
             </div>
             
-            <div class="add-dish-form">
-                <div class="form-item">
-                    <label for="dishIdInput">区内编号</label>
-                    <input type="number" id="dishIdInput" placeholder="输入分类内数字编号">
-                </div>
-                <div class="form-item">
-                    <label for="dishNameInput">菜品名称</label>
-                    <input type="text" id="dishNameInput" placeholder="输入菜品名称">
-                </div>
-                <div class="form-item">
-                    <label for="dishPriceInput">菜品价格</label>
-                    <input type="number" step="0.01" id="dishPriceInput" placeholder="输入菜品价格（元）">
-                </div>
-                <div class="form-item">
-                    <label for="dishCategoryInput">菜品分类</label>
-                    <select id="dishCategoryInput">
-                        <option value="烤鱼类">烤鱼类</option>
-                        <option value="汤锅类">汤锅类</option>
-                        <option value="配菜类">配菜类</option>
-                        <option value="凉菜类">凉菜类</option>
-                        <option value="主食点心">主食点心</option>
-                        <option value="炒菜类">炒菜类</option>
-                        <option value="干锅铁板">干锅铁板</option>
-                        <option value="啤酒类">啤酒类</option>
-                        <option value="白酒类">白酒类</option>
-                        <option value="饮料类">饮料类</option>
-                    </select>
-                </div>
-                <input type="hidden" id="editDishId" value="">
-                <input type="hidden" id="editDishGlobalId" value="">
-                <button class="form-submit-btn" onclick="saveDish()">保存菜品</button>
+            <!-- 操作按钮区域 -->
+            <div class="dish-edit-actions">
+                <button class="dish-edit-action-btn btn-modify" onclick="openSearchDishModal()">📝 修改菜品</button>
+                <button class="dish-edit-action-btn btn-add" onclick="openAddDishStep1()">➕ 添加菜品</button>
             </div>
             
+            <!-- 菜品列表（默认折叠） -->
             <div id="dishEditCategoryContainer"></div>
         </div>
 
@@ -1271,7 +1614,9 @@
                 <button class="back-order-btn" onclick="switchPage('orderPage')" style="background: white; color: #f5576c;">返回点菜</button>
             </div>
             
-            <div class="generate-ticket-fixed">
+            <!-- 浮动按钮栏 -->
+            <div class="ticket-float-bar">
+                <button class="quick-add-btn-bar" onclick="enterQuickOrderFromTicket()">⚡ 快捷添加</button>
                 <button class="generate-btn" onclick="generateTicket()">🧾 生成小票</button>
             </div>
             
@@ -1284,42 +1629,43 @@
                     </div>
                 </div>
                 
-                <!-- 快捷添加按钮 -->
-                <button class="quick-add-btn" onclick="switchPage('quickOrderPage')">⚡ 快捷添加</button>
-                
-                <!-- 额外费用增加项 -->
-                <div class="extra-fees-section">
-                    <div class="preview-title" style="border-bottom: 2px solid #48bb78; margin-bottom: 12px;">增加项（纸巾、打包盒等）</div>
-                    <div class="extra-fee-input-row">
-                        <div class="extra-fee-name" style="flex: 1.5;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 15px;">项目名称</label>
-                            <input type="text" id="extraFeeName" placeholder="如：纸巾、打包盒" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px;">
-                        </div>
-                        <div class="extra-fee-amount" style="flex: 1;">
-                            <label style="display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 15px;">金额（元）</label>
-                            <input type="number" id="extraFeeAmount" step="0.1" placeholder="0" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px;">
-                        </div>
-                        <button class="extra-fee-add-btn" onclick="addExtraFee()">添加</button>
-                    </div>
-                    <div class="extra-fee-list" id="extraFeeList">
-                        <div class="extra-fee-empty">暂无增加项</div>
-                    </div>
-                </div>
-                
                 <!-- 搜索添加菜品 -->
                 <div class="ticket-info-section">
                     <div class="ticket-input-group" style="position: relative;">
                         <label>🔍 搜索添加菜品/酒水</label>
-                        <input type="text" id="ticketDishSearch" placeholder="输入名称搜索并添加..." oninput="searchDishForTicket()">
+                        <input type="text" id="ticketDishSearch" class="dashed-search" placeholder="输入名称搜索并添加..." oninput="searchDishForTicket()">
                         <div id="ticketSearchResult" class="search-results"></div>
                     </div>
                 </div>
 
-                <!-- 小票预览区 -->
+                <!-- 小票预览区（包含额外费用） -->
                 <div class="ticket-preview-section">
                     <div class="preview-title">已点菜品预览</div>
                     <div class="preview-list" id="ticketPreviewList">
                         <div class="empty-preview">暂无菜品，请搜索添加</div>
+                    </div>
+                    
+                    <!-- 额外费用区域（移到预览区内） -->
+                    <div class="extra-fees-inline" id="extraFeesInline">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-weight: bold; color: #2d3748; font-size: 16px;">额外费用</span>
+                            <button class="manage-preset-btn" onclick="openPresetManageModal()">管理常用</button>
+                        </div>
+                        
+                        <!-- 预设固定项 -->
+                        <div id="presetFeesContainer"></div>
+                        
+                        <!-- 自定义添加 -->
+                        <div class="extra-fee-input-row">
+                            <input type="text" id="extraFeeName" placeholder="项目名称（如：纸巾）">
+                            <input type="number" id="extraFeeAmount" step="0.1" placeholder="金额">
+                            <button class="extra-fee-add-btn" onclick="addExtraFee()">添加</button>
+                        </div>
+                        
+                        <!-- 已添加的其他费用 -->
+                        <div class="extra-fee-list" id="extraFeeList">
+                            <div class="extra-fee-empty">暂无额外费用</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1345,6 +1691,23 @@
                     <button class="cancel-btn" onclick="closeQuantityModal()">取消</button>
                     <button class="confirm-btn" onclick="confirmQuantityModal()">确认添加</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- 管理固定项弹窗 -->
+        <div id="presetManageModal" class="quantity-modal preset-manage-modal">
+            <div class="quantity-modal-content">
+                <div class="close-modal" onclick="closePresetManageModal()">×</div>
+                <div class="modal-title">管理常用固定项</div>
+                <div style="margin-bottom: 15px; color: #666; font-size: 14px;">
+                    添加常用的固定费用项（如纸巾、打包盒），只需输入金额即可快速添加。
+                </div>
+                <div id="presetListContainer" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <input type="text" id="newPresetName" placeholder="项目名称（如：纸巾）" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <button class="confirm-btn" onclick="addNewPreset()" style="padding: 10px 16px;">添加</button>
+                </div>
+                <button class="cancel-btn" style="width: 100%;" onclick="closePresetManageModal()">关闭</button>
             </div>
         </div>
 
@@ -1390,58 +1753,142 @@
             </div>
         </div>
 
+        <!-- 菜品搜索弹窗（修改菜品用） -->
+        <div id="searchDishModal" class="quantity-modal">
+            <div class="quantity-modal-content dish-search-modal-content">
+                <div class="close-modal" onclick="closeSearchDishModal()">×</div>
+                <div class="modal-title">搜索菜品</div>
+                <input type="text" class="dish-search-input" id="modifyDishSearchInput" placeholder="输入菜品名称搜索..." oninput="searchDishForModify()">
+                <div class="dish-search-results" id="modifyDishSearchResults">
+                    <!-- 搜索结果 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑菜品弹窗 -->
+        <div id="editDishModal" class="quantity-modal">
+            <div class="quantity-modal-content add-dish-form-modal">
+                <div class="close-modal" onclick="closeEditDishModal()">×</div>
+                <div class="modal-title">修改菜品</div>
+                <div class="form-item">
+                    <label>区内编号</label>
+                    <input type="number" id="editModalDishId" placeholder="输入分类内数字编号">
+                </div>
+                <div class="form-item">
+                    <label>菜品名称</label>
+                    <input type="text" id="editModalDishName" placeholder="输入菜品名称">
+                </div>
+                <div class="form-item">
+                    <label>菜品价格</label>
+                    <input type="number" step="0.01" id="editModalDishPrice" placeholder="输入菜品价格（元）">
+                </div>
+                <div class="form-item">
+                    <label>菜品分类</label>
+                    <select id="editModalDishCategory">
+                        <option value="烤鱼类">烤鱼类</option>
+                        <option value="汤锅类">汤锅类</option>
+                        <option value="配菜类">配菜类</option>
+                        <option value="凉菜类">凉菜类</option>
+                        <option value="主食点心">主食点心</option>
+                        <option value="炒菜类">炒菜类</option>
+                        <option value="干锅铁板">干锅铁板</option>
+                        <option value="啤酒类">啤酒类</option>
+                        <option value="白酒类">白酒类</option>
+                        <option value="饮料类">饮料类</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>提示字（1-2个字符）</label>
+                    <input type="text" id="editModalDishPrompt" placeholder="如：清" maxlength="2">
+                </div>
+                <input type="hidden" id="editModalDishGlobalId" value="">
+                <div class="modal-actions">
+                    <button class="cancel-btn" onclick="closeEditDishModal()">取消</button>
+                    <button class="confirm-btn" onclick="saveEditDishFromModal()">保存修改</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加菜品步骤1：选择分类 -->
+        <div id="addDishStep1Modal" class="quantity-modal">
+            <div class="quantity-modal-content">
+                <div class="close-modal" onclick="closeAddDishStep1()">×</div>
+                <div class="modal-title">选择菜品分类</div>
+                <div class="category-select-grid" id="addDishCategoryGrid">
+                    <!-- 动态生成分类选项 -->
+                </div>
+                <button class="cancel-btn" style="width: 100%; margin-top: 10px;" onclick="closeAddDishStep1()">取消</button>
+            </div>
+        </div>
+
+        <!-- 添加菜品步骤2：填写信息 -->
+        <div id="addDishStep2Modal" class="quantity-modal">
+            <div class="quantity-modal-content add-dish-form-modal">
+                <div class="close-modal" onclick="closeAddDishStep2()">×</div>
+                <div class="modal-title">添加菜品信息</div>
+                <div class="form-item">
+                    <label>菜品分类</label>
+                    <input type="text" id="addModalDishCategoryDisplay" readonly style="background: #f0f0f0;">
+                    <input type="hidden" id="addModalDishCategory">
+                </div>
+                <div class="form-item">
+                    <label>区内编号（已自动填充，可修改）</label>
+                    <input type="number" id="addModalDishId" placeholder="输入分类内数字编号">
+                </div>
+                <div class="form-item">
+                    <label>菜品名称</label>
+                    <input type="text" id="addModalDishName" placeholder="输入菜品名称">
+                </div>
+                <div class="form-item">
+                    <label>菜品价格</label>
+                    <input type="number" step="0.01" id="addModalDishPrice" placeholder="输入菜品价格（元）">
+                </div>
+                <div class="form-item">
+                    <label>提示字（1-2个字符，可选）</label>
+                    <input type="text" id="addModalDishPrompt" placeholder="如：清" maxlength="2">
+                </div>
+                <div class="modal-actions">
+                    <button class="cancel-btn" onclick="closeAddDishStep2()">取消</button>
+                    <button class="confirm-btn" onclick="saveAddDishFromModal()">确认添加</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 加载动画 -->
         <div class="loading-spinner" id="loadingSpinner">
             <div class="spinner"></div>
             <div style="margin-top: 12px; font-size: 15px; color: #666;">加载中...</div>
         </div>
+        
+        <!-- Toast提示容器 -->
+        <div id="toastContainer" class="toast"></div>
     </div>
 
     <script>
         /* ===== 常量定义区域开始 ===== */
         
-        /**
-         * 菜品分类显示顺序（用于点菜页面列表）
-         */
         const CATEGORY_ORDER = ['烤鱼类', '汤锅类', '炒菜类', '干锅铁板', '凉菜类', '配菜类', '主食点心', '啤酒类', '白酒类', '饮料类'];
         
-        /**
-         * 酒水类分类（用于识别）
-         */
         const DRINK_CATEGORIES = ['啤酒类', '白酒类', '饮料类'];
         
-        /**
-         * 桌号类型定义
-         */
         const TABLE_TYPES = {
             INNER: ['内1', '内2', '内3', '内4'],
             OUTER: ['外1', '外2', '外3', '外4', '外5', '外6']
         };
         
-        /**
-         * 快捷点菜页面分类顺序（包含酒水）
-         */
         const QUICK_ORDER_CATEGORY_ORDER = ['烤鱼类', '汤锅类', '凉菜类', '炒菜类', '干锅铁板', '主食点心', '配菜类', '啤酒类', '白酒类', '饮料类'];
         
-        /**
-         * 小票页面分类显示顺序
-         */
-        const TICKET_CATEGORY_ORDER = ['烤鱼类', '汤锅类', '炒菜类', '干锅铁板', '凉菜类', '配菜类', '主食点心', '啤酒类', '白酒类', '饮料类'];
+        const TICKET_CATEGORY_ORDER = ['烤鱼类', '汤锅类', '炒菜类', '干锅铁板', '凉菜类', '配菜类', '主食点心', '啤酒类', '白酒类', '饮料类', '临时菜'];
         
-        /**
-         * 菜品分类列表（用于菜品管理）
-         */
         const DISH_CATEGORIES = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类'];
         
-        /**
-         * localStorage存储键名
-         */
-        const STORAGE_KEY = 'yangBossData_v2';
+        const STORAGE_KEY = 'yangBossData_v3';
         
-        /**
-         * 桌号列表（10个真实桌位，固定顺序）
-         */
         const TABLE_LIST = ["内1", "内2", "内3", "内4", "外1", "外2", "外3", "外4", "外5", "外6"];
+        
+        const LONG_PRESS_DURATION = 600;
+        
+        const MOVE_THRESHOLD = 10;
         
         /* ===== 常量定义区域结束 ===== */
 
@@ -1449,294 +1896,238 @@
         // （请将您的菜品数据粘贴在此处）
         let dishData = [
             // 烤鱼类 (101-103)
-            { globalId: 101, categoryId: 1, name: '清江鱼', price: 69, category: '烤鱼类', isDrink: false },
-            { globalId: 102, categoryId: 2, name: '巴沙鱼', price: 39, category: '烤鱼类', isDrink: false },
-            { globalId: 103, categoryId: 3, name: '草鱼', price: 45, category: '烤鱼类', isDrink: false },
+            { globalId: 101, categoryId: 1, name: '清江鱼', price: 69, category: '烤鱼类', isDrink: false, prompt: '清' },
+            { globalId: 102, categoryId: 2, name: '巴沙鱼', price: 49, category: '烤鱼类', isDrink: false, prompt: '巴' },
+            { globalId: 103, categoryId: 3, name: '草鱼', price: 45, category: '烤鱼类', isDrink: false, prompt: '草' },
             
             // 汤锅类 (201-227)
-            { globalId: 201, categoryId: 1, name: '铁锅牛蛙小锅', price: 88, category: '汤锅类', isDrink: false },
-            { globalId: 202, categoryId: 2, name: '铁锅牛蛙大锅', price: 118, category: '汤锅类', isDrink: false },
-            { globalId: 203, categoryId: 3, name: '干锅蛙', price: 118, category: '汤锅类', isDrink: false },
-            { globalId: 204, categoryId: 4, name: '干锅鸡', price: 98, category: '汤锅类', isDrink: false },
-            { globalId: 205, categoryId: 5, name: '重庆烧鸡公小锅', price: 78, category: '汤锅类', isDrink: false },
-            { globalId: 206, categoryId: 6, name: '重庆烧鸡公大锅', price: 128, category: '汤锅类', isDrink: false },
-            { globalId: 207, categoryId: 7, name: '甲鱼鸡煲特价', price: 98, category: '汤锅类', isDrink: false },
-            { globalId: 208, categoryId: 8, name: '甲鱼鸡煲中锅', price: 128, category: '汤锅类', isDrink: false },
-            { globalId: 209, categoryId: 9, name: '猪肚鸡小锅', price: 88, category: '汤锅类', isDrink: false },
-            { globalId: 210, categoryId: 10, name: '猪肚鸡大锅', price: 128, category: '汤锅类', isDrink: false },
-            { globalId: 211, categoryId: 11, name: '黑山羊火锅', price: 118, category: '汤锅类', isDrink: false },
-            { globalId: 212, categoryId: 12, name: '美蛙鱼火锅小锅', price: 88, category: '汤锅类', isDrink: false },
-            { globalId: 213, categoryId: 13, name: '美蛙鱼火锅大锅', price: 128, category: '汤锅类', isDrink: false },
-            { globalId: 214, categoryId: 14, name: '酸汤猪蹄小锅', price: 88, category: '汤锅类', isDrink: false },
-            { globalId: 215, categoryId: 15, name: '酸汤猪蹄大锅', price: 138, category: '汤锅类', isDrink: false },
-            { globalId: 216, categoryId: 16, name: '巴蜀腊猪脚小锅', price: 98, category: '汤锅类', isDrink: false },
-            { globalId: 217, categoryId: 17, name: '巴蜀腊猪脚大锅', price: 128, category: '汤锅类', isDrink: false },
-            { globalId: 218, categoryId: 18, name: '肥肠鸡小锅', price: 118, category: '汤锅类', isDrink: false },
-            { globalId: 219, categoryId: 19, name: '肥肠鸡大锅', price: 158, category: '汤锅类', isDrink: false },
-            { globalId: 220, categoryId: 20, name: '肥肠鱼小锅', price: 118, category: '汤锅类', isDrink: false },
-            { globalId: 221, categoryId: 21, name: '肥肠鱼大锅', price: 158, category: '汤锅类', isDrink: false },
-            { globalId: 222, categoryId: 22, name: '酸菜鱼/石锅鱼', price: 88, category: '汤锅类', isDrink: false },
-            { globalId: 223, categoryId: 23, name: '牛腩牛杂煲小锅', price: 88, category: '汤锅类', isDrink: false },
-            { globalId: 224, categoryId: 24, name: '牛腩牛杂煲大锅', price: 138, category: '汤锅类', isDrink: false },
-            { globalId: 225, categoryId: 25, name: '牛排火锅', price: 118, category: '汤锅类', isDrink: false },
+            { globalId: 201, categoryId: 1, name: '铁锅牛蛙小锅', price: 88, category: '汤锅类', isDrink: false, prompt: '蛙' },
+            { globalId: 202, categoryId: 2, name: '铁锅牛蛙大锅', price: 118, category: '汤锅类', isDrink: false, prompt: '蛙' },
+            { globalId: 203, categoryId: 3, name: '干锅蛙', price: 118, category: '汤锅类', isDrink: false, prompt: '蛙' },
+            { globalId: 204, categoryId: 4, name: '干锅鸡', price: 98, category: '汤锅类', isDrink: false, prompt: '鸡' },
+            { globalId: 205, categoryId: 5, name: '重庆烧鸡公小锅', price: 78, category: '汤锅类', isDrink: false, prompt: '鸡' },
+            { globalId: 206, categoryId: 6, name: '重庆烧鸡公大锅', price: 128, category: '汤锅类', isDrink: false, prompt: '鸡' },
+            { globalId: 207, categoryId: 7, name: '甲鱼鸡煲特价', price: 98, category: '汤锅类', isDrink: false, prompt: '甲' },
+            { globalId: 208, categoryId: 8, name: '甲鱼鸡煲中锅', price: 128, category: '汤锅类', isDrink: false, prompt: '甲' },
+            { globalId: 209, categoryId: 9, name: '猪肚鸡小锅', price: 88, category: '汤锅类', isDrink: false, prompt: '肚' },
+            { globalId: 210, categoryId: 10, name: '猪肚鸡大锅', price: 128, category: '汤锅类', isDrink: false, prompt: '肚' },
+            { globalId: 211, categoryId: 11, name: '黑山羊火锅', price: 118, category: '汤锅类', isDrink: false, prompt: '羊' },
+            { globalId: 212, categoryId: 12, name: '美蛙鱼火锅小锅', price: 88, category: '汤锅类', isDrink: false, prompt: '美' },
+            { globalId: 213, categoryId: 13, name: '美蛙鱼火锅大锅', price: 128, category: '汤锅类', isDrink: false, prompt: '美' },
+            { globalId: 214, categoryId: 14, name: '酸汤猪蹄小锅', price: 88, category: '汤锅类', isDrink: false, prompt: '蹄' },
+            { globalId: 215, categoryId: 15, name: '酸汤猪蹄大锅', price: 138, category: '汤锅类', isDrink: false, prompt: '蹄' },
+            { globalId: 216, categoryId: 16, name: '巴蜀腊猪脚小锅', price: 98, category: '汤锅类', isDrink: false, prompt: '脚' },
+            { globalId: 217, categoryId: 17, name: '巴蜀腊猪脚大锅', price: 128, category: '汤锅类', isDrink: false, prompt: '脚' },
+            { globalId: 218, categoryId: 18, name: '肥肠鸡小锅', price: 118, category: '汤锅类', isDrink: false, prompt: '肠' },
+            { globalId: 219, categoryId: 19, name: '肥肠鸡大锅', price: 158, category: '汤锅类', isDrink: false, prompt: '肠' },
+            { globalId: 220, categoryId: 20, name: '肥肠鱼小锅', price: 118, category: '汤锅类', isDrink: false, prompt: '鱼' },
+            { globalId: 221, categoryId: 21, name: '肥肠鱼大锅', price: 158, category: '汤锅类', isDrink: false, prompt: '鱼' },
+            { globalId: 222, categoryId: 22, name: '酸菜鱼/石锅鱼', price: 88, category: '汤锅类', isDrink: false, prompt: '酸' },
+            { globalId: 223, categoryId: 23, name: '牛腩牛杂煲小锅', price: 88, category: '汤锅类', isDrink: false, prompt: '杂' },
+            { globalId: 224, categoryId: 24, name: '牛腩牛杂煲大锅', price: 138, category: '汤锅类', isDrink: false, prompt: '杂' },
+            { globalId: 225, categoryId: 25, name: '牛排火锅', price: 118, category: '汤锅类', isDrink: false, prompt: '排' },
             
             // 配菜类 (301-326)
-            { globalId: 301, categoryId: 1, name: '魔芋', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 302, categoryId: 2, name: '鸭血', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 303, categoryId: 3, name: '黑毛肚', price: 25, category: '配菜类', isDrink: false },
-            { globalId: 304, categoryId: 4, name: '牛肉丸', price: 20, category: '配菜类', isDrink: false },
-            { globalId: 305, categoryId: 5, name: '猪肚', price: 32, category: '配菜类', isDrink: false },
-            { globalId: 306, categoryId: 6, name: '香芋', price: 15, category: '配菜类', isDrink: false },
-            { globalId: 307, categoryId: 7, name: '水豆腐', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 308, categoryId: 8, name: '土豆', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 309, categoryId: 9, name: '玉米', price: 10, category: '配菜类', isDrink: false },
-            { globalId: 310, categoryId: 10, name: '豆皮', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 311, categoryId: 11, name: '冬瓜', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 312, categoryId: 12, name: '淮山', price: 15, category: '配菜类', isDrink: false },
-            { globalId: 313, categoryId: 13, name: '豆芽', price: 6, category: '配菜类', isDrink: false },
-            { globalId: 314, categoryId: 14, name: '莲藕', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 315, categoryId: 15, name: '油麦菜', price: 10, category: '配菜类', isDrink: false },
-            { globalId: 316, categoryId: 16, name: '白萝卜', price: 6, category: '配菜类', isDrink: false },
-            { globalId: 317, categoryId: 17, name: '红薯粉', price: 10, category: '配菜类', isDrink: false },
-            { globalId: 318, categoryId: 18, name: '海带', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 319, categoryId: 19, name: '香菜', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 320, categoryId: 20, name: '生菜', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 321, categoryId: 21, name: '娃娃菜', price: 8, category: '配菜类', isDrink: false },
-            { globalId: 322, categoryId: 22, name: '菠菜', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 323, categoryId: 23, name: '金针菇', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 324, categoryId: 24, name: '香菇', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 325, categoryId: 25, name: '炸腐竹', price: 12, category: '配菜类', isDrink: false },
-            { globalId: 326, categoryId: 26, name: '紫苏', price: 10, category: '配菜类', isDrink: false },
+            { globalId: 301, categoryId: 1, name: '魔芋', price: 8, category: '配菜类', isDrink: false, prompt: '魔' },
+            { globalId: 302, categoryId: 2, name: '鸭血', price: 8, category: '配菜类', isDrink: false, prompt: '血' },
+            { globalId: 303, categoryId: 3, name: '黑毛肚', price: 25, category: '配菜类', isDrink: false, prompt: '黑' },
+            { globalId: 304, categoryId: 4, name: '牛肉丸', price: 20, category: '配菜类', isDrink: false, prompt: '丸' },
+            { globalId: 305, categoryId: 5, name: '猪肚', price: 32, category: '配菜类', isDrink: false, prompt: '肚' },
+            { globalId: 306, categoryId: 6, name: '香芋', price: 15, category: '配菜类', isDrink: false, prompt: '芋' },
+            { globalId: 307, categoryId: 7, name: '水豆腐', price: 8, category: '配菜类', isDrink: false, prompt: '腐' },
+            { globalId: 308, categoryId: 8, name: '土豆', price: 8, category: '配菜类', isDrink: false, prompt: '土' },
+            { globalId: 309, categoryId: 9, name: '玉米', price: 10, category: '配菜类', isDrink: false, prompt: '玉' },
+            { globalId: 310, categoryId: 10, name: '豆皮', price: 12, category: '配菜类', isDrink: false, prompt: '皮' },
+            { globalId: 311, categoryId: 11, name: '冬瓜', price: 8, category: '配菜类', isDrink: false, prompt: '冬' },
+            { globalId: 312, categoryId: 12, name: '淮山', price: 15, category: '配菜类', isDrink: false, prompt: '淮' },
+            { globalId: 313, categoryId: 13, name: '豆芽', price: 6, category: '配菜类', isDrink: false, prompt: '芽' },
+            { globalId: 314, categoryId: 14, name: '莲藕', price: 12, category: '配菜类', isDrink: false, prompt: '莲' },
+            { globalId: 315, categoryId: 15, name: '油麦菜', price: 10, category: '配菜类', isDrink: false, prompt: '麦' },
+            { globalId: 316, categoryId: 16, name: '白萝卜', price: 6, category: '配菜类', isDrink: false, prompt: '萝' },
+            { globalId: 317, categoryId: 17, name: '红薯粉', price: 10, category: '配菜类', isDrink: false, prompt: '粉' },
+            { globalId: 318, categoryId: 18, name: '海带', price: 12, category: '配菜类', isDrink: false, prompt: '海' },
+            { globalId: 319, categoryId: 19, name: '香菜', price: 12, category: '配菜类', isDrink: false, prompt: '香' },
+            { globalId: 320, categoryId: 20, name: '生菜', price: 8, category: '配菜类', isDrink: false, prompt: '生' },
+            { globalId: 321, categoryId: 21, name: '娃娃菜', price: 8, category: '配菜类', isDrink: false, prompt: '娃' },
+            { globalId: 322, categoryId: 22, name: '菠菜', price: 12, category: '配菜类', isDrink: false, prompt: '菠' },
+            { globalId: 323, categoryId: 23, name: '金针菇', price: 12, category: '配菜类', isDrink: false, prompt: '针' },
+            { globalId: 324, categoryId: 24, name: '香菇', price: 12, category: '配菜类', isDrink: false, prompt: '菇' },
+            { globalId: 325, categoryId: 25, name: '炸腐竹', price: 12, category: '配菜类', isDrink: false, prompt: '竹' },
+            { globalId: 326, categoryId: 26, name: '紫苏', price: 10, category: '配菜类', isDrink: false, prompt: '紫' },
             
             // 凉菜类 (401-412)
-            { globalId: 401, categoryId: 1, name: '凉拌牛肉', price: 38, category: '凉菜类', isDrink: false },
-            { globalId: 402, categoryId: 2, name: '红油猪耳', price: 30, category: '凉菜类', isDrink: false },
-            { globalId: 403, categoryId: 3, name: '脱骨凤爪', price: 28, category: '凉菜类', isDrink: false },
-            { globalId: 404, categoryId: 4, name: '凉拌折耳根', price: 16, category: '凉菜类', isDrink: false },
-            { globalId: 405, categoryId: 5, name: '卤水拼盘', price: 30, category: '凉菜类', isDrink: false },
-            { globalId: 406, categoryId: 6, name: '凉拌鱼皮', price: 22, category: '凉菜类', isDrink: false },
-            { globalId: 407, categoryId: 7, name: '香辣毛豆', price: 15, category: '凉菜类', isDrink: false },
-            { globalId: 408, categoryId: 8, name: '凉拌皮蛋', price: 12, category: '凉菜类', isDrink: false },
-            { globalId: 409, categoryId: 9, name: '凉拌/芥末秋葵', price: 18, category: '凉菜类', isDrink: false },
-            { globalId: 410, categoryId: 10, name: '刀拍小青瓜', price: 12, category: '凉菜类', isDrink: false },
-            { globalId: 411, categoryId: 11, name: '卤水花生', price: 15, category: '凉菜类', isDrink: false },
-            { globalId: 412, categoryId: 12, name: '酸辣藕带', price: 15, category: '凉菜类', isDrink: false },
+            { globalId: 401, categoryId: 1, name: '凉拌牛肉', price: 38, category: '凉菜类', isDrink: false, prompt: '牛' },
+            { globalId: 402, categoryId: 2, name: '红油猪耳', price: 30, category: '凉菜类', isDrink: false, prompt: '耳' },
+            { globalId: 403, categoryId: 3, name: '脱骨凤爪', price: 28, category: '凉菜类', isDrink: false, prompt: '凤' },
+            { globalId: 404, categoryId: 4, name: '凉拌折耳根', price: 16, category: '凉菜类', isDrink: false, prompt: '折' },
+            { globalId: 405, categoryId: 5, name: '卤水拼盘', price: 30, category: '凉菜类', isDrink: false, prompt: '卤' },
+            { globalId: 406, categoryId: 6, name: '凉拌鱼皮', price: 22, category: '凉菜类', isDrink: false, prompt: '鱼' },
+            { globalId: 407, categoryId: 7, name: '香辣毛豆', price: 15, category: '凉菜类', isDrink: false, prompt: '毛' },
+            { globalId: 408, categoryId: 8, name: '凉拌皮蛋', price: 12, category: '凉菜类', isDrink: false, prompt: '皮' },
+            { globalId: 409, categoryId: 9, name: '凉拌/芥末秋葵', price: 18, category: '凉菜类', isDrink: false, prompt: '葵' },
+            { globalId: 410, categoryId: 10, name: '刀拍小青瓜', price: 12, category: '凉菜类', isDrink: false, prompt: '瓜' },
+            { globalId: 411, categoryId: 11, name: '卤水花生', price: 15, category: '凉菜类', isDrink: false, prompt: '花' },
+            { globalId: 412, categoryId: 12, name: '酸辣藕带', price: 15, category: '凉菜类', isDrink: false, prompt: '带' },
             
             // 主食点心 (501-511)
-            { globalId: 501, categoryId: 1, name: '老妈子炒饭', price: 15, category: '主食点心', isDrink: false },
-            { globalId: 502, categoryId: 2, name: '三丝炒粉/河粉', price: 10, category: '主食点心', isDrink: false },
-            { globalId: 503, categoryId: 3, name: '干炒牛河', price: 28, category: '主食点心', isDrink: false },
-            { globalId: 504, categoryId: 4, name: '南瓜饼', price: 15, category: '主食点心', isDrink: false },
-            { globalId: 505, categoryId: 5, name: '香芋地瓜丸', price: 12, category: '主食点心', isDrink: false },
-            { globalId: 506, categoryId: 6, name: '金银小馒头', price: 15, category: '主食点心', isDrink: false },
-            { globalId: 507, categoryId: 7, name: '脆皮香蕉', price: 16, category: '主食点心', isDrink: false },
-            { globalId: 508, categoryId: 8, name: '香芋卷', price: 15, category: '主食点心', isDrink: false },
-            { globalId: 509, categoryId: 9, name: '虾粥', price: 58, category: '主食点心', isDrink: false },
-            { globalId: 510, categoryId: 10, name: '米饭', price: 2, category: '主食点心', isDrink: false },
-            { globalId: 511, categoryId: 11, name: '皮蛋瘦肉粥', price: 58, category: '主食点心', isDrink: false },
+            { globalId: 501, categoryId: 1, name: '老妈子炒饭', price: 15, category: '主食点心', isDrink: false, prompt: '妈' },
+            { globalId: 502, categoryId: 2, name: '三丝炒粉/河粉', price: 10, category: '主食点心', isDrink: false, prompt: '粉' },
+            { globalId: 503, categoryId: 3, name: '干炒牛河', price: 28, category: '主食点心', isDrink: false, prompt: '河' },
+            { globalId: 504, categoryId: 4, name: '南瓜饼', price: 15, category: '主食点心', isDrink: false, prompt: '南' },
+            { globalId: 505, categoryId: 5, name: '香芋地瓜丸', price: 12, category: '主食点心', isDrink: false, prompt: '丸' },
+            { globalId: 506, categoryId: 6, name: '金银小馒头', price: 15, category: '主食点心', isDrink: false, prompt: '馒' },
+            { globalId: 507, categoryId: 7, name: '脆皮香蕉', price: 16, category: '主食点心', isDrink: false, prompt: '蕉' },
+            { globalId: 508, categoryId: 8, name: '香芋卷', price: 15, category: '主食点心', isDrink: false, prompt: '卷' },
+            { globalId: 509, categoryId: 9, name: '虾粥', price: 58, category: '主食点心', isDrink: false, prompt: '虾' },
+            { globalId: 510, categoryId: 10, name: '米饭', price: 2, category: '主食点心', isDrink: false, prompt: '米' },
+            { globalId: 511, categoryId: 11, name: '皮蛋瘦肉粥', price: 58, category: '主食点心', isDrink: false, prompt: '瘦' },
             
             // 炒菜类 (601-624)
-            { globalId: 601, categoryId: 1, name: '火爆腰花', price: 36, category: '炒菜类', isDrink: false },
-            { globalId: 602, categoryId: 2, name: '青椒回锅肉', price: 35, category: '炒菜类', isDrink: false },
-            { globalId: 603, categoryId: 3, name: '巴蜀小酥肉', price: 32, category: '炒菜类', isDrink: false },
-            { globalId: 604, categoryId: 4, name: '农家小炒肉', price: 38, category: '炒菜类', isDrink: false },
-            { globalId: 605, categoryId: 5, name: '农家梅菜扣肉', price: 38, category: '炒菜类', isDrink: false },
-            { globalId: 606, categoryId: 6, name: '鱼香肉丝', price: 35, category: '炒菜类', isDrink: false },
-            { globalId: 607, categoryId: 7, name: '酸辣鸡杂', price: 32, category: '炒菜类', isDrink: false },
-            { globalId: 608, categoryId: 8, name: '小炒黄牛肉', price: 48, category: '炒菜类', isDrink: false },
-            { globalId: 609, categoryId: 9, name: '椒盐鸭下巴', price: 38, category: '炒菜类', isDrink: false },
-            { globalId: 610, categoryId: 10, name: '孜然羊肉', price: 48, category: '炒菜类', isDrink: false },
-            { globalId: 611, categoryId: 11, name: '青椒肉丝', price: 28, category: '炒菜类', isDrink: false },
-            { globalId: 612, categoryId: 12, name: '鼓椒炒花甲', price: 25, category: '炒菜类', isDrink: false },
-            { globalId: 613, categoryId: 13, name: '香辣田螺', price: 16, category: '炒菜类', isDrink: false },
-            { globalId: 614, categoryId: 14, name: '清炒莴笋丝', price: 18, category: '炒菜类', isDrink: false },
-            { globalId: 615, categoryId: 15, name: '干煸泥鳅', price: 48, category: '炒菜类', isDrink: false },
-            { globalId: 616, categoryId: 16, name: '酸菜肥肠', price: 38, category: '炒菜类', isDrink: false },
-            { globalId: 617, categoryId: 17, name: '蒜蓉菜心', price: 19, category: '炒菜类', isDrink: false },
-            { globalId: 618, categoryId: 18, name: '炒空心菜', price: 19, category: '炒菜类', isDrink: false },
-            { globalId: 619, categoryId: 19, name: '炒油麦菜', price: 19, category: '炒菜类', isDrink: false },
-            { globalId: 620, categoryId: 20, name: '虎皮尖椒', price: 25, category: '炒菜类', isDrink: false },
-            { globalId: 621, categoryId: 21, name: '香煎鸡蛋饼', price: 18, category: '炒菜类', isDrink: false },
-            { globalId: 622, categoryId: 22, name: '手撕包菜', price: 18, category: '炒菜类', isDrink: false },
-            { globalId: 623, categoryId: 23, name: '酸辣土豆丝', price: 15, category: '炒菜类', isDrink: false },
-            { globalId: 624, categoryId: 24, name: '韭菜炒鸡蛋', price: 18, category: '炒菜类', isDrink: false },
+            { globalId: 601, categoryId: 1, name: '火爆腰花', price: 36, category: '炒菜类', isDrink: false, prompt: '腰' },
+            { globalId: 602, categoryId: 2, name: '青椒回锅肉', price: 35, category: '炒菜类', isDrink: false, prompt: '回' },
+            { globalId: 603, categoryId: 3, name: '巴蜀小酥肉', price: 32, category: '炒菜类', isDrink: false, prompt: '酥' },
+            { globalId: 604, categoryId: 4, name: '农家小炒肉', price: 38, category: '炒菜类', isDrink: false, prompt: '农' },
+            { globalId: 605, categoryId: 5, name: '农家梅菜扣肉', price: 38, category: '炒菜类', isDrink: false, prompt: '扣' },
+            { globalId: 606, categoryId: 6, name: '鱼香肉丝', price: 35, category: '炒菜类', isDrink: false, prompt: '鱼' },
+            { globalId: 607, categoryId: 7, name: '酸辣鸡杂', price: 32, category: '炒菜类', isDrink: false, prompt: '杂' },
+            { globalId: 608, categoryId: 8, name: '小炒黄牛肉', price: 48, category: '炒菜类', isDrink: false, prompt: '黄' },
+            { globalId: 609, categoryId: 9, name: '椒盐鸭下巴', price: 38, category: '炒菜类', isDrink: false, prompt: '鸭' },
+            { globalId: 610, categoryId: 10, name: '孜然羊肉', price: 48, category: '炒菜类', isDrink: false, prompt: '羊' },
+            { globalId: 611, categoryId: 11, name: '青椒肉丝', price: 28, category: '炒菜类', isDrink: false, prompt: '肉' },
+            { globalId: 612, categoryId: 12, name: '鼓椒炒花甲', price: 25, category: '炒菜类', isDrink: false, prompt: '甲' },
+            { globalId: 613, categoryId: 13, name: '香辣田螺', price: 16, category: '炒菜类', isDrink: false, prompt: '螺' },
+            { globalId: 614, categoryId: 14, name: '清炒莴笋丝', price: 18, category: '炒菜类', isDrink: false, prompt: '莴' },
+            { globalId: 615, categoryId: 15, name: '干煸泥鳅', price: 48, category: '炒菜类', isDrink: false, prompt: '鳅' },
+            { globalId: 616, categoryId: 16, name: '酸菜肥肠', price: 38, category: '炒菜类', isDrink: false, prompt: '酸' },
+            { globalId: 617, categoryId: 17, name: '蒜蓉菜心', price: 19, category: '炒菜类', isDrink: false, prompt: '心' },
+            { globalId: 618, categoryId: 18, name: '炒空心菜', price: 19, category: '炒菜类', isDrink: false, prompt: '空' },
+            { globalId: 619, categoryId: 19, name: '炒油麦菜', price: 19, category: '炒菜类', isDrink: false, prompt: '麦' },
+            { globalId: 620, categoryId: 20, name: '虎皮尖椒', price: 25, category: '炒菜类', isDrink: false, prompt: '椒' },
+            { globalId: 621, categoryId: 21, name: '香煎鸡蛋饼', price: 18, category: '炒菜类', isDrink: false, prompt: '饼' },
+            { globalId: 622, categoryId: 22, name: '手撕包菜', price: 18, category: '炒菜类', isDrink: false, prompt: '撕' },
+            { globalId: 623, categoryId: 23, name: '酸辣土豆丝', price: 15, category: '炒菜类', isDrink: false, prompt: '土' },
+            { globalId: 624, categoryId: 24, name: '韭菜炒鸡蛋', price: 18, category: '炒菜类', isDrink: false, prompt: '韭' },
             
             // 干锅铁板 (701-710)
-            { globalId: 701, categoryId: 1, name: '干锅鸡翅虾', price: 48, category: '干锅铁板', isDrink: false },
-            { globalId: 702, categoryId: 2, name: '干锅猪尾', price: 48, category: '干锅铁板', isDrink: false },
-            { globalId: 703, categoryId: 3, name: '干锅香辣虾', price: 48, category: '干锅铁板', isDrink: false },
-            { globalId: 704, categoryId: 4, name: '铁板牛肉', price: 48, category: '干锅铁板', isDrink: false },
-            { globalId: 705, categoryId: 5, name: '干锅肥肠', price: 38, category: '干锅铁板', isDrink: false },
-            { globalId: 706, categoryId: 6, name: '干锅牛杂', price: 38, category: '干锅铁板', isDrink: false },
-            { globalId: 707, categoryId: 7, name: '干锅带皮牛肉', price: 38, category: '干锅铁板', isDrink: false },
-            { globalId: 708, categoryId: 8, name: '干锅腌笋腊肉', price: 38, category: '干锅铁板', isDrink: false },
-            { globalId: 709, categoryId: 9, name: '干锅花菜', price: 22, category: '干锅铁板', isDrink: false },
-            { globalId: 710, categoryId: 10, name: '干锅土豆片', price: 22, category: '干锅铁板', isDrink: false },
+            { globalId: 701, categoryId: 1, name: '干锅鸡翅虾', price: 48, category: '干锅铁板', isDrink: false, prompt: '翅' },
+            { globalId: 702, categoryId: 2, name: '干锅猪尾', price: 48, category: '干锅铁板', isDrink: false, prompt: '尾' },
+            { globalId: 703, categoryId: 3, name: '干锅香辣虾', price: 48, category: '干锅铁板', isDrink: false, prompt: '虾' },
+            { globalId: 704, categoryId: 4, name: '铁板牛肉', price: 48, category: '干锅铁板', isDrink: false, prompt: '牛' },
+            { globalId: 705, categoryId: 5, name: '干锅肥肠', price: 38, category: '干锅铁板', isDrink: false, prompt: '肠' },
+            { globalId: 706, categoryId: 6, name: '干锅牛杂', price: 38, category: '干锅铁板', isDrink: false, prompt: '杂' },
+            { globalId: 707, categoryId: 7, name: '干锅带皮牛肉', price: 38, category: '干锅铁板', isDrink: false, prompt: '带' },
+            { globalId: 708, categoryId: 8, name: '干锅腌笋腊肉', price: 38, category: '干锅铁板', isDrink: false, prompt: '腊' },
+            { globalId: 709, categoryId: 9, name: '干锅花菜', price: 22, category: '干锅铁板', isDrink: false, prompt: '花' },
+            { globalId: 710, categoryId: 10, name: '干锅土豆片', price: 22, category: '干锅铁板', isDrink: false, prompt: '片' },
             
             // 啤酒类 (801-806)
-            { globalId: 801, categoryId: 1, name: '哈尔滨冰纯', price: 8, category: '啤酒类', isDrink: true },
-            { globalId: 802, categoryId: 2, name: '漓泉', price: 10, category: '啤酒类', isDrink: true },
-            { globalId: 803, categoryId: 3, name: '金标雪花', price: 10, category: '啤酒类', isDrink: true },
-            { globalId: 804, categoryId: 4, name: '乌苏啤酒', price: 12, category: '啤酒类', isDrink: true },
-            { globalId: 805, categoryId: 5, name: '珠江零度/0度', price: 6, category: '啤酒类', isDrink: true },
-            { globalId: 806, categoryId: 6, name: '百威', price: 10, category: '啤酒类', isDrink: true },
+            { globalId: 801, categoryId: 1, name: '哈尔滨冰纯', price: 8, category: '啤酒类', isDrink: true, prompt: '哈' },
+            { globalId: 802, categoryId: 2, name: '漓泉', price: 10, category: '啤酒类', isDrink: true, prompt: '漓' },
+            { globalId: 803, categoryId: 3, name: '金标雪花', price: 10, category: '啤酒类', isDrink: true, prompt: '雪' },
+            { globalId: 804, categoryId: 4, name: '乌苏啤酒', price: 12, category: '啤酒类', isDrink: true, prompt: '乌' },
+            { globalId: 805, categoryId: 5, name: '珠江零度/0度', price: 6, category: '啤酒类', isDrink: true, prompt: '珠' },
+            { globalId: 806, categoryId: 6, name: '百威', price: 10, category: '啤酒类', isDrink: true, prompt: '百' },
             
             // 白酒类 (901-913)
-            { globalId: 901, categoryId: 1, name: '小毛铺', price: 20, category: '白酒类', isDrink: true },
-            { globalId: 902, categoryId: 2, name: '金荞大毛铺', price: 88, category: '白酒类', isDrink: true },
-            { globalId: 903, categoryId: 3, name: '小百年糊涂33°/33度', price: 18, category: '白酒类', isDrink: true },
-            { globalId: 904, categoryId: 4, name: '小百年糊涂52°/52度', price: 20, category: '白酒类', isDrink: true },
-            { globalId: 905, categoryId: 5, name: '大百年糊涂33°/33度', price: 88, category: '白酒类', isDrink: true },
-            { globalId: 906, categoryId: 6, name: '大百年糊涂52°/52度', price: 98, category: '白酒类', isDrink: true },
-            { globalId: 907, categoryId: 7, name: '小劲酒', price: 20, category: '白酒类', isDrink: true },
-            { globalId: 908, categoryId: 8, name: '大劲酒', price: 68, category: '白酒类', isDrink: true },
-            { globalId: 909, categoryId: 9, name: '牛栏山', price: 20, category: '白酒类', isDrink: true },
-            { globalId: 910, categoryId: 10, name: '江小白', price: 20, category: '白酒类', isDrink: true },
-            { globalId: 911, categoryId: 11, name: '小郎酒', price: 22, category: '白酒类', isDrink: true },
-            { globalId: 912, categoryId: 12, name: '天龙泉22°', price: 18, category: '白酒类', isDrink: true },
-            { globalId: 913, categoryId: 13, name: '天龙泉28°', price: 20, category: '白酒类', isDrink: true },
+            { globalId: 901, categoryId: 1, name: '小毛铺', price: 20, category: '白酒类', isDrink: true, prompt: '毛' },
+            { globalId: 902, categoryId: 2, name: '金荞大毛铺', price: 88, category: '白酒类', isDrink: true, prompt: '荞' },
+            { globalId: 903, categoryId: 3, name: '小百年糊涂33°/33度', price: 18, category: '白酒类', isDrink: true, prompt: '三' },
+            { globalId: 904, categoryId: 4, name: '小百年糊涂52°/52度', price: 20, category: '白酒类', isDrink: true, prompt: '五' },
+            { globalId: 905, categoryId: 5, name: '大百年糊涂33°/33度', price: 88, category: '白酒类', isDrink: true, prompt: '三' },
+            { globalId: 906, categoryId: 6, name: '大百年糊涂52°/52度', price: 98, category: '白酒类', isDrink: true, prompt: '五' },
+            { globalId: 907, categoryId: 7, name: '小劲酒', price: 20, category: '白酒类', isDrink: true, prompt: '劲' },
+            { globalId: 908, categoryId: 8, name: '大劲酒', price: 68, category: '白酒类', isDrink: true, prompt: '劲' },
+            { globalId: 909, categoryId: 9, name: '牛栏山', price: 20, category: '白酒类', isDrink: true, prompt: '牛' },
+            { globalId: 910, categoryId: 10, name: '江小白', price: 20, category: '白酒类', isDrink: true, prompt: '江' },
+            { globalId: 911, categoryId: 11, name: '小郎酒', price: 22, category: '白酒类', isDrink: true, prompt: '郎' },
+            { globalId: 912, categoryId: 12, name: '天龙泉22°', price: 18, category: '白酒类', isDrink: true, prompt: '二' },
+            { globalId: 913, categoryId: 13, name: '天龙泉28°', price: 20, category: '白酒类', isDrink: true, prompt: '八' },
             
             // 饮料类 (1001-1012)
-            { globalId: 1001, categoryId: 1, name: '小天地壹号', price: 6, category: '饮料类', isDrink: true },
-            { globalId: 1002, categoryId: 2, name: '大天地壹号', price: 20, category: '饮料类', isDrink: true },
-            { globalId: 1003, categoryId: 3, name: '小王老吉', price: 5, category: '饮料类', isDrink: true },
-            { globalId: 1004, categoryId: 4, name: '大王老吉', price: 16, category: '饮料类', isDrink: true },
-            { globalId: 1005, categoryId: 5, name: '小椰汁', price: 5, category: '饮料类', isDrink: true },
-            { globalId: 1006, categoryId: 6, name: '大椰汁', price: 20, category: '饮料类', isDrink: true },
-            { globalId: 1007, categoryId: 7, name: '大橙汁', price: 10, category: '饮料类', isDrink: true },
-            { globalId: 1008, categoryId: 8, name: '小可乐', price: 4, category: '饮料类', isDrink: true },
-            { globalId: 1009, categoryId: 9, name: '大可乐', price: 10, category: '饮料类', isDrink: true },
-            { globalId: 1010, categoryId: 10, name: '小雪碧', price: 4, category: '饮料类', isDrink: true },
-            { globalId: 1011, categoryId: 11, name: '大雪碧', price: 10, category: '饮料类', isDrink: true },
-            { globalId: 1012, categoryId: 12, name: '矿泉水', price: 3, category: '饮料类', isDrink: true }
+            { globalId: 1001, categoryId: 1, name: '小天地壹号', price: 6, category: '饮料类', isDrink: true, prompt: '壹' },
+            { globalId: 1002, categoryId: 2, name: '大天地壹号', price: 20, category: '饮料类', isDrink: true, prompt: '壹' },
+            { globalId: 1003, categoryId: 3, name: '小王老吉', price: 5, category: '饮料类', isDrink: true, prompt: '吉' },
+            { globalId: 1004, categoryId: 4, name: '大王老吉', price: 16, category: '饮料类', isDrink: true, prompt: '吉' },
+            { globalId: 1005, categoryId: 5, name: '小椰汁', price: 5, category: '饮料类', isDrink: true, prompt: '椰' },
+            { globalId: 1006, categoryId: 6, name: '大椰汁', price: 20, category: '饮料类', isDrink: true, prompt: '椰' },
+            { globalId: 1007, categoryId: 7, name: '大橙汁', price: 10, category: '饮料类', isDrink: true, prompt: '橙' },
+            { globalId: 1008, categoryId: 8, name: '小可乐', price: 4, category: '饮料类', isDrink: true, prompt: '乐' },
+            { globalId: 1009, categoryId: 9, name: '大可乐', price: 10, category: '饮料类', isDrink: true, prompt: '乐' },
+            { globalId: 1010, categoryId: 10, name: '小雪碧', price: 4, category: '饮料类', isDrink: true, prompt: '碧' },
+            { globalId: 1011, categoryId: 11, name: '大雪碧', price: 10, category: '饮料类', isDrink: true, prompt: '碧' },
+            { globalId: 1012, categoryId: 12, name: '矿泉水', price: 3, category: '饮料类', isDrink: true, prompt: '矿' }
         ];
         // ===== 菜品数据区域结束 =====
 
         /* ===== 全局变量和状态区域开始 ===== */
         
-        /**
-         * 桌号菜品映射
-         */
         let tableDishesMap = {};
-        
-        /**
-         * 当前选中的桌号
-         */
         let currentTable = "";
-        
-        /**
-         * 最后点菜的桌号（用于提示）
-         */
         let lastOrderedTable = "";
-        
-        /**
-         * 快捷点菜选中的菜品（包含数量）
-         */
+        let quickOrderSource = "orderPage";
         let selectedDishes = [];
-        
-        /**
-         * 搜索定时器（点菜页面）
-         */
+        let presetFees = ['纸巾', '打包盒'];
         let searchResultTimer = null;
-        
-        /**
-         * 搜索定时器（小票页面）
-         */
         let ticketSearchTimer = null;
-        
-        /**
-         * 当前弹窗操作的菜品
-         */
         let currentModalDish = null;
-        
-        /**
-         * 弹窗确认后的回调函数
-         */
         let quantityModalCallback = null;
-        
-        /**
-         * 长按定时器
-         */
         let longPressTimer = null;
-        
-        /**
-         * 是否触发了长按
-         */
         let isLongPressTriggered = false;
-        
-        /**
-         * 长按时间阈值（毫秒）
-         */
-        const LONG_PRESS_DURATION = 600;
-        
-        /**
-         * 自动保存定时器
-         */
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isMoving = false;
         let autoSaveTimer = null;
-        
-        /**
-         * 当前生成的小票纯文本内容（用于复制）
-         */
         let currentTicketText = '';
-        
-        /**
-         * 额外费用列表（当前桌）
-         */
         let currentExtraFees = [];
-        
-        /**
-         * 换桌选择的目标桌
-         */
         let changeTableTarget = null;
+        let expandedQuickCategories = new Set(); // 记录快捷点菜中展开的分类
         
         /* ===== 全局变量和状态区域结束 ===== */
 
         /* ===== 辅助函数区域开始 ===== */
         
-        /**
-         * 计算菜品统计信息
-         */
-        function calculateDishStats(dishes) {
-            return dishes.reduce((stats, dish) => {
-                stats.totalCount += dish.count;
-                return stats;
-            }, { totalCount: 0 });
-        }
-        
-        /**
-         * 判断是否为酒水类
-         */
-        function isDrinkCategory(category) {
-            return DRINK_CATEGORIES.includes(category);
-        }
-        
-        /**
-         * 显示加载动画
-         */
         function showLoading() {
             document.getElementById('loadingSpinner').classList.add('active');
         }
         
-        /**
-         * 隐藏加载动画
-         */
         function hideLoading() {
             document.getElementById('loadingSpinner').classList.remove('active');
+        }
+        
+        function showToast(message, duration = 2000) {
+            const toast = document.getElementById('toastContainer');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        function isDrinkCategory(category) {
+            return DRINK_CATEGORIES.includes(category);
         }
         
         /* ===== 辅助函数区域结束 ===== */
 
         /* ===== localStorage自动保存区域开始 ===== */
         
-        /**
-         * 保存数据到localStorage
-         */
         function saveToLocal() {
             try {
+                const tableDataForSave = {};
+                for (let table of TABLE_LIST) {
+                    if (tableDishesMap[table]) {
+                        tableDataForSave[table] = {
+                            dishes: tableDishesMap[table],
+                            extraFees: tableDishesMap[table].extraFees || []
+                        };
+                    }
+                }
+                
                 const data = {
-                    tableDishesMap: tableDishesMap,
+                    tableDishesMap: tableDataForSave,
                     dishData: dishData,
                     lastOrderedTable: lastOrderedTable,
+                    presetFees: presetFees,
                     timestamp: Date.now(),
                     saveTime: new Date().toLocaleString('zh-CN')
                 };
@@ -1747,9 +2138,6 @@
             }
         }
         
-        /**
-         * 从localStorage加载数据
-         */
         function loadFromLocal() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
@@ -1758,17 +2146,30 @@
                 const data = JSON.parse(saved);
                 
                 if (data.tableDishesMap) {
-                    tableDishesMap = data.tableDishesMap;
+                    for (let table of TABLE_LIST) {
+                        const savedTableData = data.tableDishesMap[table];
+                        if (savedTableData) {
+                            if (Array.isArray(savedTableData)) {
+                                tableDishesMap[table] = savedTableData;
+                                tableDishesMap[table].extraFees = [];
+                            } else {
+                                tableDishesMap[table] = savedTableData.dishes || [];
+                                tableDishesMap[table].extraFees = savedTableData.extraFees || [];
+                            }
+                        }
+                    }
                 }
                 
-                // 加载菜品数据（如果存在）
                 if (data.dishData && data.dishData.length > 0) {
                     dishData = data.dishData;
                 }
                 
-                // 加载最后点菜桌号
                 if (data.lastOrderedTable) {
                     lastOrderedTable = data.lastOrderedTable;
+                }
+                
+                if (data.presetFees) {
+                    presetFees = data.presetFees;
                 }
                 
                 console.log('数据已恢复，最后保存时间:', data.saveTime);
@@ -1779,9 +2180,6 @@
             }
         }
         
-        /**
-         * 启动自动保存
-         */
         function startAutoSave() {
             if (autoSaveTimer) clearInterval(autoSaveTimer);
             autoSaveTimer = setInterval(() => {
@@ -1793,12 +2191,14 @@
 
         /* ===== 初始化和页面切换区域开始 ===== */
         
-        /**
-         * 初始化桌号卡片
-         */
         function initTableCards() {
             TABLE_LIST.forEach(table => {
-                if (!tableDishesMap[table]) tableDishesMap[table] = [];
+                if (!tableDishesMap[table]) {
+                    tableDishesMap[table] = [];
+                    tableDishesMap[table].extraFees = [];
+                } else if (!tableDishesMap[table].extraFees) {
+                    tableDishesMap[table].extraFees = [];
+                }
             });
             
             renderTableCards();
@@ -1807,9 +2207,6 @@
             startAutoSave();
         }
 
-        /**
-         * 切换页面
-         */
         function switchPage(pageId) {
             saveToLocal();
             
@@ -1821,7 +2218,6 @@
             switch(pageId) {
                 case "dishEditPage":
                     renderDishEditList();
-                    clearDishEditForm();
                     break;
                 case "quickOrderPage":
                     renderQuickOrderByCategory();
@@ -1846,9 +2242,6 @@
 
         /* ===== 桌号管理区域开始 ===== */
         
-        /**
-         * 渲染桌号卡片列表（固定顺序）
-         */
         function renderTableCards() {
             const tableListEl = document.getElementById("tableList");
             
@@ -1865,19 +2258,21 @@
                     borderClass = "outer-table";
                 }
                 
-                // 最近点菜提示
                 const isRecent = (table === lastOrderedTable);
-                if (isRecent) {
-                    borderClass += " recent-table";
-                }
+                const recentCircle = isRecent ? '<div class="recent-circle">刚</div>' : '';
                 
-                const recentBadge = isRecent ? '<div class="recent-badge">刚刚点过</div>' : '';
+                const clearBtnHtml = isActive 
+                    ? `<button class="new-table-card-btn" onclick="newTableFromCard('${table}')" title="清空桌台">🗑️</button>`
+                    : '';
                 
                 html += `
                     <div class="table-card ${borderClass}" data-table="${table}">
+                        ${recentCircle}
                         <h3>${table}</h3>
-                        ${recentBadge}
-                        <button class="${btnClass}" onclick="enterTable('${table}')">${btnText}</button>
+                        <div class="table-card-actions">
+                            <button class="${btnClass}" onclick="enterTable('${table}')">${btnText}</button>
+                            ${clearBtnHtml}
+                        </div>
                     </div>
                 `;
             });
@@ -1885,9 +2280,19 @@
             tableListEl.innerHTML = html;
         }
 
-        /**
-         * 进入桌号点菜页面
-         */
+        function newTableFromCard(table) {
+            if (!confirm(`【${table}】新的一桌？\n\n将清空该桌所有菜品`)) return;
+            
+            tableDishesMap[table] = [];
+            tableDishesMap[table].extraFees = [];
+            saveToLocal();
+            renderTableCards();
+            
+            if (currentTable === table) {
+                updateDishSections();
+            }
+        }
+
         function enterTable(table) {
             currentTable = table;
             
@@ -1896,29 +2301,24 @@
             switchPage("orderPage");
         }
 
-        /**
-         * 清空桌号菜品（新桌功能）
-         */
         function clearTableDishes() {
             if (!confirm(`确定要清空【${currentTable}】的所有菜品并设置为新桌吗？`)) return;
             
             tableDishesMap[currentTable] = [];
+            tableDishesMap[currentTable].extraFees = [];
             
             updateDishSections();
             updateTicketPreview();
             renderTableCards();
             saveToLocal();
             
-            alert(`已清空【${currentTable}】的所有菜品！`);
+            showToast(`已清空【${currentTable}】的所有菜品！`);
         }
 
-        /**
-         * 打开换桌弹窗
-         */
         function openChangeTableModal() {
             const currentDishes = tableDishesMap[currentTable];
             if (!currentDishes || currentDishes.length === 0) {
-                alert('当前桌没有菜品，无需换桌！');
+                showToast('当前桌没有菜品，无需换桌！');
                 return;
             }
             
@@ -1941,9 +2341,6 @@
             document.getElementById('changeTableModal').classList.add('active');
         }
 
-        /**
-         * 选择目标桌
-         */
         function selectChangeTable(table, element) {
             document.querySelectorAll('.change-table-item').forEach(el => {
                 if (!el.classList.contains('disabled')) {
@@ -1954,36 +2351,34 @@
             changeTableTarget = table;
         }
 
-        /**
-         * 关闭换桌弹窗
-         */
         function closeChangeTableModal() {
             document.getElementById('changeTableModal').classList.remove('active');
             changeTableTarget = null;
         }
 
-        /**
-         * 确认换桌（不包含排队号交换）
-         */
         function confirmChangeTable() {
             if (!changeTableTarget) {
-                alert('请选择目标桌号！');
+                showToast('请选择目标桌号！');
                 return;
             }
             
             const sourceDishes = tableDishesMap[currentTable] || [];
             const targetDishes = tableDishesMap[changeTableTarget] || [];
+            const sourceExtraFees = tableDishesMap[currentTable].extraFees || [];
+            const targetExtraFees = tableDishesMap[changeTableTarget].extraFees || [];
             
-            let confirmMsg = `确定【${currentTable}】换到【${changeTableTarget}】吗？`;
+            let confirmMsg = `确定将【${currentTable}】的${sourceDishes.length}个菜品换到【${changeTableTarget}】吗？`;
             if (targetDishes.length > 0) {
                 confirmMsg += `\n\n注意：【${changeTableTarget}】已有${targetDishes.length}个菜品，将合并在一起。`;
             }
             
             if (!confirm(confirmMsg)) return;
             
-            // 合并菜品
             tableDishesMap[changeTableTarget] = [...targetDishes, ...sourceDishes];
             tableDishesMap[currentTable] = [];
+            
+            tableDishesMap[changeTableTarget].extraFees = [...targetExtraFees, ...sourceExtraFees];
+            tableDishesMap[currentTable].extraFees = [];
             
             const oldTable = currentTable;
             currentTable = changeTableTarget;
@@ -1996,15 +2391,13 @@
             
             document.getElementById("currentTable").textContent = currentTable;
             
+            showToast(`换桌成功！${oldTable}的菜品已迁移到${currentTable}`);
         }
         
         /* ===== 桌号管理区域结束 ===== */
 
         /* ===== 点菜功能区域开始 ===== */
         
-        /**
-         * 搜索菜品（点菜页面）
-         */
         function searchDishForAdd() {
             if (searchResultTimer) {
                 clearTimeout(searchResultTimer);
@@ -2049,9 +2442,6 @@
             }, 300);
         }
 
-        /**
-         * 打开临时菜品弹窗
-         */
         function openTempDishModal(defaultName) {
             document.getElementById('tempDishName').value = defaultName || '';
             document.getElementById('tempDishPrice').value = '';
@@ -2063,35 +2453,28 @@
             document.getElementById('dishSearch').value = '';
         }
 
-        /**
-         * 关闭临时菜品弹窗
-         */
         function closeTempDishModal() {
             document.getElementById('tempDishModal').classList.remove('active');
         }
 
-        /**
-         * 确认添加临时菜品
-         */
         function confirmAddTempDish() {
             const name = document.getElementById('tempDishName').value.trim();
             const price = parseFloat(document.getElementById('tempDishPrice').value);
             const qty = parseInt(document.getElementById('tempDishQty').value);
             
             if (!name) {
-                alert('请输入菜品名称！');
+                showToast('请输入菜品名称！');
                 return;
             }
             if (isNaN(price) || price < 0) {
-                alert('请输入有效的价格！');
+                showToast('请输入有效的价格！');
                 return;
             }
             if (isNaN(qty) || qty < 1) {
-                alert('请输入有效的数量！');
+                showToast('请输入有效的数量！');
                 return;
             }
             
-            // 添加临时菜品
             if (!tableDishesMap[currentTable]) {
                 tableDishesMap[currentTable] = [];
             }
@@ -2107,25 +2490,20 @@
                 isTemporary: true
             });
             
-            // 记录最后点菜桌号
             lastOrderedTable = currentTable;
             
             saveToLocal();
             updateDishSections();
             updateTicketPreview();
             closeTempDishModal();
+            
+            showToast('临时菜品添加成功');
         }
 
-        /**
-         * 添加菜品（默认数量1）
-         */
         function addDish(globalId) {
             addDishWithQuantity(globalId, 1);
         }
 
-        /**
-         * 添加菜品（指定数量）
-         */
         function addDishWithQuantity(globalId, quantity) {
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
@@ -2145,27 +2523,19 @@
                 });
             }
 
-            // 记录最后点菜桌号
             lastOrderedTable = currentTable;
             
             saveToLocal();
             updateDishSections();
             updateTicketPreview();
-            renderTableCards(); // 更新"刚刚点过"提示
+            renderTableCards();
         }
 
-        /**
-         * 更新菜品列表显示（不分区，包含酒水）
-         */
         function updateDishSections() {
             const dishListEl = document.getElementById("dishList");
             const currentDishes = tableDishesMap[currentTable] || [];
-
-            const stats = calculateDishStats(currentDishes);
             
-            // 按分类分组，包含酒水
             const sortedDishes = [...currentDishes].sort((a, b) => {
-                // 临时菜排在最后
                 if (a.category === '临时菜' && b.category !== '临时菜') return 1;
                 if (a.category !== '临时菜' && b.category === '临时菜') return -1;
                 
@@ -2183,17 +2553,24 @@
             } else {
                 let currentCategory = null;
                 
-                sortedDishes.forEach((dish) => {
+                sortedDishes.forEach((dish, index) => {
                     if (dish.category !== currentCategory) {
                         if (currentCategory !== null) {
                             html += `</div></div>`;
                         }
                         currentCategory = dish.category;
+                        
+                        const catDishes = sortedDishes.filter(d => d.category === currentCategory);
+                        const catTotal = catDishes.reduce((sum, d) => sum + d.count, 0);
+                        
                         const categoryClass = dish.category === '临时菜' ? 'category-group-临时菜' : `category-group-${currentCategory}`;
                         const title = dish.category === '临时菜' ? '临时菜' : currentCategory;
                         html += `
                             <div class="category-group ${categoryClass}">
-                                <div style="font-size: 14px; font-weight: bold; color: #333; padding: 8px 8px 4px 8px; border-bottom: 1px solid #eee; margin-bottom: 4px;">${title}</div>
+                                <div class="category-header">
+                                    <span>${title}</span>
+                                    <span class="category-count">${catTotal}份</span>
+                                </div>
                                 <div>
                         `;
                     }
@@ -2221,13 +2598,8 @@
                 }
             }
             dishListEl.innerHTML = html;
-
-            document.getElementById("totalCount").textContent = stats.totalCount;
         }
 
-        /**
-         * 删除菜品（支持临时菜）
-         */
         function deleteDish(id) {
             const currentDishes = tableDishesMap[currentTable];
             const dishIndex = currentDishes.findIndex(d => (d.globalId || d.name) == id);
@@ -2246,9 +2618,32 @@
 
         /* ===== 快捷点菜区域开始 ===== */
         
-        /**
-         * 渲染快捷点菜页面（按分类，包含酒水，每个分类带预览）
-         */
+        function enterQuickOrderFromOrder() {
+            quickOrderSource = "orderPage";
+            expandedQuickCategories.clear(); // 进入页面时重置所有分类为折叠状态
+            switchPage('quickOrderPage');
+        }
+        
+        function enterQuickOrderFromTicket() {
+            quickOrderSource = "ticketPage";
+            expandedQuickCategories.clear(); // 进入页面时重置所有分类为折叠状态
+            switchPage('quickOrderPage');
+        }
+        
+        function backFromQuickOrder() {
+            switchPage(quickOrderSource);
+        }
+        
+        // 切换快捷点菜分类展开/折叠
+        function toggleQuickCategory(category) {
+            if (expandedQuickCategories.has(category)) {
+                expandedQuickCategories.delete(category);
+            } else {
+                expandedQuickCategories.add(category);
+            }
+            renderQuickOrderByCategory();
+        }
+        
         function renderQuickOrderByCategory() {
             const containerEl = document.getElementById('quickOrderContent');
             let html = "";
@@ -2260,16 +2655,14 @@
 
                 if (categoryDishes.length === 0) return;
 
-                // 获取该分类已选菜品
                 const selectedInCategory = selectedDishes.filter(s => {
                     const dish = dishData.find(d => d.globalId === s.globalId);
                     return dish && dish.category === category;
                 });
 
-                // 生成分类预览HTML
                 let previewHtml = '';
                 if (selectedInCategory.length === 0) {
-                    previewHtml = '<div class="category-preview-empty">点击或长按编号选择</div>';
+                    previewHtml = '<div class="category-preview-empty"> </div>';
                 } else {
                     previewHtml = selectedInCategory.map(item => {
                         const dish = dishData.find(d => d.globalId === item.globalId);
@@ -2277,33 +2670,47 @@
                     }).join('');
                 }
 
+                const isExpanded = expandedQuickCategories.has(category);
+                const headerExpandedClass = isExpanded ? 'expanded' : '';
+                const contentExpandedClass = isExpanded ? 'expanded' : '';
+                const arrowExpandedClass = isExpanded ? 'expanded' : '';
+
                 html += `
-                    <div class="category-section">
-                        <div class="category-title">${category}</div>
-                        <div class="category-preview" id="preview-${category}">
-                            ${previewHtml}
+                    <div class="quick-category-section">
+                        <div class="quick-category-header ${headerExpandedClass}" id="quick-cat-header-${category}" onclick="toggleQuickCategory('${category}')">
+                            <span class="quick-category-title">${category}</span>
+                            <span class="quick-category-arrow ${arrowExpandedClass}" id="quick-cat-arrow-${category}">▼</span>
                         </div>
-                        <div class="category-number-list">
-                            ${categoryDishes.map(dish => {
-                                const selectedItem = selectedDishes.find(s => s.globalId === dish.globalId);
-                                const isSelected = !!selectedItem;
-                                const qty = selectedItem ? selectedItem.quantity : 0;
-                                return `
-                                <div class="number-item ${isSelected ? 'selected' : ''}" 
-                                     data-global-id="${dish.globalId}"
-                                     data-dish-name="${dish.name}"
-                                     data-dish-price="${dish.price}"
-                                     onmousedown="handlePressStart(${dish.globalId}, this)"
-                                     ontouchstart="handlePressStart(${dish.globalId}, this)"
-                                     onmouseup="handlePressEnd(${dish.globalId}, this)"
-                                     ontouchend="handlePressEnd(${dish.globalId}, this)"
-                                     onmouseleave="handlePressCancel()"
-                                     ontouchmove="handlePressMove(event)"
-                                     onclick="handleNumberClick(${dish.globalId}, this)">
-                                    ${dish.categoryId}
-                                    ${qty > 1 ? `<span class="qty-badge">${qty}</span>` : ''}
-                                </div>
-                            `}).join('')}
+                        <div class="quick-category-content ${contentExpandedClass}" id="quick-cat-content-${category}">
+                            <div class="category-preview" id="preview-${category}">
+                                ${previewHtml}
+                            </div>
+                            <div class="category-number-list">
+                                ${categoryDishes.map(dish => {
+                                    const selectedItem = selectedDishes.find(s => s.globalId === dish.globalId);
+                                    const isSelected = !!selectedItem;
+                                    const qty = selectedItem ? selectedItem.quantity : 0;
+                                    const promptText = dish.prompt || '';
+                                    return `
+                                    <div class="number-item ${isSelected ? 'selected' : ''}" 
+                                         data-global-id="${dish.globalId}"
+                                         data-dish-name="${dish.name}"
+                                         data-dish-price="${dish.price}"
+                                         data-category="${dish.category}"
+                                         ontouchstart="handlePressStart(event, ${dish.globalId}, this, '${dish.category}')"
+                                         ontouchmove="handlePressMove(event, this)"
+                                         ontouchend="handlePressEnd(event, this)"
+                                         onmousedown="handlePressStart(event, ${dish.globalId}, this, '${dish.category}')"
+                                         onmousemove="handlePressMove(event, this)"
+                                         onmouseup="handlePressEnd(event, this)"
+                                         onmouseleave="handlePressCancel()"
+                                         onclick="handleNumberClick(${dish.globalId}, '${dish.category}')">
+                                        <span class="category-id">${dish.categoryId}</span>
+                                        ${promptText ? `<span class="prompt-text">${promptText}</span>` : ''}
+                                        ${qty > 1 ? `<span class="qty-badge">${qty}</span>` : ''}
+                                    </div>
+                                `}).join('')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2312,40 +2719,64 @@
             containerEl.innerHTML = html;
         }
 
-        function handlePressStart(globalId, element) {
+        function handlePressStart(event, globalId, element, category) {
             isLongPressTriggered = false;
+            isMoving = false;
+            
+            const touch = event.touches ? event.touches[0] : event;
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
             element.classList.add('pressing');
             
-            longPressTimer = setTimeout(() => {
-                isLongPressTriggered = true;
-                element.classList.remove('pressing');
-                
-                const dish = dishData.find(d => d.globalId === globalId);
-                if (dish) {
-                    openQuantityModalForQuickOrder(dish);
-                }
-            }, LONG_PRESS_DURATION);
+            // 只有非酒水类才需要长按计时（酒水类直接弹窗）
+            if (!DRINK_CATEGORIES.includes(category)) {
+                longPressTimer = setTimeout(() => {
+                    if (!isMoving) {
+                        isLongPressTriggered = true;
+                        element.classList.remove('pressing');
+                        const dish = dishData.find(d => d.globalId === globalId);
+                        if (dish) {
+                            openQuantityModalForQuickOrder(dish);
+                        }
+                    }
+                }, LONG_PRESS_DURATION);
+            }
         }
 
-        function handlePressEnd(globalId, element) {
+        function handlePressMove(event, element) {
+            if (!longPressTimer && !element.classList.contains('pressing')) return;
+            
+            const touch = event.touches ? event.touches[0] : event;
+            const diffX = Math.abs(touch.clientX - touchStartX);
+            const diffY = Math.abs(touch.clientY - touchStartY);
+            
+            if (diffX > MOVE_THRESHOLD || diffY > MOVE_THRESHOLD) {
+                isMoving = true;
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+                element.classList.remove('pressing');
+            }
+        }
+
+        function handlePressEnd(event, element) {
             if (longPressTimer) {
                 clearTimeout(longPressTimer);
                 longPressTimer = null;
             }
-            element.classList.remove('pressing');
+            
+            if (element) {
+                element.classList.remove('pressing');
+            }
+            
+            if (isMoving) {
+                return false;
+            }
             
             if (isLongPressTriggered) {
                 return false;
-            }
-        }
-
-        function handlePressMove(event) {
-            if (longPressTimer) {
-                clearTimeout(longPressTimer);
-                longPressTimer = null;
-                document.querySelectorAll('.number-item.pressing').forEach(el => {
-                    el.classList.remove('pressing');
-                });
             }
         }
 
@@ -2357,9 +2788,15 @@
             document.querySelectorAll('.number-item.pressing').forEach(el => {
                 el.classList.remove('pressing');
             });
+            isMoving = false;
         }
 
-        function handleNumberClick(globalId, element) {
+        function handleNumberClick(globalId, category) {
+            if (isMoving) {
+                isMoving = false;
+                return;
+            }
+            
             if (isLongPressTriggered) {
                 isLongPressTriggered = false;
                 return;
@@ -2370,7 +2807,19 @@
                 longPressTimer = null;
             }
             
-            element.classList.remove('pressing');
+            document.querySelectorAll('.number-item.pressing').forEach(el => {
+                el.classList.remove('pressing');
+            });
+            
+            // 啤酒、白酒、饮料自动弹窗，其他默认+1
+            if (DRINK_CATEGORIES.includes(category)) {
+                const dish = dishData.find(d => d.globalId === globalId);
+                if (dish) {
+                    openQuantityModalForQuickOrder(dish, true);
+                }
+                return;
+            }
+            
             toggleNumberSelect(globalId);
         }
 
@@ -2389,7 +2838,7 @@
             renderQuickOrderByCategory();
         }
 
-        function openQuantityModalForQuickOrder(dish) {
+        function openQuantityModalForQuickOrder(dish, clearDefault = false) {
             currentModalDish = dish;
             
             const existingItem = selectedDishes.find(s => s.globalId === dish.globalId);
@@ -2397,7 +2846,12 @@
             
             document.getElementById("modalDishName").textContent = dish.name;
             document.getElementById("modalDishPrice").textContent = `¥${dish.price}`;
-            document.getElementById("quantityInput").value = currentQty;
+            
+            if (clearDefault) {
+                document.getElementById("quantityInput").value = '';
+            } else {
+                document.getElementById("quantityInput").value = currentQty;
+            }
             
             quantityModalCallback = (quantity) => {
                 const index = selectedDishes.findIndex(s => s.globalId === dish.globalId);
@@ -2418,7 +2872,7 @@
 
         function confirmQuickOrder() {
             if (selectedDishes.length === 0) {
-                alert('请先选择菜品');
+                showToast('请先选择菜品');
                 return;
             }
             
@@ -2427,9 +2881,10 @@
             });
             
             selectedDishes = [];
+            expandedQuickCategories.clear(); // 确认后重置展开状态
             
             saveToLocal();
-            switchPage("orderPage");
+            switchPage(quickOrderSource);
         }
         
         /* ===== 快捷点菜区域结束 ===== */
@@ -2439,7 +2894,7 @@
         function jumpToTicketPage() {
             const currentDishes = tableDishesMap[currentTable];
             if (!currentDishes || currentDishes.length === 0) {
-                alert('暂无已点菜品，无法生成小票！');
+                showToast('暂无已点菜品，无法生成小票！');
                 return;
             }
             switchPage('ticketPage');
@@ -2450,29 +2905,135 @@
             document.getElementById('ticketDishSearch').value = '';
             document.getElementById('ticketSearchResult').style.display = 'none';
             
-            // 初始化额外费用
-            currentExtraFees = [];
+            currentExtraFees = tableDishesMap[currentTable].extraFees || [];
             document.getElementById('extraFeeName').value = '';
             document.getElementById('extraFeeAmount').value = '';
+            
+            renderPresetFees();
             renderExtraFeeList();
+            updateTicketPreview();
             
             document.getElementById('ticketDisplayArea').innerHTML = '';
-            updateTicketPreview();
         }
 
-        /**
-         * 添加额外费用
-         */
+        function renderPresetFees() {
+            const container = document.getElementById('presetFeesContainer');
+            let html = '';
+            
+            presetFees.forEach((feeName, index) => {
+                html += `
+                    <div class="preset-fee-row">
+                        <div class="preset-fee-name">${feeName}</div>
+                        <div class="preset-fee-input">
+                            <input type="number" id="preset-${index}" step="0.1" placeholder="0">
+                        </div>
+                        <button class="preset-fee-add-btn" onclick="addPresetFee(${index})">添加</button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function addPresetFee(index) {
+            const input = document.getElementById(`preset-${index}`);
+            const amount = parseFloat(input.value);
+            
+            if (isNaN(amount) || amount === 0) return;
+            
+            const feeName = presetFees[index];
+            
+            const existingIndex = currentExtraFees.findIndex(f => f.name === feeName);
+            if (existingIndex > -1) {
+                currentExtraFees[existingIndex].amount = amount;
+            } else {
+                currentExtraFees.push({
+                    name: feeName,
+                    amount: amount
+                });
+            }
+            
+            tableDishesMap[currentTable].extraFees = currentExtraFees;
+            saveToLocal();
+            renderExtraFeeList();
+            updateTicketPreview();
+            
+            input.style.background = '#c6f6d5';
+            setTimeout(() => {
+                input.style.background = '';
+                input.value = '';
+            }, 500);
+        }
+
+        function openPresetManageModal() {
+            renderPresetList();
+            document.getElementById('presetManageModal').classList.add('active');
+        }
+
+        function closePresetManageModal() {
+            document.getElementById('presetManageModal').classList.remove('active');
+        }
+
+        function renderPresetList() {
+            const container = document.getElementById('presetListContainer');
+            let html = '';
+            
+            presetFees.forEach((fee, index) => {
+                html += `
+                    <div class="preset-item">
+                        <span>${fee}</span>
+                        <button class="remove-btn" onclick="removePresetFee(${index})">删除</button>
+                    </div>
+                `;
+            });
+            
+            if (presetFees.length === 0) {
+                html = '<div style="text-align: center; color: #999; padding: 20px;">暂无预设项</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function addNewPreset() {
+            const input = document.getElementById('newPresetName');
+            const name = input.value.trim();
+            
+            if (!name) {
+                showToast('请输入项目名称');
+                return;
+            }
+            
+            if (presetFees.includes(name)) {
+                showToast('该项目已存在');
+                return;
+            }
+            
+            presetFees.push(name);
+            input.value = '';
+            renderPresetList();
+            renderPresetFees();
+            saveToLocal();
+        }
+
+        function removePresetFee(index) {
+            if (confirm(`确定删除【${presetFees[index]}】吗？`)) {
+                presetFees.splice(index, 1);
+                renderPresetList();
+                renderPresetFees();
+                saveToLocal();
+            }
+        }
+
         function addExtraFee() {
             const name = document.getElementById('extraFeeName').value.trim();
             const amount = parseFloat(document.getElementById('extraFeeAmount').value);
             
             if (!name) {
-                alert('请输入项目名称！');
+                showToast('请输入项目名称！');
                 return;
             }
             if (isNaN(amount) || amount === 0) {
-                alert('请输入有效的金额！');
+                showToast('请输入有效的金额！');
                 return;
             }
             
@@ -2481,33 +3042,32 @@
                 amount: amount
             });
             
+            tableDishesMap[currentTable].extraFees = currentExtraFees;
+            saveToLocal();
+            
             document.getElementById('extraFeeName').value = '';
             document.getElementById('extraFeeAmount').value = '';
             document.getElementById('extraFeeName').focus();
             
             renderExtraFeeList();
+            updateTicketPreview();
         }
 
-        /**
-         * 渲染额外费用列表
-         */
         function renderExtraFeeList() {
             const listEl = document.getElementById('extraFeeList');
             
             if (currentExtraFees.length === 0) {
-                listEl.innerHTML = '<div class="extra-fee-empty">暂无增加项</div>';
+                listEl.innerHTML = '<div class="extra-fee-empty">暂无额外费用</div>';
                 return;
             }
             
             let html = '';
-            let totalExtra = 0;
             
             currentExtraFees.forEach((fee, index) => {
-                totalExtra += fee.amount;
                 html += `
                     <div class="extra-fee-item">
                         <span class="extra-fee-item-name">${fee.name}</span>
-                        <div style="display: flex; align-items: center;">
+                        <div>
                             <span class="extra-fee-item-amount">¥${fee.amount.toFixed(2)}</span>
                             <button class="extra-fee-delete" onclick="deleteExtraFee(${index})">删除</button>
                         </div>
@@ -2515,19 +3075,15 @@
                 `;
             });
             
-            html += `<div style="text-align: right; padding-top: 10px; font-weight: bold; color: #2d3748; border-top: 1px solid #eee; margin-top: 8px;">
-                增加项合计：¥${totalExtra.toFixed(2)}
-            </div>`;
-            
             listEl.innerHTML = html;
         }
 
-        /**
-         * 删除额外费用
-         */
         function deleteExtraFee(index) {
             currentExtraFees.splice(index, 1);
+            tableDishesMap[currentTable].extraFees = currentExtraFees;
+            saveToLocal();
             renderExtraFeeList();
+            updateTicketPreview();
         }
 
         function searchDishForTicket() {
@@ -2547,7 +3103,16 @@
 
                 const matchedDishes = dishData.filter(d => d.name.toLowerCase().includes(searchText));
                 if (matchedDishes.length === 0) {
-                    searchResultEl.innerHTML = "<div style='padding: 10px;'>未找到匹配菜品</div>";
+                    let html = `
+                        <div class="search-result-item temp-dish-option" onclick="openTempDishModal('${searchText}')">
+                            <div class="search-result-item-info">
+                                <span style="color: #805ad5; font-weight: bold;">➕ 添加临时菜品</span>
+                                <div style="font-size: 12px; color: #666; margin-top: 2px;">"${searchText}"</div>
+                            </div>
+                            <span style="color: #9f7aea;">手动输入价格</span>
+                        </div>
+                    `;
+                    searchResultEl.innerHTML = html;
                     searchResultEl.style.display = "block";
                     return;
                 }
@@ -2578,7 +3143,7 @@
             
             currentModalDish = dish;
             
-            const defaultQuantity = dish.category === "啤酒类" ? "" : "1";
+            const defaultQuantity = DRINK_CATEGORIES.includes(dish.category) ? "" : "1";
             
             document.getElementById("modalDishName").textContent = dish.name;
             document.getElementById("modalDishPrice").textContent = `¥${dish.price}`;
@@ -2612,7 +3177,7 @@
             const quantity = parseInt(quantityInput.value);
             
             if (isNaN(quantity) || quantity < 1) {
-                alert("请输入有效的数量（至少1份）");
+                showToast("请输入有效的数量（至少1份）");
                 quantityInput.focus();
                 return;
             }
@@ -2693,27 +3258,23 @@
             });
             
             let itemsTotal = 0;
-            const dishCategories = {};
-            const drinkCategories = {};
+            const allCategories = {};
+            
+            const receiptCategoryOrder = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '炒菜类', '干锅铁板', '主食点心', '临时菜', '啤酒类', '白酒类', '饮料类'];
             
             currentDishes.forEach(item => {
                 const itemTotal = item.price * item.count;
                 itemsTotal += itemTotal;
                 
-                if (item.isDrink) {
-                    if (!drinkCategories[item.category]) drinkCategories[item.category] = [];
-                    drinkCategories[item.category].push(item);
-                } else {
-                    if (!dishCategories[item.category]) dishCategories[item.category] = [];
-                    dishCategories[item.category].push(item);
+                if (!allCategories[item.category]) {
+                    allCategories[item.category] = [];
                 }
+                allCategories[item.category].push(item);
             });
             
-            // 计算额外费用总计
             const extraFeesTotal = currentExtraFees.reduce((sum, fee) => sum + fee.amount, 0);
             const grandTotal = itemsTotal + extraFeesTotal;
             
-            // 构建小票HTML（统一字号、加粗、去虚线、四周留白）
             let receiptHtml = `
                 <div class="ticket-info-section">
                     <div class="ticket-display" id="receiptContent">
@@ -2723,49 +3284,36 @@
                         </div>
             `;
             
-            // 额外费用部分
             if (currentExtraFees.length > 0) {
                 currentExtraFees.forEach(fee => {
                     receiptHtml += `
                         <div class="receipt-line">
                             <span>${fee.name}</span>
-                            <span>¥${fee.amount.toFixed(2)}</span>
+                            <span>¥${fee.amount.toFixed(0)}</span>
                         </div>
                     `;
                 });
             }
             
-            if (Object.keys(dishCategories).length > 0) {
-                Object.keys(dishCategories).forEach(category => {
-                    dishCategories[category].forEach(item => {
+            receiptCategoryOrder.forEach(category => {
+                if (allCategories[category] && allCategories[category].length > 0) {
+                    receiptHtml += `<div class="receipt-category-title">${category}</div>`;
+                    allCategories[category].forEach(item => {
                         const tempMark = item.isTemporary ? '[临]' : '';
                         receiptHtml += `
                             <div class="receipt-line">
                                 <span>${tempMark}${item.name}×${item.count}</span>
-                                <span>¥${(item.price * item.count).toFixed(2)}</span>
+                                <span>¥${(item.price * item.count).toFixed(0)}</span>
                             </div>
                         `;
                     });
-                });
-            }
-            
-            if (Object.keys(drinkCategories).length > 0) {
-                Object.keys(drinkCategories).forEach(category => {
-                    drinkCategories[category].forEach(item => {
-                        receiptHtml += `
-                            <div class="receipt-line">
-                                <span>${item.name}×${item.count}</span>
-                                <span>¥${(item.price * item.count).toFixed(2)}</span>
-                            </div>
-                        `;
-                    });
-                });
-            }
+                }
+            });
             
             receiptHtml += `
                         <div class="receipt-total receipt-line">
                             <span>总计</span>
-                            <span>¥${grandTotal.toFixed(2)}</span>
+                            <span>¥${grandTotal.toFixed(0)}</span>
                         </div>
                     </div>
                     <div class="ticket-actions">
@@ -2777,47 +3325,40 @@
             
             document.getElementById('ticketDisplayArea').innerHTML = receiptHtml;
             
-            generateReceiptText(time, tableNumber, dishCategories, drinkCategories, grandTotal);
+            generateReceiptText(time, tableNumber, allCategories, grandTotal);
         }
 
-        function generateReceiptText(time, tableNumber, dishCategories, drinkCategories, grandTotal) {
-            let text = `桌号: ${tableNumber}\n`;
-            text += `时间: ${time}\n`;
+        function generateReceiptText(time, tableNumber, allCategories, grandTotal) {
+            const receiptCategoryOrder = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '炒菜类', '干锅铁板', '主食点心', '临时菜', '啤酒类', '白酒类', '饮料类'];
+            
+            let text = `${tableNumber} ${time}\n`;
             
             if (currentExtraFees.length > 0) {
                 currentExtraFees.forEach(fee => {
-                    text += `${fee.name}: ¥${fee.amount.toFixed(2)}\n`;
+                    text += `${fee.name} ¥${fee.amount.toFixed(2)}\n`;
                 });
                 text += `\n`;
             }
             
-            if (Object.keys(dishCategories).length > 0) {
-                Object.keys(dishCategories).forEach(category => {
-                    dishCategories[category].forEach(item => {
-                        const tempMark = item.isTemporary ? '[临时]' : '';
-                        text += `${tempMark}${item.name.padEnd(10)} ${item.count}份 ¥${(item.price * item.count).toFixed(2)}\n`;
+            receiptCategoryOrder.forEach(category => {
+                if (allCategories[category] && allCategories[category].length > 0) {
+                    text += `${category}\n`;
+                    allCategories[category].forEach(item => {
+                        const tempMark = item.isTemporary ? '[临]' : '';
+                        text += `${tempMark}${item.name} ${item.count}份 ¥${(item.price * item.count).toFixed(2)}\n`;
                     });
-                });
-                text += `\n`;
-            }
+                    text += `\n`;
+                }
+            });
             
-            if (Object.keys(drinkCategories).length > 0) {
-                Object.keys(drinkCategories).forEach(category => {
-                    drinkCategories[category].forEach(item => {
-                        text += `${item.name.padEnd(10)} ${item.count}份 ¥${(item.price * item.count).toFixed(2)}\n`;
-                    });
-                });
-                text += `\n`;
-            }
-            
-            text += `总计: ¥${grandTotal.toFixed(2)}\n`;
+            text += `总计 ¥${grandTotal.toFixed(2)}\n`;
             
             currentTicketText = text;
         }
 
         function copyReceiptText() {
             if (!currentTicketText) {
-                alert('请先生成小票');
+                showToast('请先生成小票');
                 return;
             }
             
@@ -2833,19 +3374,19 @@
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
-                    alert('小票已复制');
+                    showToast('小票已复制');
                 } else {
-                    alert('复制失败，请手动复制');
+                    showToast('复制失败，请手动复制');
                 }
             } catch (err) {
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(currentTicketText).then(() => {
-                        alert('小票已复制');
+                        showToast('小票已复制');
                     }).catch(() => {
-                        alert('复制失败，请手动复制');
+                        showToast('复制失败，请手动复制');
                     });
                 } else {
-                    alert('复制失败，请手动复制');
+                    showToast('复制失败，请手动复制');
                 }
             }
             
@@ -2856,7 +3397,7 @@
             const receiptElement = document.getElementById('receiptContent');
             
             if (!receiptElement) {
-                alert('请先生成小票');
+                showToast('请先生成小票');
                 return;
             }
             
@@ -2877,17 +3418,35 @@
                 document.body.removeChild(link);
                 
                 hideLoading();
-                alert('小票图片已保存！');
+                showToast('小票图片已保存！');
             }).catch(error => {
                 console.error('保存小票图片出错:', error);
                 hideLoading();
-                alert('保存小票图片时出错，请重试');
+                showToast('图片生成失败，已自动切换为复制文字');
+                copyReceiptText();
             });
         }
         
         /* ===== 小票功能区域结束 ===== */
 
         /* ===== 菜品管理区域开始 ===== */
+        
+        // 切换分类展开/折叠
+        function toggleEditCategory(category) {
+            const header = document.getElementById(`edit-cat-header-${category}`);
+            const content = document.getElementById(`edit-cat-content-${category}`);
+            const arrow = document.getElementById(`edit-cat-arrow-${category}`);
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                header.classList.remove('expanded');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                header.classList.add('expanded');
+                arrow.classList.add('expanded');
+            }
+        }
         
         function renderDishEditList() {
             const containerEl = document.getElementById('dishEditCategoryContainer');
@@ -2901,25 +3460,35 @@
                 if (categoryDishes.length === 0) return;
 
                 html += `
-                    <div class="edit-category-section">
-                        <div class="edit-category-title">${category}</div>
-                        <div class="dish-edit-list">
-                            <div class="dish-edit-item header">
-                                <div>编号</div>
-                                <div>菜品名称</div>
-                                <div>价格</div>
-                                <div>编辑</div>
-                                <div>删除</div>
-                            </div>
-                            ${categoryDishes.map(dish => `
-                                <div class="dish-edit-item">
-                                    <div>${dish.categoryId}</div>
-                                    <div>${dish.name}</div>
-                                    <div>${dish.price.toFixed(2)}</div>
-                                    <button class="edit-btn" onclick="editDish(${dish.globalId})">编辑</button>
-                                    <button class="remove-btn" onclick="removeDish(${dish.globalId})">删除</button>
+                    <div class="edit-category-section-fold">
+                        <div class="edit-category-header-fold" id="edit-cat-header-${category}" onclick="toggleEditCategory('${category}')">
+                            <span class="edit-category-title-fold">${category} (${categoryDishes.length}个菜品)</span>
+                            <span class="edit-category-arrow" id="edit-cat-arrow-${category}">▼</span>
+                        </div>
+                        <div class="edit-category-content" id="edit-cat-content-${category}">
+                            <div class="dish-edit-list">
+                                <div class="dish-edit-item header">
+                                    <div>编号</div>
+                                    <div>菜品名称</div>
+                                    <div>价格</div>
+                                    <div>提示字</div>
+                                    <div>编辑</div>
+                                    <div>删除</div>
                                 </div>
-                            `).join('')}
+                                ${categoryDishes.map(dish => `
+                                    <div class="dish-edit-item">
+                                        <div>${dish.categoryId}</div>
+                                        <div>${dish.name}</div>
+                                        <div>${dish.price.toFixed(2)}</div>
+                                        <input type="text" class="prompt-input" value="${dish.prompt || ''}" 
+                                               maxlength="2" placeholder="无"
+                                               onchange="updateDishPrompt(${dish.globalId}, this.value)"
+                                               onclick="this.select()">
+                                        <button class="edit-btn" onclick="openEditDishModal(${dish.globalId})">编辑</button>
+                                        <button class="remove-btn" onclick="removeDish(${dish.globalId})">删除</button>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2928,100 +3497,244 @@
             containerEl.innerHTML = html;
         }
 
-        function clearDishEditForm() {
-            document.getElementById("dishIdInput").value = "";
-            document.getElementById("dishNameInput").value = "";
-            document.getElementById("dishPriceInput").value = "";
-            document.getElementById("dishCategoryInput").value = "烤鱼类";
-            document.getElementById("editDishId").value = "";
-            document.getElementById("editDishGlobalId").value = "";
+        // 打开修改菜品搜索弹窗
+        function openSearchDishModal() {
+            document.getElementById('modifyDishSearchInput').value = '';
+            document.getElementById('modifyDishSearchResults').innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">输入菜品名称开始搜索</div>';
+            document.getElementById('searchDishModal').classList.add('active');
+            document.getElementById('modifyDishSearchInput').focus();
         }
 
-        function editDish(globalId) {
+        function closeSearchDishModal() {
+            document.getElementById('searchDishModal').classList.remove('active');
+        }
+
+        // 搜索菜品（用于修改）
+        function searchDishForModify() {
+            const searchText = document.getElementById('modifyDishSearchInput').value.trim().toLowerCase();
+            const resultsEl = document.getElementById('modifyDishSearchResults');
+            
+            if (!searchText) {
+                resultsEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">输入菜品名称开始搜索</div>';
+                return;
+            }
+            
+            const matchedDishes = dishData.filter(d => d.name.toLowerCase().includes(searchText));
+            
+            if (matchedDishes.length === 0) {
+                resultsEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">未找到匹配菜品</div>';
+                return;
+            }
+            
+            let html = '';
+            matchedDishes.forEach(dish => {
+                html += `
+                    <div class="dish-search-item" onclick="selectDishToEdit(${dish.globalId})">
+                        <div class="dish-search-item-name">${dish.name}</div>
+                        <div class="dish-search-item-info">
+                            <span>${dish.category} · 编号${dish.categoryId}</span>
+                            <span>¥${dish.price}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsEl.innerHTML = html;
+        }
+
+        // 选择菜品进行编辑
+        function selectDishToEdit(globalId) {
+            closeSearchDishModal();
+            openEditDishModal(globalId);
+        }
+
+        // 打开编辑菜品弹窗
+        function openEditDishModal(globalId) {
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
-
-            document.getElementById("dishIdInput").value = dish.categoryId;
-            document.getElementById("dishNameInput").value = dish.name;
-            document.getElementById("dishPriceInput").value = dish.price;
-            document.getElementById("dishCategoryInput").value = dish.category;
-            document.getElementById("editDishId").value = dish.categoryId;
-            document.getElementById("editDishGlobalId").value = globalId;
             
-            document.getElementById("dishIdInput").scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('editModalDishGlobalId').value = dish.globalId;
+            document.getElementById('editModalDishId').value = dish.categoryId;
+            document.getElementById('editModalDishName').value = dish.name;
+            document.getElementById('editModalDishPrice').value = dish.price;
+            document.getElementById('editModalDishCategory').value = dish.category;
+            document.getElementById('editModalDishPrompt').value = dish.prompt || '';
+            
+            document.getElementById('editDishModal').classList.add('active');
         }
 
-        function saveDish() {
-            const categoryId = Number(document.getElementById("dishIdInput").value);
-            const dishName = document.getElementById("dishNameInput").value.trim();
-            const dishPrice = Number(document.getElementById("dishPriceInput").value);
-            const dishCategory = document.getElementById("dishCategoryInput").value;
-            const editGlobalId = document.getElementById("editDishGlobalId").value;
+        function closeEditDishModal() {
+            document.getElementById('editDishModal').classList.remove('active');
+        }
 
+        // 保存编辑的菜品
+        function saveEditDishFromModal() {
+            const globalId = Number(document.getElementById('editModalDishGlobalId').value);
+            const categoryId = Number(document.getElementById('editModalDishId').value);
+            const dishName = document.getElementById('editModalDishName').value.trim();
+            const dishPrice = Number(document.getElementById('editModalDishPrice').value);
+            const dishCategory = document.getElementById('editModalDishCategory').value;
+            const dishPrompt = document.getElementById('editModalDishPrompt').value.trim().substring(0, 2);
+            
             if (!categoryId || categoryId <= 0) {
-                alert("请输入有效的分类内编号（正整数）！");
+                showToast("请输入有效的分类内编号（正整数）！");
                 return;
             }
             if (!dishName) {
-                alert("请输入菜品名称！");
+                showToast("请输入菜品名称！");
                 return;
             }
             if (isNaN(dishPrice) || dishPrice < 0) {
-                alert("请输入有效的菜品价格（≥0的数字）！");
+                showToast("请输入有效的菜品价格（≥0的数字）！");
                 return;
             }
-
-            const isDrink = isDrinkCategory(dishCategory);
-
-            if (editGlobalId) {
-                const index = dishData.findIndex(d => d.globalId === Number(editGlobalId));
-                if (index > -1) {
-                    const isDuplicate = dishData.some(d => 
-                        d.category === dishCategory && 
-                        d.categoryId === categoryId && 
-                        d.globalId !== Number(editGlobalId)
-                    );
-                    if (isDuplicate) {
-                        alert(`【${dishCategory}】分类内编号${categoryId}已存在！`);
-                        return;
-                    }
-
-                    dishData[index] = {
-                        ...dishData[index],
-                        categoryId: categoryId,
-                        name: dishName,
-                        price: dishPrice,
-                        category: dishCategory,
-                        isDrink: isDrink
-                    };
-                    alert("菜品编辑成功！");
-                }
-            } else {
-                const isDuplicate = dishData.some(d => 
-                    d.category === dishCategory && d.categoryId === categoryId
-                );
-                if (isDuplicate) {
-                    alert(`【${dishCategory}】分类内编号${categoryId}已存在！`);
-                    return;
-                }
-
-                const categoryIndex = DISH_CATEGORIES.indexOf(dishCategory) + 1;
-                const newGlobalId = categoryIndex * 100 + categoryId;
-
-                dishData.push({
-                    globalId: newGlobalId,
-                    categoryId: categoryId,
-                    name: dishName,
-                    price: dishPrice,
-                    category: dishCategory,
-                    isDrink: isDrink
-                });
-                alert("菜品新增成功！");
+            
+            const index = dishData.findIndex(d => d.globalId === globalId);
+            if (index === -1) {
+                showToast("菜品不存在！");
+                return;
             }
-
-            saveToLocal(); // 保存菜品数据
+            
+            // 检查编号是否与其他菜品冲突
+            const isDuplicate = dishData.some(d => 
+                d.category === dishCategory && 
+                d.categoryId === categoryId && 
+                d.globalId !== globalId
+            );
+            if (isDuplicate) {
+                showToast(`【${dishCategory}】分类内编号${categoryId}已存在！`);
+                return;
+            }
+            
+            const isDrink = isDrinkCategory(dishCategory);
+            
+            dishData[index] = {
+                ...dishData[index],
+                categoryId: categoryId,
+                name: dishName,
+                price: dishPrice,
+                category: dishCategory,
+                isDrink: isDrink,
+                prompt: dishPrompt
+            };
+            
+            saveToLocal();
             renderDishEditList();
-            clearDishEditForm();
+            closeEditDishModal();
+            showToast("菜品修改成功！");
+        }
+
+        // 打开添加菜品步骤1：选择分类
+        function openAddDishStep1() {
+            const grid = document.getElementById('addDishCategoryGrid');
+            let html = '';
+            
+            DISH_CATEGORIES.forEach(cat => {
+                html += `<div class="category-select-item" onclick="selectCategoryForAdd('${cat}')">${cat}</div>`;
+            });
+            
+            grid.innerHTML = html;
+            document.getElementById('addDishStep1Modal').classList.add('active');
+        }
+
+        function closeAddDishStep1() {
+            document.getElementById('addDishStep1Modal').classList.remove('active');
+        }
+
+        // 选择分类后进入步骤2
+        function selectCategoryForAdd(category) {
+            closeAddDishStep1();
+            
+            // 计算该分类当前最大编号
+            const categoryDishes = dishData.filter(d => d.category === category);
+            let nextId = 1;
+            if (categoryDishes.length > 0) {
+                const maxId = Math.max(...categoryDishes.map(d => d.categoryId));
+                nextId = maxId + 1;
+            }
+            
+            document.getElementById('addModalDishCategory').value = category;
+            document.getElementById('addModalDishCategoryDisplay').value = category;
+            document.getElementById('addModalDishId').value = nextId;
+            document.getElementById('addModalDishName').value = '';
+            document.getElementById('addModalDishPrice').value = '';
+            document.getElementById('addModalDishPrompt').value = '';
+            
+            document.getElementById('addDishStep2Modal').classList.add('active');
+            document.getElementById('addModalDishName').focus();
+        }
+
+        function closeAddDishStep2() {
+            document.getElementById('addDishStep2Modal').classList.remove('active');
+        }
+
+        // 保存添加的菜品
+        function saveAddDishFromModal() {
+            const categoryId = Number(document.getElementById('addModalDishId').value);
+            const dishName = document.getElementById('addModalDishName').value.trim();
+            const dishPrice = Number(document.getElementById('addModalDishPrice').value);
+            const dishCategory = document.getElementById('addModalDishCategory').value;
+            const dishPrompt = document.getElementById('addModalDishPrompt').value.trim().substring(0, 2);
+            
+            if (!categoryId || categoryId <= 0) {
+                showToast("请输入有效的分类内编号（正整数）！");
+                return;
+            }
+            if (!dishName) {
+                showToast("请输入菜品名称！");
+                return;
+            }
+            if (isNaN(dishPrice) || dishPrice < 0) {
+                showToast("请输入有效的菜品价格（≥0的数字）！");
+                return;
+            }
+            
+            // 检查编号是否已存在
+            const isDuplicate = dishData.some(d => 
+                d.category === dishCategory && d.categoryId === categoryId
+            );
+            if (isDuplicate) {
+                showToast(`【${dishCategory}】分类内编号${categoryId}已存在！`);
+                return;
+            }
+            
+            const categoryIndex = DISH_CATEGORIES.indexOf(dishCategory) + 1;
+            const newGlobalId = categoryIndex * 100 + categoryId;
+            
+            // 检查globalId是否已存在（理论上不应该，但以防万一）
+            const globalIdExists = dishData.some(d => d.globalId === newGlobalId);
+            if (globalIdExists) {
+                showToast("系统错误：该编号已存在，请联系管理员");
+                return;
+            }
+            
+            const isDrink = isDrinkCategory(dishCategory);
+            
+            dishData.push({
+                globalId: newGlobalId,
+                categoryId: categoryId,
+                name: dishName,
+                price: dishPrice,
+                category: dishCategory,
+                isDrink: isDrink,
+                prompt: dishPrompt
+            });
+            
+            saveToLocal();
+            renderDishEditList();
+            closeAddDishStep2();
+            showToast("菜品添加成功！");
+        }
+
+        function updateDishPrompt(globalId, newPrompt) {
+            const dish = dishData.find(d => d.globalId === globalId);
+            if (!dish) return;
+            
+            newPrompt = newPrompt.trim().substring(0, 2);
+            
+            dish.prompt = newPrompt;
+            saveToLocal();
+            showToast(`【${dish.name}】提示字已更新为"${newPrompt}"`);
         }
 
         function removeDish(globalId) {
@@ -3030,9 +3743,9 @@
 
             if (confirm(`确定要删除菜品【${dish.name}（${dish.category}编号${dish.categoryId}，¥${dish.price}）】吗？`)) {
                 dishData = dishData.filter(d => d.globalId !== globalId);
-                saveToLocal(); // 保存菜品数据
+                saveToLocal();
                 renderDishEditList();
-                alert("菜品删除成功！");
+                showToast("菜品删除成功！");
             }
         }
         
@@ -3043,7 +3756,6 @@
         window.onload = function() {
             loadFromLocal();
             
-            // 初始化桌位
             TABLE_LIST.forEach(table => {
                 if (!tableDishesMap[table]) tableDishesMap[table] = [];
             });
@@ -3069,6 +3781,11 @@
                     closeQuantityModal();
                     closeTempDishModal();
                     closeChangeTableModal();
+                    closePresetManageModal();
+                    closeSearchDishModal();
+                    closeEditDishModal();
+                    closeAddDishStep1();
+                    closeAddDishStep2();
                 }
                 
                 if (e.key === 'Enter') {
@@ -3076,23 +3793,15 @@
                         confirmQuantityModal();
                     } else if (document.getElementById('tempDishModal').classList.contains('active')) {
                         confirmAddTempDish();
+                    } else if (document.getElementById('editDishModal').classList.contains('active')) {
+                        saveEditDishFromModal();
+                    } else if (document.getElementById('addDishStep2Modal').classList.contains('active')) {
+                        saveAddDishFromModal();
                     }
                 }
             });
             
-            document.getElementById('quantityInput').addEventListener('focus', function() {
-                if (this.value === '' && currentModalDish && currentModalDish.category === "啤酒类") {
-                    this.placeholder = "请输入数量";
-                }
-            });
-            
             console.log("点菜收银系统已加载完成！");
-            
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    console.log('页面重新可见，当前数据已保持');
-                }
-            });
         };
         
         /* ===== 初始化入口区域结束 ===== */
