@@ -6,6 +6,48 @@
     <title>点菜收银系统</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
+        /* ============================================================
+           1. CSS 变量与设计令牌
+           ============================================================ */
+        :root {
+            /* 品牌色 */
+            --color-primary: #4299e1;
+            --color-success: #48bb78;
+            --color-danger: #f56565;
+            --color-warning: #ed8936;
+            --color-purple: #9f7aea;
+            
+            /* 分类色（用于小票虚线框） */
+            --cat-grill: #48bb78;
+            --cat-soup: #4299e1;
+            --cat-side: #ed8936;
+            --cat-cold: #38b2ac;
+            --cat-staple: #9f7aea;
+            --cat-stir: #e53e3e;
+            --cat-dry: #d69e2e;
+            --cat-beer: #f6ad55;
+            --cat-liquor: #fc8181;
+            --cat-drink: #63b3ed;
+            --cat-temp: #9f7aea;
+            
+            /* 中性色 */
+            --color-bg: #f5f5f5;
+            --color-card: #ffffff;
+            --color-text: #333333;
+            --color-text-secondary: #666666;
+            --color-border: #eeeeee;
+            
+            /* 尺寸 */
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --radius-xl: 12px;
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* ============================================================
+           2. 基础重置与通用样式
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -16,20 +58,23 @@
             -webkit-user-select: none;
             user-select: none;
         }
-        input, textarea {
-            -webkit-user-select: auto;
-            user-select: auto;
-        }
+
         body {
-            background-color: #f5f5f5;
+            background-color: var(--color-bg);
             padding: 10px;
             font-size: 16px;
             overflow-x: hidden;
         }
+
+        input, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
+        }
+
         button {
             cursor: pointer;
             border: none;
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             font-size: 16px;
             padding: 12px 16px;
             transition: all 0.2s;
@@ -39,24 +84,39 @@
             justify-content: center;
             gap: 6px;
         }
+
         button:active {
             transform: scale(0.98);
         }
+
+        /* ============================================================
+           3. 工具类/原子类
+           ============================================================ */
         .container {
             max-width: 100%;
             margin: 0 auto;
         }
+
         .page {
             display: none;
             width: 100%;
             min-height: calc(100vh - 20px);
             position: relative;
         }
+
         .page.active {
             display: block;
         }
 
-        /* 一级界面：桌号选择页 */
+        .hide { display: none !important; }
+        .show { display: flex !important; }
+        .text-center { text-align: center; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+
+        /* ============================================================
+           4. 页面级样式 - 4.1 桌号选择页
+           ============================================================ */
         .table-page-header {
             display: flex;
             justify-content: space-between;
@@ -65,18 +125,21 @@
             padding: 10px 5px;
             position: relative;
         }
+
         .table-page-header h2 {
             font-size: 24px;
             font-weight: bold;
         }
+
         .edit-dish-btn {
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
             font-size: 14px;
             padding: 8px 12px;
             min-width: 80px;
             height: 36px;
         }
+
         .table-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -84,11 +147,13 @@
             margin-top: 10px;
             margin-bottom: 20px;
         }
+
         @media (max-width: 480px) {
             .table-list {
                 grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             }
         }
+
         .table-card {
             background: white;
             border-radius: 12px;
@@ -102,30 +167,28 @@
             flex-direction: column;
             gap: 8px;
         }
+
         .table-card:active {
             transform: scale(0.98);
         }
-        .table-card.inner-table {
-            border-color: #e53e3e;
-        }
-        .table-card.outer-table {
-            border-color: #38a169;
-        }
-        .table-card.pack-table {
-            border-color: #9f7aea;
-        }
+
+        .table-card.inner-table { border-color: #e53e3e; }
+        .table-card.outer-table { border-color: #38a169; }
+        .table-card.pack-table { border-color: var(--color-purple); }
+
         .table-card h3 {
             font-size: 22px;
             margin: 0;
             font-weight: bold;
         }
+
         .recent-circle {
             position: absolute;
             top: 8px;
             right: 8px;
             width: 24px;
             height: 24px;
-            background: #9f7aea;
+            background: var(--color-purple);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -135,13 +198,15 @@
             font-weight: bold;
             z-index: 10;
         }
+
         .table-card-actions {
             display: flex;
             gap: 6px;
             width: 100%;
         }
+
         .enter-table-btn {
-            background: #4299e1;
+            background: var(--color-primary);
             color: white;
             flex: 1;
             font-size: 14px;
@@ -149,11 +214,13 @@
             font-weight: bold;
             margin: 0;
         }
+
         .enter-table-btn.active-table-btn {
-            background: #ed8936;
+            background: var(--color-warning);
         }
+
         .new-table-card-btn {
-            background: #f56565;
+            background: var(--color-danger);
             color: white;
             font-size: 16px;
             padding: 0;
@@ -168,7 +235,9 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
-        /* 二级界面：桌号点菜页 - 美团外卖式布局 */
+        /* ============================================================
+           5. 页面级样式 - 5.1 点菜页（美团外卖式布局）
+           ============================================================ */
         .order-page-container {
             display: flex;
             height: calc(100vh - 100px);
@@ -178,8 +247,8 @@
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
-        /* 左侧分类导航 */
+
+        /* 5.1.1 左侧分类导航 */
         .category-sidebar {
             width: 85px;
             background: #f8f8f8;
@@ -188,6 +257,7 @@
             flex-shrink: 0;
             padding-bottom: 80px;
         }
+
         .category-nav-item {
             padding: 15px 5px;
             text-align: center;
@@ -204,12 +274,14 @@
             justify-content: center;
             gap: 4px;
         }
+
         .category-nav-item.active {
             background: #fff;
             color: #ff6600;
             border-left-color: #ff6600;
             font-weight: bold;
         }
+
         .category-nav-badge {
             position: absolute;
             top: 5px;
@@ -222,17 +294,25 @@
             min-width: 18px;
             font-weight: bold;
         }
-        
-        /* 右侧菜品列表 */
+
+        .category-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        /* 5.1.2 右侧菜品列表 */
         .dishes-content {
             flex: 1;
             overflow-y: auto;
             position: relative;
             scroll-behavior: smooth;
+            padding-bottom: 100px;
         }
+
         .dish-category-section {
             padding: 0;
         }
+
         .dish-category-title {
             padding: 10px 12px;
             background: #f5f5f5;
@@ -244,6 +324,7 @@
             z-index: 10;
             border-bottom: 1px solid #eee;
         }
+
         .dish-item-new {
             display: flex;
             padding: 12px;
@@ -252,13 +333,16 @@
             justify-content: space-between;
             gap: 10px;
         }
+
         .dish-item-new.dish-item-odd {
             background-color: #fafafa;
         }
+
         .dish-info-new {
             flex: 1;
             min-width: 0;
         }
+
         .dish-name-new {
             font-size: 15px;
             font-weight: bold;
@@ -268,16 +352,19 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .dish-price-new {
             font-size: 13px;
             color: #999;
             font-weight: normal;
         }
+
         .dish-actions-new {
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .dish-btn-minus, .dish-btn-plus {
             width: 28px;
             height: 28px;
@@ -292,15 +379,18 @@
             padding: 0;
             min-height: 28px;
         }
+
         .dish-btn-minus {
             color: #999;
             border-color: #ccc;
         }
+
         .dish-btn-plus {
             background: #ff6600;
             color: white;
             border-color: #ff6600;
         }
+
         .dish-btn-bulk {
             background: #805ad5;
             color: white;
@@ -312,6 +402,7 @@
             min-height: 28px;
             font-weight: bold;
         }
+
         .dish-quantity {
             font-size: 15px;
             font-weight: bold;
@@ -319,8 +410,20 @@
             min-width: 24px;
             text-align: center;
         }
-        
-        /* 底部悬浮栏 */
+
+        /* 5.1.3 关键词高亮样式 */
+        .dish-keyword-highlight {
+            color: #c53030;
+            font-weight: 900;
+            background: linear-gradient(120deg, rgba(245, 101, 101, 0.15) 0%, rgba(245, 101, 101, 0.05) 100%);
+            padding: 1px 3px;
+            border-radius: 4px;
+            border-bottom: 2px solid rgba(197, 48, 48, 0.4);
+            text-shadow: 0 0 1px rgba(197, 48, 48, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        /* 5.1.4 底部悬浮栏 */
         .bottom-float-bar {
             position: fixed;
             bottom: 0;
@@ -330,19 +433,22 @@
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             z-index: 100;
             padding: 10px 15px;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            padding-bottom: calc(10px + var(--safe-bottom));
         }
+
         .float-bar-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
             max-width: 100%;
         }
+
         .float-bar-left {
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         .expand-btn {
             width: 40px;
             height: 40px;
@@ -358,29 +464,40 @@
             padding: 0;
             min-height: 40px;
         }
+
         .expand-btn::after {
             content: '▲';
             font-size: 12px;
             margin-top: 2px;
+            transition: transform 0.3s;
         }
+
+        .expand-btn.expanded::after {
+            content: '▼';
+        }
+
         .expand-btn.has-items {
             background: #ff6600;
         }
+
         .total-info {
             display: flex;
             flex-direction: column;
         }
+
         .total-amount {
             font-size: 20px;
             font-weight: bold;
             color: #ff6600;
         }
+
         .total-count {
             font-size: 12px;
             color: #999;
         }
+
         .ticket-btn-float {
-            background: #ff6600;
+            background: var(--color-success);
             color: white;
             padding: 12px 24px;
             border-radius: 20px;
@@ -388,8 +505,8 @@
             font-weight: bold;
             min-height: 44px;
         }
-        
-        /* 已点菜品抽屉 */
+
+        /* 5.1.5 已点菜品抽屉 */
         .order-drawer {
             position: fixed;
             bottom: 70px;
@@ -403,9 +520,11 @@
             display: none;
             flex-direction: column;
         }
+
         .order-drawer.active {
             display: flex;
         }
+
         .drawer-header {
             padding: 15px;
             border-bottom: 1px solid #eee;
@@ -413,10 +532,12 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .drawer-title {
             font-size: 16px;
             font-weight: bold;
         }
+
         .clear-all-btn {
             color: #999;
             font-size: 14px;
@@ -424,35 +545,40 @@
             padding: 0;
             min-height: auto;
         }
+
         .drawer-content {
             overflow-y: auto;
             max-height: 40vh;
             padding: 10px;
         }
+
         .drawer-item {
             display: flex;
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #f5f5f5;
         }
+
         .drawer-item-name {
             flex: 1;
             font-size: 14px;
         }
+
         .drawer-item-price {
             color: #ff6600;
             font-size: 14px;
             margin-right: 10px;
         }
+
         .drawer-item-actions {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
-        /* 顶部操作栏 */
+
+        /* 5.1.6 点菜页顶部操作栏 */
         .order-header-new {
-            background: #4299e1;
+            background: var(--color-primary);
             color: white;
             padding: 12px 15px;
             border-radius: 12px;
@@ -461,14 +587,17 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .order-header-title {
             font-size: 20px;
             font-weight: bold;
         }
+
         .order-header-actions {
             display: flex;
             gap: 8px;
         }
+
         .header-btn-small {
             padding: 6px 12px;
             font-size: 13px;
@@ -477,15 +606,12 @@
             border-radius: 4px;
             min-height: 32px;
         }
-        
-        /* 确保底部不被遮挡 */
-        .dishes-content {
-            padding-bottom: 100px;
-        }
 
-        /* 四级界面：菜品编号管理页 */
+        /* ============================================================
+           6. 页面级样式 - 6.1 菜品管理页
+           ============================================================ */
         .dish-edit-header {
-            background: #4299e1;
+            background: var(--color-primary);
             color: white;
             padding: 12px 15px;
             border-radius: 12px;
@@ -497,8 +623,7 @@
             top: 0;
             z-index: 100;
         }
-        
-        /* 菜品管理操作按钮区域 */
+
         .dish-edit-actions {
             display: flex;
             flex-direction: column;
@@ -506,6 +631,7 @@
             margin-bottom: 20px;
             padding: 0 5px;
         }
+
         .dish-edit-action-btn {
             width: 100%;
             padding: 16px;
@@ -514,16 +640,17 @@
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
+
         .btn-modify {
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
         }
+
         .btn-add {
-            background: #f56565;
+            background: var(--color-danger);
             color: white;
         }
-        
-        /* 折叠分类样式 */
+
         .edit-category-section-fold {
             background: white;
             border-radius: 12px;
@@ -531,6 +658,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             overflow: hidden;
         }
+
         .edit-category-header-fold {
             display: flex;
             justify-content: space-between;
@@ -541,33 +669,40 @@
             transition: all 0.2s;
             border-bottom: 1px solid transparent;
         }
+
         .edit-category-header-fold:active {
             background: #edf2f7;
         }
+
         .edit-category-header-fold.expanded {
             border-bottom: 1px solid #e2e8f0;
         }
+
         .edit-category-title-fold {
             font-size: 18px;
             font-weight: bold;
             color: #2d3748;
         }
+
         .edit-category-arrow {
             font-size: 20px;
             color: #718096;
             transition: transform 0.3s;
         }
+
         .edit-category-arrow.expanded {
             transform: rotate(180deg);
         }
+
         .edit-category-content {
             display: none;
             padding: 12px;
         }
+
         .edit-category-content.expanded {
             display: block;
         }
-        
+
         .edit-category-section {
             background: white;
             border-radius: 12px;
@@ -575,6 +710,7 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
+
         .edit-category-title {
             font-size: 16px;
             font-weight: bold;
@@ -583,13 +719,14 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 6px;
         }
+
         .dish-edit-list {
             background: white;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #eee;
         }
-        /* 简化为只有名称、价格、编辑、删除 */
+
         .dish-edit-item {
             display: grid;
             grid-template-columns: 1fr 80px 60px 60px;
@@ -599,6 +736,7 @@
             border-bottom: 1px solid #eee;
             font-size: 14px;
         }
+
         @media (max-width: 400px) {
             .dish-edit-item {
                 grid-template-columns: 1fr 60px 50px 50px;
@@ -607,24 +745,19 @@
                 gap: 4px;
             }
         }
+
         .dish-edit-item.header {
             font-weight: bold;
             background: #f0f8ff;
             font-size: 13px;
         }
+
         .dish-edit-item:last-child {
             border-bottom: none;
         }
+
         .edit-btn {
-            background: #4299e1;
-            color: white;
-            padding: 6px 2px;
-            font-size: 12px;
-            min-width: 0;
-            border-radius: 4px;
-        }
-        .remove-btn {
-            background: #f56565;
+            background: var(--color-primary);
             color: white;
             padding: 6px 2px;
             font-size: 12px;
@@ -632,7 +765,18 @@
             border-radius: 4px;
         }
 
-        /* 六级界面：小票页面 */
+        .remove-btn {
+            background: var(--color-danger);
+            color: white;
+            padding: 6px 2px;
+            font-size: 12px;
+            min-width: 0;
+            border-radius: 4px;
+        }
+
+        /* ============================================================
+           7. 页面级样式 - 7.1 小票页面
+           ============================================================ */
         .ticket-page-header {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -647,10 +791,12 @@
             z-index: 100;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
         .ticket-page-content {
             max-width: 100%;
             padding-bottom: 100px;
         }
+
         .ticket-float-bar {
             position: fixed;
             top: 70px;
@@ -664,10 +810,12 @@
             display: flex;
             gap: 8px;
         }
+
         .ticket-float-bar button {
             flex: 1;
             margin: 0;
         }
+
         .ticket-info-section {
             background: white;
             border-radius: 12px;
@@ -676,9 +824,11 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             margin-top: 80px;
         }
+
         .ticket-input-group {
             margin-bottom: 12px;
         }
+
         .ticket-input-group label {
             display: block;
             margin-bottom: 6px;
@@ -686,6 +836,7 @@
             color: #333;
             font-size: 15px;
         }
+
         .ticket-input-group input {
             width: 100%;
             padding: 10px 12px;
@@ -694,31 +845,30 @@
             font-size: 15px;
             background: white;
         }
-        
-        /* 搜索框虚线 */
+
+        /* 7.1.1 搜索框虚线 */
         .dashed-search {
             border: 2px dashed #999 !important;
             background: #fafafa;
         }
-        
-        /* 点菜按钮 */
+
+        /* 7.1.2 按钮样式 */
         .order-btn-bar {
-            background: #4299e1;
+            background: var(--color-primary);
             color: white;
             font-size: 16px;
             font-weight: bold;
         }
-        
-        /* 生成小票按钮绿色 */
+
         .generate-btn {
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
             font-weight: bold;
             font-size: 16px;
             width: 100%;
         }
-        
-        /* 额外费用区域样式 - 改小一点 */
+
+        /* 7.1.3 额外费用区域 */
         .extra-fees-inline {
             margin-top: 10px;
             padding: 10px;
@@ -727,15 +877,14 @@
             border-radius: 6px;
             font-size: 14px;
         }
-        
-        /* 预设费用横向标签云 - 紧凑布局 */
+
         .preset-fees-container {
             display: flex;
             flex-direction: column;
             gap: 6px;
             margin-bottom: 10px;
         }
-        
+
         .preset-fee-row {
             display: flex;
             align-items: center;
@@ -745,7 +894,7 @@
             border-radius: 4px;
             border: 1px solid #c6f6d5;
         }
-        
+
         .preset-fee-name {
             width: 70px;
             font-weight: bold;
@@ -753,11 +902,11 @@
             flex-shrink: 0;
             font-size: 13px;
         }
-        
+
         .preset-fee-input {
             flex: 1;
         }
-        
+
         .preset-fee-input input {
             width: 100%;
             padding: 4px 6px;
@@ -766,7 +915,7 @@
             font-size: 13px;
             text-align: center;
         }
-        
+
         .preset-fee-add-btn {
             width: 50px;
             background: #718096;
@@ -778,8 +927,7 @@
             cursor: pointer;
             font-weight: bold;
         }
-        
-        /* 添加常用按钮 - 改为行内样式 */
+
         .manage-preset-btn {
             background: #718096;
             color: white;
@@ -791,8 +939,7 @@
             margin-left: auto;
             white-space: nowrap;
         }
-        
-        /* 自定义添加单行紧凑布局 */
+
         .extra-fee-input-row {
             display: grid;
             grid-template-columns: 1fr 100px 60px;
@@ -804,6 +951,7 @@
             margin-top: 6px;
             border: 1px solid #c6f6d5;
         }
+
         .extra-fee-input-row input {
             width: 100%;
             padding: 6px;
@@ -811,8 +959,9 @@
             border-radius: 6px;
             font-size: 13px;
         }
+
         .extra-fee-add-btn {
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
             height: 32px;
             padding: 0;
@@ -822,10 +971,11 @@
             border-radius: 6px;
             cursor: pointer;
         }
-        
+
         .extra-fee-list {
             margin-top: 8px;
         }
+
         .extra-fee-item {
             display: flex;
             justify-content: space-between;
@@ -837,16 +987,19 @@
             font-size: 13px;
             border: 1px solid #c6f6d5;
         }
+
         .extra-fee-item-name {
             font-weight: bold;
             color: #2d3748;
         }
+
         .extra-fee-item-amount {
-            color: #f56565;
+            color: var(--color-danger);
             font-weight: bold;
         }
+
         .extra-fee-delete {
-            color: #f56565;
+            color: var(--color-danger);
             background: #fff5f5;
             border: none;
             padding: 2px 6px;
@@ -855,14 +1008,15 @@
             cursor: pointer;
             margin-left: 8px;
         }
+
         .extra-fee-empty {
             text-align: center;
             color: #999;
             padding: 8px;
             font-size: 13px;
         }
-        
-        /* 小票预览区 - 分类虚线框样式 */
+
+        /* 7.1.4 小票预览区 */
         .ticket-preview-section {
             background: white;
             border-radius: 12px;
@@ -870,6 +1024,7 @@
             margin-bottom: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
+
         .preview-title {
             font-size: 16px;
             font-weight: bold;
@@ -881,12 +1036,13 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .preview-list {
             overflow-y: visible;
             max-height: none;
             margin-bottom: 12px;
         }
-        
+
         /* 分类虚线框颜色定义 */
         .preview-category-box {
             border: 2px dashed;
@@ -894,18 +1050,19 @@
             padding: 10px;
             margin-bottom: 12px;
         }
-        .preview-category-box-烤鱼类 { border-color: #48bb78; background: #f0fff4; }
-        .preview-category-box-汤锅类 { border-color: #4299e1; background: #ebf8ff; }
-        .preview-category-box-配菜类 { border-color: #ed8936; background: #fffaf0; }
-        .preview-category-box-主食点心 { border-color: #9f7aea; background: #faf5ff; }
-        .preview-category-box-炒菜类 { border-color: #e53e3e; background: #fff5f5; }
-        .preview-category-box-干锅铁板 { border-color: #d69e2e; background: #fffff0; }
-        .preview-category-box-凉菜类 { border-color: #38b2ac; background: #e6fffa; }
-        .preview-category-box-临时菜 { border-color: #9f7aea; background: #faf5ff; }
-        .preview-category-box-啤酒类 { border-color: #f6ad55; background: #fffaf0; }
-        .preview-category-box-白酒类 { border-color: #fc8181; background: #fff5f5; }
-        .preview-category-box-饮料类 { border-color: #63b3ed; background: #ebf8ff; }
-        
+
+        .preview-category-box-烤鱼类 { border-color: var(--cat-grill); background: #f0fff4; }
+        .preview-category-box-汤锅类 { border-color: var(--cat-soup); background: #ebf8ff; }
+        .preview-category-box-配菜类 { border-color: var(--cat-side); background: #fffaf0; }
+        .preview-category-box-主食点心 { border-color: var(--cat-staple); background: #faf5ff; }
+        .preview-category-box-炒菜类 { border-color: var(--cat-stir); background: #fff5f5; }
+        .preview-category-box-干锅铁板 { border-color: var(--cat-dry); background: #fffff0; }
+        .preview-category-box-凉菜类 { border-color: var(--cat-cold); background: #e6fffa; }
+        .preview-category-box-临时菜 { border-color: var(--cat-temp); background: #faf5ff; }
+        .preview-category-box-啤酒类 { border-color: var(--cat-beer); background: #fffaf0; }
+        .preview-category-box-白酒类 { border-color: var(--cat-liquor); background: #fff5f5; }
+        .preview-category-box-饮料类 { border-color: var(--cat-drink); background: #ebf8ff; }
+
         .preview-category-title {
             font-size: 15px;
             font-weight: bold;
@@ -914,6 +1071,7 @@
             border-bottom: 1px solid rgba(0,0,0,0.1);
             color: #333;
         }
+
         .preview-item {
             display: flex;
             align-items: center;
@@ -924,27 +1082,33 @@
             margin-bottom: 6px;
             font-size: 14px;
         }
+
         .preview-item:last-child {
             margin-bottom: 0;
         }
+
         .preview-item-info {
             flex: 1;
         }
+
         .preview-item-name {
             font-weight: bold;
             margin-bottom: 2px;
         }
+
         .preview-item-details {
             color: #666;
             font-size: 13px;
         }
+
         .preview-item-actions {
             display: flex;
             align-items: center;
             gap: 6px;
         }
+
         .preview-delete-btn {
-            background: #f56565;
+            background: var(--color-danger);
             color: white;
             padding: 4px 8px;
             border-radius: 4px;
@@ -952,14 +1116,15 @@
             border: none;
             cursor: pointer;
         }
+
         .empty-preview {
             text-align: center;
             color: #999;
             padding: 20px;
             font-size: 15px;
         }
-        
-        /* 小票显示样式 - 纯文本优化版 */
+
+        /* 7.1.5 小票显示样式 */
         .ticket-display {
             background: #fff;
             padding: 15px;
@@ -972,18 +1137,21 @@
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+
         .receipt-line {
             display: flex;
             justify-content: space-between;
             margin-bottom: 4px;
             font-size: 14px;
         }
+
         .receipt-category-title {
             font-weight: bold;
             margin: 8px 0 4px 0;
             padding-left: 0;
             font-size: 14px;
         }
+
         .receipt-total {
             margin-top: 10px;
             padding-top: 8px;
@@ -991,13 +1159,14 @@
             font-weight: bold;
             font-size: 14px;
         }
-        
-        /* 小票操作按钮区域 */
+
+        /* 7.1.6 小票操作按钮 */
         .ticket-actions {
             display: flex;
             gap: 8px;
             margin-top: 15px;
         }
+
         .ticket-actions button {
             flex: 1;
             padding: 12px;
@@ -1007,16 +1176,20 @@
             border-radius: 6px;
             cursor: pointer;
         }
+
         .save-img-btn {
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
         }
+
         .copy-text-btn {
-            background: #4299e1;
+            background: var(--color-primary);
             color: white;
         }
-        
-        /* 数量输入弹窗 */
+
+        /* ============================================================
+           8. 跨页面通用组件 - 8.1 弹窗/模态框
+           ============================================================ */
         .quantity-modal {
             display: none;
             position: fixed;
@@ -1029,9 +1202,11 @@
             align-items: center;
             justify-content: center;
         }
+
         .quantity-modal.active {
             display: flex;
         }
+
         .quantity-modal-content {
             background: white;
             width: 90%;
@@ -1041,6 +1216,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
         }
+
         .modal-title {
             font-size: 18px;
             font-weight: bold;
@@ -1048,6 +1224,7 @@
             text-align: center;
             color: #333;
         }
+
         .modal-dish-info {
             text-align: center;
             margin-bottom: 15px;
@@ -1055,20 +1232,24 @@
             background: #f8f9fa;
             border-radius: 8px;
         }
+
         .modal-dish-name {
             font-size: 16px;
             font-weight: bold;
             color: #333;
             margin-bottom: 4px;
         }
+
         .modal-dish-price {
             font-size: 15px;
             color: #f5576c;
             font-weight: bold;
         }
+
         .quantity-input-group {
             margin-bottom: 20px;
         }
+
         .quantity-input-group label {
             display: block;
             margin-bottom: 8px;
@@ -1076,6 +1257,7 @@
             color: #555;
             font-weight: bold;
         }
+
         .quantity-input {
             width: 100%;
             padding: 12px;
@@ -1085,10 +1267,12 @@
             border-radius: 8px;
             background: white;
         }
+
         .modal-actions {
             display: flex;
             gap: 8px;
         }
+
         .modal-actions button {
             flex: 1;
             padding: 12px;
@@ -1098,14 +1282,17 @@
             border-radius: 6px;
             cursor: pointer;
         }
+
         .cancel-btn {
             background: #a0aec0;
             color: white;
         }
+
         .confirm-btn {
-            background: #48bb78;
+            background: var(--color-success);
             color: white;
         }
+
         .close-modal {
             position: absolute;
             top: 12px;
@@ -1113,7 +1300,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #f56565;
+            background: var(--color-danger);
             color: white;
             display: flex;
             align-items: center;
@@ -1121,19 +1308,8 @@
             cursor: pointer;
             font-size: 16px;
         }
-        
-        /* 管理固定项弹窗 */
-        .preset-manage-modal .preset-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #f7fafc;
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
-        
-        /* 换桌弹窗 */
+
+        /* 8.1.1 特定弹窗样式 */
         .change-table-modal {
             display: none;
             position: fixed;
@@ -1146,9 +1322,11 @@
             align-items: center;
             justify-content: center;
         }
+
         .change-table-modal.active {
             display: flex;
         }
+
         .change-table-content {
             background: white;
             width: 90%;
@@ -1158,6 +1336,7 @@
             max-height: 80vh;
             overflow-y: auto;
         }
+
         .change-table-title {
             font-size: 18px;
             font-weight: bold;
@@ -1165,12 +1344,14 @@
             text-align: center;
             color: #333;
         }
+
         .change-table-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin-bottom: 15px;
         }
+
         .change-table-item {
             padding: 15px;
             border: 2px solid #ddd;
@@ -1180,21 +1361,24 @@
             font-weight: bold;
             transition: all 0.2s;
         }
+
         .change-table-item:active {
             transform: scale(0.95);
         }
+
         .change-table-item.selected {
-            background: #4299e1;
+            background: var(--color-primary);
             color: white;
-            border-color: #4299e1;
+            border-color: var(--color-primary);
         }
+
         .change-table-item.disabled {
             opacity: 0.5;
             background: #f0f0f0;
             cursor: not-allowed;
         }
-        
-        /* 搜索下拉结果 */
+
+        /* 8.1.2 搜索下拉结果 */
         .search-results {
             position: absolute;
             background: white;
@@ -1207,6 +1391,7 @@
             display: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
         .search-result-item {
             padding: 10px;
             border-bottom: 1px solid #eee;
@@ -1216,46 +1401,54 @@
             align-items: center;
             transition: background 0.2s;
         }
+
         .search-result-item:active {
             background: #f0f0f0;
         }
+
         .search-result-item-info {
             display: flex;
             flex-direction: column;
         }
+
         .search-result-item-name {
             font-weight: bold;
             margin-bottom: 3px;
             font-size: 15px;
         }
+
         .search-result-item-category {
             color: #999;
             font-size: 12px;
         }
+
         .price-tag {
             color: #f5576c;
             font-weight: bold;
             font-size: 15px;
         }
+
         .add-temp-dish-btn {
-            background: #9f7aea;
+            background: var(--color-purple);
             color: white;
             padding: 12px;
             text-align: center;
             font-weight: bold;
             border-top: 1px solid #ddd;
         }
+
         .add-temp-dish-btn:active {
             background: #805ad5;
         }
-        
-        /* 菜品管理搜索弹窗样式 */
+
+        /* 8.1.3 菜品管理搜索弹窗 */
         .dish-search-modal-content {
             max-width: 400px;
             max-height: 70vh;
             display: flex;
             flex-direction: column;
         }
+
         .dish-search-input {
             width: 100%;
             padding: 12px;
@@ -1264,6 +1457,7 @@
             font-size: 16px;
             margin-bottom: 15px;
         }
+
         .dish-search-results {
             flex: 1;
             overflow-y: auto;
@@ -1272,35 +1466,40 @@
             border-radius: 8px;
             background: #fafafa;
         }
+
         .dish-search-item {
             padding: 12px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
             transition: all 0.2s;
         }
+
         .dish-search-item:hover, .dish-search-item:active {
             background: #ebf8ff;
         }
+
         .dish-search-item-name {
             font-weight: bold;
             font-size: 16px;
             color: #2d3748;
             margin-bottom: 4px;
         }
+
         .dish-search-item-info {
             display: flex;
             justify-content: space-between;
             font-size: 13px;
             color: #718096;
         }
-        
-        /* 添加菜品步骤1 - 选择分类 */
+
+        /* 8.1.4 添加菜品步骤 */
         .category-select-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-bottom: 15px;
         }
+
         .category-select-item {
             padding: 15px;
             border: 2px solid #e2e8f0;
@@ -1311,16 +1510,17 @@
             transition: all 0.2s;
             background: white;
         }
+
         .category-select-item:active {
             transform: scale(0.95);
             background: #ebf8ff;
-            border-color: #4299e1;
+            border-color: var(--color-primary);
         }
-        
-        /* 添加菜品步骤2 - 表单 */
+
         .add-dish-form-modal .form-item {
             margin-bottom: 15px;
         }
+
         .add-dish-form-modal label {
             display: block;
             margin-bottom: 6px;
@@ -1328,6 +1528,7 @@
             color: #555;
             font-size: 14px;
         }
+
         .add-dish-form-modal input, .add-dish-form-modal select {
             width: 100%;
             padding: 10px;
@@ -1335,31 +1536,21 @@
             border-radius: 6px;
             font-size: 15px;
         }
-        
-        /* 底部安全区域（针对iPhone X等全面屏） */
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            body {
-                padding-bottom: env(safe-area-inset-bottom);
-            }
+
+        /* 8.1.5 管理固定项弹窗 */
+        .preset-manage-modal .preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f7fafc;
+            margin-bottom: 8px;
+            border-radius: 6px;
         }
-        
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a1a1a1;
-        }
-        
-        /* 加载动画 */
+
+        /* ============================================================
+           9. 跨页面通用组件 - 9.1 加载与提示
+           ============================================================ */
         .loading-spinner {
             display: none;
             position: fixed;
@@ -1373,23 +1564,25 @@
             justify-content: center;
             flex-direction: column;
         }
+
         .loading-spinner.active {
             display: flex;
         }
+
         .spinner {
             width: 50px;
             height: 50px;
             border: 5px solid #f3f3f3;
-            border-top: 5px solid #4299e1;
+            border-top: 5px solid var(--color-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* Toast提示 */
+
         .toast {
             position: fixed;
             top: 50%;
@@ -1406,14 +1599,44 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
+
         .toast.show {
             opacity: 1;
+        }
+
+        /* ============================================================
+           10. 响应式与打印媒体查询
+           ============================================================ */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 一级界面：桌号选择页 -->
+        <!-- ============================================================
+             页面 1：桌号选择页
+             ============================================================ -->
         <div id="tablePage" class="page active">
             <div class="table-page-header">
                 <h2>桌号选择</h2>
@@ -1422,7 +1645,9 @@
             <div class="table-list" id="tableList"></div>
         </div>
 
-        <!-- 二级界面：桌号点菜页 - 美团外卖式布局 -->
+        <!-- ============================================================
+             页面 2：桌号点菜页（美团外卖式布局）
+             ============================================================ -->
         <div id="orderPage" class="page">
             <div class="order-header-new">
                 <div class="order-header-title" id="currentTableDisplay">内3</div>
@@ -1434,29 +1659,18 @@
             </div>
             
             <div class="order-page-container">
-                <!-- 左侧分类导航 -->
-                <div class="category-sidebar" id="categorySidebar">
-                    <!-- 动态生成分类导航 -->
-                </div>
-                
-                <!-- 右侧菜品列表 -->
-                <div class="dishes-content" id="dishesContent">
-                    <!-- 动态生成菜品列表 -->
-                </div>
+                <div class="category-sidebar" id="categorySidebar"></div>
+                <div class="dishes-content" id="dishesContent"></div>
             </div>
             
-            <!-- 已点菜品抽屉 -->
             <div class="order-drawer" id="orderDrawer">
                 <div class="drawer-header">
                     <span class="drawer-title">已点菜品</span>
                     <button class="clear-all-btn" onclick="clearAllDishes()">清空全部</button>
                 </div>
-                <div class="drawer-content" id="drawerContent">
-                    <!-- 动态生成已点菜品列表 -->
-                </div>
+                <div class="drawer-content" id="drawerContent"></div>
             </div>
             
-            <!-- 底部悬浮栏 -->
             <div class="bottom-float-bar">
                 <div class="float-bar-content">
                     <div class="float-bar-left">
@@ -1473,38 +1687,38 @@
             </div>
         </div>
 
-        <!-- 四级界面：菜品管理页 -->
+        <!-- ============================================================
+             页面 3：菜品管理页
+             ============================================================ -->
         <div id="dishEditPage" class="page">
             <div class="dish-edit-header">
                 <h2>菜品管理</h2>
                 <button class="back-table-btn" onclick="switchPage('tablePage')">返回桌号</button>
             </div>
             
-            <!-- 操作按钮区域 -->
             <div class="dish-edit-actions">
                 <button class="dish-edit-action-btn btn-modify" onclick="openSearchDishModal()">📝 修改菜品</button>
                 <button class="dish-edit-action-btn btn-add" onclick="openAddDishStep1()">➕ 添加菜品</button>
             </div>
             
-            <!-- 菜品列表（默认折叠） -->
             <div id="dishEditCategoryContainer"></div>
         </div>
 
-        <!-- 五级界面：小票页面 -->
+        <!-- ============================================================
+             页面 4：小票页面
+             ============================================================ -->
         <div id="ticketPage" class="page">
             <div class="ticket-page-header">
                 <h2>收银小票</h2>
                 <button class="back-order-btn" onclick="switchPage('orderPage')" style="background: white; color: #f5576c;">返回点菜</button>
             </div>
             
-            <!-- 浮动按钮栏 -->
             <div class="ticket-float-bar">
                 <button class="order-btn-bar" onclick="switchPage('orderPage')">📝 点菜</button>
                 <button class="generate-btn" onclick="generateTicket()">🧾 生成小票</button>
             </div>
             
             <div class="ticket-page-content">
-                <!-- 桌号信息 -->
                 <div class="ticket-info-section">
                     <div class="ticket-input-group">
                         <label>桌号</label>
@@ -1512,52 +1726,49 @@
                     </div>
                 </div>
                 
-                <!-- 搜索添加菜品 -->
                 <div class="ticket-info-section">
                     <div class="ticket-input-group" style="position: relative;">
-                        <label>🔍 搜索添加菜品/酒水</label>
-                        <input type="text" id="ticketDishSearch" class="dashed-search" placeholder="输入名称搜索并添加..." oninput="searchDishForTicket()">
+                        <label>🔍 搜索添加菜品/酒水（支持拼音首字母）</label>
+                        <input type="text" id="ticketDishSearch" class="dashed-search" placeholder="输入名称或拼音首字母，如xlx、香辣虾..." oninput="searchDishForTicket()">
                         <div id="ticketSearchResult" class="search-results"></div>
                     </div>
                 </div>
 
-                <!-- 小票预览区（包含额外费用） -->
                 <div class="ticket-preview-section">
                     <div class="preview-title">已点菜品预览</div>
                     <div class="preview-list" id="ticketPreviewList">
                         <div class="empty-preview">暂无菜品，请搜索添加</div>
                     </div>
                     
-                    <!-- 额外费用区域（移到预览区内） -->
                     <div class="extra-fees-inline" id="extraFeesInline">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <span style="font-weight: bold; color: #2d3748; font-size: 15px;">额外费用</span>
                             <button class="manage-preset-btn" onclick="openPresetManageModal()">管理常用</button>
                         </div>
                         
-                        <!-- 预设固定项 -->
                         <div id="presetFeesContainer"></div>
                         
-                        <!-- 自定义添加 -->
                         <div class="extra-fee-input-row">
                             <input type="text" id="extraFeeName" placeholder="项目名称（如：纸巾）">
                             <input type="number" id="extraFeeAmount" step="0.1" placeholder="金额">
                             <button class="extra-fee-add-btn" onclick="addExtraFee()">添加</button>
                         </div>
                         
-                        <!-- 已添加的其他费用 -->
                         <div class="extra-fee-list" id="extraFeeList">
                             <div class="extra-fee-empty">暂无额外费用</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 小票显示区域 -->
                 <div id="ticketDisplayArea"></div>
             </div>
         </div>
 
-        <!-- 数量输入弹窗（通用） -->
+        <!-- ============================================================
+             弹窗组件：点菜页相关
+             ============================================================ -->
+        
+        <!-- 通用数量输入弹窗 -->
         <div id="quantityModal" class="quantity-modal">
             <div class="quantity-modal-content">
                 <div class="close-modal" onclick="closeQuantityModal()">×</div>
@@ -1597,23 +1808,25 @@
             </div>
         </div>
 
-        <!-- 管理固定项弹窗 -->
-        <div id="presetManageModal" class="quantity-modal preset-manage-modal">
-            <div class="quantity-modal-content">
-                <div class="close-modal" onclick="closePresetManageModal()">×</div>
-                <div class="modal-title">管理常用固定项</div>
-                <div style="margin-bottom: 15px; color: #666; font-size: 14px;">
-                    添加常用的固定费用项（如纸巾、打包盒），只需输入金额即可快速添加。
+        <!-- 换桌弹窗 -->
+        <div id="changeTableModal" class="change-table-modal">
+            <div class="change-table-content">
+                <div class="change-table-title">选择目标桌号</div>
+                <div style="margin-bottom: 10px; color: #666; font-size: 14px; text-align: center;">
+                    将【<span id="changeTableSource" style="font-weight: bold; color: #333;"></span>】的菜品换到：
                 </div>
-                <div id="presetListContainer" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
-                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                    <input type="text" id="newPresetName" placeholder="项目名称（如：纸巾）" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
-                    <button class="confirm-btn" onclick="addNewPreset()" style="padding: 10px 16px;">添加</button>
+                <div class="change-table-grid" id="changeTableGrid"></div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="cancel-btn" style="flex: 1; padding: 12px;" onclick="closeChangeTableModal()">取消</button>
+                    <button class="confirm-btn" style="flex: 1; padding: 12px;" onclick="confirmChangeTable()">确认换桌</button>
                 </div>
-                <button class="cancel-btn" style="width: 100%;" onclick="closePresetManageModal()">关闭</button>
             </div>
         </div>
 
+        <!-- ============================================================
+             弹窗组件：小票页相关
+             ============================================================ -->
+        
         <!-- 临时菜品添加弹窗 -->
         <div id="tempDishModal" class="quantity-modal">
             <div class="quantity-modal-content">
@@ -1641,30 +1854,34 @@
             </div>
         </div>
 
-        <!-- 换桌弹窗 -->
-        <div id="changeTableModal" class="change-table-modal">
-            <div class="change-table-content">
-                <div class="change-table-title">选择目标桌号</div>
-                <div style="margin-bottom: 10px; color: #666; font-size: 14px; text-align: center;">
-                    将【<span id="changeTableSource" style="font-weight: bold; color: #333;"></span>】的菜品换到：
+        <!-- 管理固定项弹窗 -->
+        <div id="presetManageModal" class="quantity-modal preset-manage-modal">
+            <div class="quantity-modal-content">
+                <div class="close-modal" onclick="closePresetManageModal()">×</div>
+                <div class="modal-title">管理常用固定项</div>
+                <div style="margin-bottom: 15px; color: #666; font-size: 14px;">
+                    添加常用的固定费用项（如纸巾、打包盒），只需输入金额即可快速添加。
                 </div>
-                <div class="change-table-grid" id="changeTableGrid"></div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="cancel-btn" style="flex: 1; padding: 12px;" onclick="closeChangeTableModal()">取消</button>
-                    <button class="confirm-btn" style="flex: 1; padding: 12px;" onclick="confirmChangeTable()">确认换桌</button>
+                <div id="presetListContainer" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <input type="text" id="newPresetName" placeholder="项目名称（如：纸巾）" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    <button class="confirm-btn" onclick="addNewPreset()" style="padding: 10px 16px;">添加</button>
                 </div>
+                <button class="cancel-btn" style="width: 100%;" onclick="closePresetManageModal()">关闭</button>
             </div>
         </div>
 
+        <!-- ============================================================
+             弹窗组件：菜品管理页相关
+             ============================================================ -->
+        
         <!-- 菜品搜索弹窗（修改菜品用） -->
         <div id="searchDishModal" class="quantity-modal">
             <div class="quantity-modal-content dish-search-modal-content">
                 <div class="close-modal" onclick="closeSearchDishModal()">×</div>
                 <div class="modal-title">搜索菜品</div>
                 <input type="text" class="dish-search-input" id="modifyDishSearchInput" placeholder="输入菜品名称搜索..." oninput="searchDishForModify()">
-                <div class="dish-search-results" id="modifyDishSearchResults">
-                    <!-- 搜索结果 -->
-                </div>
+                <div class="dish-search-results" id="modifyDishSearchResults"></div>
             </div>
         </div>
 
@@ -1709,9 +1926,7 @@
             <div class="quantity-modal-content">
                 <div class="close-modal" onclick="closeAddDishStep1()">×</div>
                 <div class="modal-title">选择菜品分类</div>
-                <div class="category-select-grid" id="addDishCategoryGrid">
-                    <!-- 动态生成分类选项 -->
-                </div>
+                <div class="category-select-grid" id="addDishCategoryGrid"></div>
                 <button class="cancel-btn" style="width: 100%; margin-top: 10px;" onclick="closeAddDishStep1()">取消</button>
             </div>
         </div>
@@ -1741,41 +1956,90 @@
             </div>
         </div>
 
-        <!-- 加载动画 -->
+        <!-- ============================================================
+             全局组件：加载与提示
+             ============================================================ -->
         <div class="loading-spinner" id="loadingSpinner">
             <div class="spinner"></div>
             <div style="margin-top: 12px; font-size: 15px; color: #666;">加载中...</div>
         </div>
         
-        <!-- Toast提示容器 -->
         <div id="toastContainer" class="toast"></div>
     </div>
 
     <script>
-        /* ===== 常量定义区域开始 ===== */
+        /* ============================================================
+           第一部分：配置常量
+           功能：纯配置数据，无业务逻辑
+           ============================================================ */
         
-        const CATEGORY_ORDER = ['烤鱼类', '汤锅类', '炒菜类', '干锅铁板', '凉菜类', '配菜类', '主食点心', '啤酒类', '白酒类', '饮料类'];
-        
+        /* 拼音首字母映射表（仅包含菜单中出现的汉字） */
+        const pinyinMap = {
+            // 烤鱼类
+            '清': 'q', '江': 'j', '鱼': 'y', '巴': 'b', '沙': 's', '草': 'c',
+            // 汤锅类
+            '铁': 't', '锅': 'g', '牛': 'n', '蛙': 'w', '小': 'x', '大': 'd', '干': 'g', '鸡': 'j',
+            '重': 'c', '庆': 'q', '烧': 's', '公': 'g', '甲': 'j', '煲': 'b', '特': 't', '价': 'j',
+            '中': 'z', '猪': 'z', '肚': 'd', '黑': 'h', '山': 's', '羊': 'y', '火': 'h', '美': 'm',
+            '酸': 's', '汤': 't', '蹄': 't', '蜀': 's', '腊': 'l', '脚': 'j', '肥': 'f', '肠': 'c',
+            '排': 'p', '杂': 'z', '菜': 'c', '石': 's', '冬': 'd', '瓜': 'g', '肉': 'r',
+            // 配菜类
+            '魔': 'm', '芋': 'y', '鸭': 'y', '血': 'x', '毛': 'm', '丸': 'w', '香': 'x',
+            '水': 's', '豆': 'd', '腐': 'f', '土': 't', '米': 'm', '玉': 'y', '皮': 'p',
+            '淮': 'h', '芽': 'y', '莲': 'l', '藕': 'o', '油': 'y', '麦': 'm', '白': 'b',
+            '萝': 'l', '卜': 'b', '红': 'h', '薯': 's', '粉': 'f', '海': 'h', '带': 'd',
+            '紫': 'z', '苏': 's', '生': 's', '金': 'j', '针': 'z', '菇': 'g', '冬': 'd',
+            // 凉菜类
+            '凉': 'l', '拌': 'b', '猪': 'z', '耳': 'e', '脱': 't', '骨': 'g', '凤': 'f', '爪': 'z',
+            '折': 'z', '根': 'g', '卤': 'l', '拼': 'p', '盘': 'p', '辣': 'l', '蛋': 'd',
+            '芥': 'j', '末': 'm', '秋': 'q', '葵': 'k', '刀': 'd', '拍': 'p', '青': 'q',
+            '花': 'h', '生': 's', '田': 't', '螺': 'l',
+            // 主食点心
+            '老': 'l', '妈': 'm', '子': 'z', '炒': 'c', '饭': 'f', '三': 's', '丝': 's',
+            '河': 'h', '南': 'n', '饼': 'b', '地': 'd', '银': 'y', '馒': 'm',
+            '头': 't', '脆': 'c', '蕉': 'j', '卷': 'j', '虾': 'x', '粥': 'z', '瘦': 's',
+            '瓜': 'g',
+            // 炒菜类
+            '爆': 'b', '腰': 'y', '椒': 'j', '回': 'h', '农': 'n', '家': 'j',
+            '梅': 'm', '扣': 'k', '孜': 'z', '然': 'r', '清': 'q',
+            '笋': 's', '煸': 'b', '泥': 'n', '鳅': 'q', '蒜': 's', '空': 'k', '虎': 'h',
+            '尖': 'j', '煎': 'j', '手': 's', '撕': 's', '包': 'b', '韭': 'j', '黄': 'h',
+            '土': 't', '丝': 's', '鸭': 'y', '下': 'x', '巴': 'b', '豉': 'c', '炒': 'c',
+            // 干锅铁板
+            '翅': 'c', '尾': 'w', '腌': 'y',
+            // 啤酒类
+            '哈': 'h', '尔': 'e', '滨': 'b', '冰': 'b', '纯': 'c', '漓': 'l', '泉': 'q',
+            '标': 'b', '雪': 'x', '乌': 'w', '珠': 'z', '江': 'j', '零': 'l', '度': 'd',
+            '百': 'b', '威': 'w',
+            // 白酒类
+            '铺': 'p', '荞': 'q', '年': 'n', '糊': 'h', '涂': 't', '劲': 'j',
+            '栏': 'l', '天': 't', '龙': 'l',
+            // 饮料类
+            '壹': 'y', '号': 'h', '王': 'w', '吉': 'j', '椰': 'y', '汁': 'z', '橙': 'c',
+            '可': 'k', '乐': 'l', '碧': 'b', '矿': 'k', '矿': 'k', '泉': 'q',
+            // 其他可能出现的
+            '料': 'l', '酒': 'j', '饮': 'y', '餐': 'c', '厅': 't', '临': 'l', '时': 's'
+        };
+
+        /* 业务常量 */
+        const CATEGORY_ORDER = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类'];
         const DRINK_CATEGORIES = ['啤酒类', '白酒类', '饮料类'];
-        
         const TABLE_TYPES = {
             INNER: ['内1', '内2', '内3', '内4'],
             OUTER: ['外1', '外2', '外3', '外4', '外5', '外6'],
             PACK: ['打包1', '打包2']
         };
-        
-        const TICKET_CATEGORY_ORDER = ['烤鱼类', '汤锅类', '炒菜类', '干锅铁板', '凉菜类', '配菜类', '主食点心', '临时菜', '啤酒类', '白酒类', '饮料类'];
-        
+        const TICKET_CATEGORY_ORDER = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类', '临时菜'];
         const DISH_CATEGORIES = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类'];
-        
         const STORAGE_KEY = 'yangBossData_v4';
-        
         const TABLE_LIST = ["内1", "内2", "内3", "内4", "外1", "外2", "外3", "外4", "外5", "外6", "打包1", "打包2"];
-        
-        /* ===== 常量定义区域结束 ===== */
 
-        /* ===== 菜品数据区域开始 ===== */
-        // 已删除categoryId和prompt字段
+        /* ============================================================
+           第二部分：数据模型（状态管理）
+           功能：应用全局状态与初始数据
+           ============================================================ */
+        
+        /* 初始菜品数据 */
         let dishData = [
             // 烤鱼类
             { globalId: 101, name: '清江鱼', price: 69, category: '烤鱼类', isDrink: false },
@@ -1939,10 +2203,8 @@
             { globalId: 1011, name: '大雪碧', price: 10, category: '饮料类', isDrink: true },
             { globalId: 1012, name: '矿泉水', price: 3, category: '饮料类', isDrink: true }
         ];
-        // ===== 菜品数据区域结束 =====
 
-        /* ===== 全局变量和状态区域开始 ===== */
-        
+        /* 全局状态变量 */
         let tableDishesMap = {};
         let currentTable = "";
         let lastOrderedTable = "";
@@ -1957,19 +2219,45 @@
         let changeTableTarget = null;
         let activeCategory = CATEGORY_ORDER[0];
         let currentBeerDish = null;
-        
-        /* ===== 全局变量和状态区域结束 ===== */
 
-        /* ===== 辅助函数区域开始 ===== */
-        
+        /* ============================================================
+           第三部分：工具函数
+           功能：纯工具函数，无副作用，不依赖业务状态
+           ============================================================ */
+
+        /* 拼音首字母获取 */
+        function getPinyinInitial(str) {
+            if (!str) return '';
+            let result = '';
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charAt(i);
+                if (pinyinMap[char]) {
+                    result += pinyinMap[char];
+                } else if (/[a-zA-Z]/.test(char)) {
+                    result += char.toLowerCase();
+                }
+            }
+            return result;
+        }
+
+        /* 初始化菜品拼音首字母 */
+        function initDishPinyinInitials() {
+            dishData.forEach(dish => {
+                if (!dish.pinyinInitials) {
+                    dish.pinyinInitials = getPinyinInitial(dish.name);
+                }
+            });
+        }
+
+        /* UI 反馈工具 */
         function showLoading() {
             document.getElementById('loadingSpinner').classList.add('active');
         }
-        
+
         function hideLoading() {
             document.getElementById('loadingSpinner').classList.remove('active');
         }
-        
+
         function showToast(message, duration = 2000) {
             const toast = document.getElementById('toastContainer');
             toast.textContent = message;
@@ -1978,15 +2266,17 @@
                 toast.classList.remove('show');
             }, duration);
         }
-        
+
+        /* 业务判断工具 */
         function isDrinkCategory(category) {
             return DRINK_CATEGORIES.includes(category);
         }
-        
-        /* ===== 辅助函数区域结束 ===== */
 
-        /* ===== localStorage自动保存区域开始 ===== */
-        
+        /* ============================================================
+           第四部分：存储管理层（localStorage）
+           功能：数据持久化与自动保存
+           ============================================================ */
+
         function saveToLocal() {
             try {
                 const tableDataForSave = {};
@@ -2013,7 +2303,7 @@
                 console.warn('自动保存失败:', e);
             }
         }
-        
+
         function loadFromLocal() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
@@ -2055,18 +2345,19 @@
                 return false;
             }
         }
-        
+
         function startAutoSave() {
             if (autoSaveTimer) clearInterval(autoSaveTimer);
             autoSaveTimer = setInterval(() => {
                 saveToLocal();
             }, 30000);
         }
-        
-        /* ===== localStorage自动保存区域结束 ===== */
 
-        /* ===== 初始化和页面切换区域开始 ===== */
-        
+        /* ============================================================
+           第五部分：业务模块 - 5.1 桌号管理模块
+           功能：桌号初始化、进入桌台、换桌、清台
+           ============================================================ */
+
         function initTableCards() {
             TABLE_LIST.forEach(table => {
                 if (!tableDishesMap[table]) {
@@ -2079,42 +2370,9 @@
             
             renderTableCards();
             renderDishEditList();
-            
             startAutoSave();
         }
 
-        function switchPage(pageId) {
-            saveToLocal();
-            
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            const targetPage = document.getElementById(pageId);
-            targetPage.classList.add('active');
-            targetPage.scrollTop = 0;
-            
-            switch(pageId) {
-                case "dishEditPage":
-                    renderDishEditList();
-                    break;
-                case "tablePage":
-                    renderTableCards();
-                    break;
-                case "ticketPage":
-                    prepareTicketPage();
-                    break;
-                case "orderPage":
-                    renderOrderPage();
-                    break;
-            }
-            
-            document.querySelectorAll('.search-results').forEach(el => {
-                el.style.display = 'none';
-            });
-        }
-        
-        /* ===== 初始化和页面切换区域结束 ===== */
-
-        /* ===== 桌号管理区域开始 ===== */
-        
         function renderTableCards() {
             const tableListEl = document.getElementById("tableList");
             
@@ -2155,6 +2413,14 @@
             tableListEl.innerHTML = html;
         }
 
+        function enterTable(table) {
+            currentTable = table;
+            document.getElementById("currentTableDisplay").textContent = table;
+            activeCategory = CATEGORY_ORDER[0];
+            renderOrderPage();
+            switchPage("orderPage");
+        }
+
         function newTableFromCard(table) {
             if (!confirm(`【${table}】新的一桌？\n\n将清空该桌所有菜品`)) return;
             
@@ -2166,14 +2432,6 @@
             if (currentTable === table) {
                 renderOrderPage();
             }
-        }
-
-        function enterTable(table) {
-            currentTable = table;
-            document.getElementById("currentTableDisplay").textContent = table;
-            activeCategory = CATEGORY_ORDER[0];
-            renderOrderPage();
-            switchPage("orderPage");
         }
 
         function clearTableDishes() {
@@ -2189,7 +2447,7 @@
             
             showToast(`已清空【${currentTable}】的所有菜品！`);
         }
-        
+
         function clearAllDishes() {
             if (!confirm(`确定要清空【${currentTable}】的所有菜品吗？`)) return;
             
@@ -2283,25 +2541,27 @@
             
             showToast(`换桌成功！${oldTable}的菜品已迁移到${currentTable}`);
         }
-        
-        /* ===== 桌号管理区域结束 ===== */
 
-        /* ===== 新点菜界面功能区域开始 ===== */
-        
+        /* ============================================================
+           第六部分：业务模块 - 6.1 点菜模块（核心模块）
+           功能：美团外卖式点菜界面，包含高亮、批量添加等
+           ============================================================ */
+
+        /* 6.1.1 渲染类函数 */
+
         function renderOrderPage() {
             renderCategorySidebar();
             renderDishesContent();
             updateBottomFloatBar();
             setupScrollSync();
         }
-        
+
         function renderCategorySidebar() {
             const sidebar = document.getElementById('categorySidebar');
             const currentDishes = tableDishesMap[currentTable] || [];
             
             let html = '';
             CATEGORY_ORDER.forEach(category => {
-                // 计算该分类已点份数
                 const categoryCount = currentDishes
                     .filter(d => d.category === category)
                     .reduce((sum, d) => sum + d.count, 0);
@@ -2309,14 +2569,22 @@
                 const activeClass = category === activeCategory ? 'active' : '';
                 const badgeHtml = categoryCount > 0 ? `<span class="category-nav-badge">${categoryCount}</span>` : '';
                 
+                let iconHtml = '';
+                if (category === '啤酒类') {
+                    iconHtml = '<span class="category-icon">🍺</span>';
+                } else if (category === '白酒类') {
+                    iconHtml = '<span class="category-icon">🍶</span>';
+                } else if (category === '饮料类') {
+                    iconHtml = '<span class="category-icon">🥤</span>';
+                }
+                
                 html += `
                     <div class="category-nav-item ${activeClass}" onclick="scrollToCategory('${category}')" data-category="${category}">
-                        ${category}${badgeHtml}
+                        ${iconHtml}${category}${badgeHtml}
                     </div>
                 `;
             });
             
-            // 添加临时加菜按钮
             html += `
                 <div class="category-nav-item" onclick="scrollToTempDish()" style="color: #9f7aea; font-weight: bold;">
                     临时加菜
@@ -2325,7 +2593,7 @@
             
             sidebar.innerHTML = html;
         }
-        
+
         function renderDishesContent() {
             const content = document.getElementById('dishesContent');
             const currentDishes = tableDishesMap[currentTable] || [];
@@ -2347,14 +2615,15 @@
                     const count = existingDish ? existingDish.count : 0;
                     const bgClass = index % 2 === 0 ? 'dish-item-even' : 'dish-item-odd';
                     
-                    // 啤酒类显示批量添加按钮
                     const isBeer = dish.category === '啤酒类';
                     const bulkBtn = isBeer ? `<button class="dish-btn-bulk" onclick="openBeerQuantityModal(${dish.globalId})">批量</button>` : '';
                     
+                    const highlightedName = highlightDishName(dish.name, dish.category);
+                    
                     html += `
-                        <div class="dish-item-new ${bgClass}">
+                        <div class="dish-item-new ${bgClass}" data-global-id="${dish.globalId}">
                             <div class="dish-info-new">
-                                <div class="dish-name-new">${dish.name}</div>
+                                <div class="dish-name-new">${highlightedName}</div>
                                 <div class="dish-price-new">¥${dish.price}</div>
                             </div>
                             <div class="dish-actions-new">
@@ -2370,7 +2639,6 @@
                 html += '</div>';
             });
             
-            // 添加临时菜品区域
             html += `
                 <div id="temp-dish-section" style="padding: 20px; text-align: center; border-top: 2px dashed #ddd; margin-top: 20px;">
                     <button onclick="openTempDishModal()" style="background: #9f7aea; color: white; padding: 12px 24px; border-radius: 20px; font-size: 16px; font-weight: bold;">
@@ -2381,11 +2649,10 @@
             
             content.innerHTML = html;
         }
-        
+
         function setupScrollSync() {
             const content = document.getElementById('dishesContent');
             
-            // 使用Intersection Observer监听分类标题的可见性
             const observerOptions = {
                 root: content,
                 threshold: 0,
@@ -2404,50 +2671,50 @@
                 });
             }, observerOptions);
             
-            // 观察所有分类区域
             content.querySelectorAll('.dish-category-section').forEach(section => {
                 observer.observe(section);
             });
         }
-        
-        function scrollToCategory(category) {
-            activeCategory = category;
-            renderCategorySidebar();
+
+        function updateDishItemUI(globalId, count, dish) {
+            const dishElement = document.querySelector(`#dishesContent .dish-item-new[data-global-id="${globalId}"]`);
+            if (!dishElement) return;
             
-            const element = document.getElementById(`category-${category}`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const actionsContainer = dishElement.querySelector('.dish-actions-new');
+            if (!actionsContainer) return;
+            
+            const isBeer = dish.category === '啤酒类';
+            const bulkBtn = isBeer ? `<button class="dish-btn-bulk" onclick="openBeerQuantityModal(${dish.globalId})">批量</button>` : '';
+            
+            let html = '';
+            if (count > 0) {
+                html += `<button class="dish-btn-minus" onclick="updateDishCount(${dish.globalId}, -1)">−</button>`;
+                html += `<span class="dish-quantity">${count}</span>`;
             }
+            html += bulkBtn;
+            html += `<button class="dish-btn-plus" onclick="updateDishCount(${dish.globalId}, 1)">+</button>`;
+            
+            actionsContainer.innerHTML = html;
         }
-        
-        function scrollToTempDish() {
-            const element = document.getElementById('temp-dish-section');
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // 高亮临时加菜按钮
-                document.querySelectorAll('.category-nav-item').forEach(el => {
-                    el.classList.remove('active');
-                });
-                activeCategory = null;
-                renderCategorySidebar();
-            }
-        }
-        
+
         function updateDishCount(globalId, delta) {
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
             
             const currentDishes = tableDishesMap[currentTable];
             const existingIndex = currentDishes.findIndex(d => d.globalId === dish.globalId);
+            let newCount = 0;
             
             if (existingIndex > -1) {
-                const newCount = currentDishes[existingIndex].count + delta;
+                newCount = currentDishes[existingIndex].count + delta;
                 if (newCount <= 0) {
                     currentDishes.splice(existingIndex, 1);
+                    newCount = 0;
                 } else {
                     currentDishes[existingIndex].count = newCount;
                 }
             } else if (delta > 0) {
+                newCount = 1;
                 currentDishes.push({
                     globalId: dish.globalId,
                     name: dish.name,
@@ -2461,17 +2728,23 @@
             
             lastOrderedTable = currentTable;
             
+            updateDishItemUI(globalId, newCount, dish);
+            
             saveToLocal();
             renderCategorySidebar();
-            renderDishesContent();
             updateBottomFloatBar();
             renderTableCards();
         }
-        
+
         function updateBottomFloatBar() {
             const currentDishes = tableDishesMap[currentTable] || [];
             const totalCount = currentDishes.reduce((sum, d) => sum + d.count, 0);
-            const totalAmount = currentDishes.reduce((sum, d) => sum + (d.price * d.count), 0);
+            const itemsTotal = currentDishes.reduce((sum, d) => sum + (d.price * d.count), 0);
+            
+            const extraFees = tableDishesMap[currentTable].extraFees || [];
+            const extraTotal = extraFees.reduce((sum, f) => sum + f.amount, 0);
+            
+            const totalAmount = itemsTotal + extraTotal;
             
             document.getElementById('totalAmount').textContent = `¥${totalAmount}`;
             document.getElementById('totalCount').textContent = `共${totalCount}份`;
@@ -2484,19 +2757,22 @@
                 expandBtn.classList.remove('has-items');
             }
         }
-        
+
         function toggleOrderDrawer() {
             const drawer = document.getElementById('orderDrawer');
+            const expandBtn = document.getElementById('expandBtn');
             const isActive = drawer.classList.contains('active');
             
             if (isActive) {
                 drawer.classList.remove('active');
+                expandBtn.classList.remove('expanded');
             } else {
                 renderDrawerContent();
                 drawer.classList.add('active');
+                expandBtn.classList.add('expanded');
             }
         }
-        
+
         function renderDrawerContent() {
             const content = document.getElementById('drawerContent');
             const currentDishes = tableDishesMap[currentTable] || [];
@@ -2506,7 +2782,6 @@
                 return;
             }
             
-            // 按分类排序
             const sortedDishes = [...currentDishes].sort((a, b) => {
                 const catIndexA = CATEGORY_ORDER.indexOf(a.category);
                 const catIndexB = CATEGORY_ORDER.indexOf(b.category);
@@ -2536,9 +2811,234 @@
             
             content.innerHTML = html;
         }
-        
-        /* ===== 啤酒快速添加功能 ===== */
-        
+
+        function scrollToCategory(category) {
+            activeCategory = category;
+            renderCategorySidebar();
+            
+            const element = document.getElementById(`category-${category}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function scrollToTempDish() {
+            const element = document.getElementById('temp-dish-section');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.querySelectorAll('.category-nav-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                activeCategory = null;
+                renderCategorySidebar();
+            }
+        }
+
+        /* 6.1.2 高亮处理函数（点菜页专用） */
+
+        function highlightBigChar(html, originalName, category) {
+            let result = html.replace(/大(?![^<]*>)/g, '<span style="font-size: 18px; color: #e53e3e; font-weight: bold;">大</span>');
+            
+            const potentialBigName = originalName.replace(/小/g, '大');
+            const hasBigVersion = dishData.some(d => 
+                d.category === category && d.name === potentialBigName
+            );
+            
+            if (hasBigVersion) {
+                result = result.replace(/小(?![^<]*>)/g, '<span style="color: #48bb78; font-weight: bold;">小</span>');
+            }
+            
+            return result;
+        }
+
+        function highlightColdDish(name) {
+            if (name.length <= 2) return name;
+            
+            const prefix = name.substring(0, 2);
+            let suffix = name.substring(2);
+            
+            const keywords = ['牛肉', '猪耳', '凤爪', '折耳根', '拼盘', '鱼皮', '毛豆', '皮蛋', '秋葵', '青瓜', '花生', '藕带', '鸡爪'];
+            keywords.sort((a, b) => b.length - a.length);
+            
+            const placeholders = [];
+            let index = 0;
+            
+            keywords.forEach(keyword => {
+                if (suffix.includes(keyword)) {
+                    const regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    suffix = suffix.replace(regex, (match) => {
+                        const placeholder = `__C_${index}__`;
+                        placeholders.push({ placeholder, word: match });
+                        index++;
+                        return placeholder;
+                    });
+                }
+            });
+            
+            placeholders.forEach(({ placeholder, word }) => {
+                suffix = suffix.replace(placeholder, `<span class="dish-keyword-highlight">${word}</span>`);
+            });
+            
+            return prefix + suffix;
+        }
+
+        function highlightIngredientsOnly(name) {
+            const ingredients = [
+                '鸡翅', '虾', '猪尾', '肥肠', '牛杂', '带皮牛肉', '牛肉', '腌笋腊肉', '腊肉', 
+                '花菜', '土豆片', '土豆', '腰花', '回锅肉', '小酥肉', '扣肉', '黄牛肉', 
+                '鸭下巴', '羊肉', '花甲', '田螺', '泥鳅', '肉丝', '鸡蛋', '鸡蛋饼', '包菜', 
+                '土豆丝', '韭菜', '莴笋丝', '菜心', '空心菜', '油麦菜', '尖椒', '豆芽', '腊猪脚'
+            ].sort((a, b) => b.length - a.length);
+            
+            let result = name;
+            const placeholders = [];
+            let index = 0;
+            
+            ingredients.forEach(ingredient => {
+                if (result.includes(ingredient)) {
+                    const regex = new RegExp(ingredient.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    result = result.replace(regex, (match) => {
+                        const placeholder = `__I_${index}__`;
+                        placeholders.push({ placeholder, word: match });
+                        index++;
+                        return placeholder;
+                    });
+                }
+            });
+            
+            placeholders.forEach(({ placeholder, word }) => {
+                result = result.replace(placeholder, `<span class="dish-keyword-highlight">${word}</span>`);
+            });
+            
+            return result;
+        }
+
+        function highlightMainFoodKeywords(name) {
+            const keywords = ['炒饭', '炒粉', '小馒头'];
+            let result = name;
+            const placeholders = [];
+            let index = 0;
+            
+            keywords.forEach(keyword => {
+                if (result.includes(keyword)) {
+                    const regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    result = result.replace(regex, (match) => {
+                        const placeholder = `__MF_${index}__`;
+                        placeholders.push({ placeholder, word: match, isRice: false });
+                        index++;
+                        return placeholder;
+                    });
+                }
+            });
+            
+            if (result.includes('米饭')) {
+                const regex = /米饭/g;
+                result = result.replace(regex, (match) => {
+                    const placeholder = `__MF_${index}__`;
+                    placeholders.push({ placeholder, word: match, isRice: true });
+                    index++;
+                    return placeholder;
+                });
+            }
+            
+            placeholders.forEach(({ placeholder, word, isRice }) => {
+                if (isRice) {
+                    result = result.replace(placeholder, `<span style="color: #e53e3e; font-weight: bold; font-size: 17px;">${word}</span>`);
+                } else {
+                    result = result.replace(placeholder, `<span class="dish-keyword-highlight">${word}</span>`);
+                }
+            });
+            
+            return result;
+        }
+
+        function highlightStirFryKeywords(name) {
+            const specificKeywords = ['小炒肉', '鸡杂'];
+            let result = name;
+            const placeholders = [];
+            let index = 0;
+            
+            specificKeywords.forEach(keyword => {
+                if (result.includes(keyword)) {
+                    const regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    result = result.replace(regex, (match) => {
+                        const placeholder = `__SF_${index}__`;
+                        placeholders.push({ placeholder, word: match });
+                        index++;
+                        return placeholder;
+                    });
+                }
+            });
+            
+            result = highlightIngredientsOnly(result);
+            
+            placeholders.forEach(({ placeholder, word }) => {
+                result = result.replace(placeholder, `<span class="dish-keyword-highlight">${word}</span>`);
+            });
+            
+            return result;
+        }
+
+        function highlightDefault(name) {
+            const keywords = [
+                '腊猪脚', '鸡翅', '鸡爪', '鸡杂', '鸡公', '鸡煲', '肥肠鸡', '猪肚鸡', '甲鱼鸡', '甲鱼',
+                '牛蛙', '田鸡', '蛙', '美蛙', '黑山羊', '羊肉', '牛排', '牛腩', '牛肉', '牛杂', '带皮牛肉', 
+                '猪尾', '猪脚', '猪蹄', '猪肚', '猪肉', '猪耳', '卤肉', '腊肉', '腌笋腊肉', '排骨', 
+                '肥肠', '腰花', '毛肚', '鸭血', '脱骨凤爪', '王八', '龟',
+                '清江鱼', '巴沙鱼', '石锅鱼', '肥肠鱼', '酸菜鱼', '美蛙鱼', '草鱼', '鱼', '虾', '花甲', '田螺', 
+                '鳅', '泥鳅', '鸭', '鹅', '兔', '鸡'
+            ].sort((a, b) => b.length - a.length);
+            
+            let result = name;
+            const placeholders = [];
+            let index = 0;
+            
+            keywords.forEach(keyword => {
+                if (result.includes(keyword)) {
+                    const regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    result = result.replace(regex, (match) => {
+                        const placeholder = `__D_${index}__`;
+                        placeholders.push({ placeholder, word: match });
+                        index++;
+                        return placeholder;
+                    });
+                }
+            });
+            
+            placeholders.forEach(({ placeholder, word }) => {
+                result = result.replace(placeholder, `<span class="dish-keyword-highlight">${word}</span>`);
+            });
+            
+            return result;
+        }
+
+        function highlightDishName(name, category) {
+            let result = name;
+            
+            switch(category) {
+                case '配菜类':
+                    break;
+                case '主食点心':
+                    result = highlightMainFoodKeywords(result);
+                    break;
+                case '凉菜类':
+                    result = highlightColdDish(result);
+                    break;
+                case '炒菜类':
+                    result = highlightStirFryKeywords(result);
+                    break;
+                case '干锅铁板':
+                    result = highlightIngredientsOnly(result);
+                    break;
+                default:
+                    result = highlightDefault(result);
+            }
+            
+            return highlightBigChar(result, name, category);
+        }
+
+        /* 6.1.3 啤酒批量添加功能 */
+
         function openBeerQuantityModal(globalId) {
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
@@ -2552,12 +3052,12 @@
             document.getElementById("beerQuantityModal").classList.add("active");
             document.getElementById("beerQuantityInput").focus();
         }
-        
+
         function closeBeerQuantityModal() {
             document.getElementById("beerQuantityModal").classList.remove("active");
             currentBeerDish = null;
         }
-        
+
         function confirmBeerQuantityModal() {
             if (!currentBeerDish) {
                 closeBeerQuantityModal();
@@ -2601,11 +3101,12 @@
             showToast(`已添加 ${currentBeerDish.name} ${quantity}瓶`);
             closeBeerQuantityModal();
         }
-        
-        /* ===== 新点菜界面功能区域结束 ===== */
 
-        /* ===== 小票功能区域开始 ===== */
-        
+        /* ============================================================
+           第七部分：业务模块 - 7.1 小票收银模块
+           功能：小票生成、额外费用管理、搜索添加
+           ============================================================ */
+
         function jumpToTicketPage() {
             const currentDishes = tableDishesMap[currentTable];
             if (!currentDishes || currentDishes.length === 0) {
@@ -2816,7 +3317,12 @@
                     return;
                 }
 
-                const matchedDishes = dishData.filter(d => d.name.toLowerCase().includes(searchText));
+                const matchedDishes = dishData.filter(d => {
+                    if (d.name.toLowerCase().includes(searchText)) return true;
+                    if (d.pinyinInitials && d.pinyinInitials.includes(searchText)) return true;
+                    return false;
+                });
+                
                 if (matchedDishes.length === 0) {
                     let html = `
                         <div class="search-result-item temp-dish-option" onclick="openTempDishModal('${searchText}')">
@@ -2836,12 +3342,13 @@
                 matchedDishes.forEach(dish => {
                     const existingDish = tableDishesMap[currentTable].find(d => d.globalId === dish.globalId);
                     const count = existingDish ? existingDish.count : 0;
+                    const pinyinTip = dish.pinyinInitials || '';
                     
                     html += `
                         <div class="search-result-item" onclick="openTicketQuantityModal(${dish.globalId});">
                             <div class="search-result-item-info">
                                 <div class="search-result-item-name">${dish.name}</div>
-                                <div class="search-result-item-category">${dish.category}</div>
+                                <div class="search-result-item-category">${dish.category} [${pinyinTip}]</div>
                             </div>
                             <span class="price-tag">¥${dish.price} ${count > 0 ? `(已点${count})` : ''}</span>
                         </div>
@@ -2924,7 +3431,6 @@
                 if (categories[category] && categories[category].length > 0) {
                     const categoryDishes = categories[category].sort((a, b) => b.price - a.price);
                     
-                    // 根据分类获取对应的CSS类名
                     const boxClass = `preview-category-box-${category}`;
                     
                     previewHtml += `
@@ -2984,7 +3490,7 @@
             let itemsTotal = 0;
             const allCategories = {};
             
-            const receiptCategoryOrder = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '炒菜类', '干锅铁板', '主食点心', '临时菜', '啤酒类', '白酒类', '饮料类'];
+            const receiptCategoryOrder = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类', '临时菜'];
             
             currentDishes.forEach(item => {
                 const itemTotal = item.price * item.count;
@@ -3053,7 +3559,7 @@
         }
 
         function generateReceiptText(time, tableNumber, allCategories, grandTotal) {
-            const receiptCategoryOrder = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '炒菜类', '干锅铁板', '主食点心', '临时菜', '啤酒类', '白酒类', '饮料类'];
+            const receiptCategoryOrder = ['烤鱼类', '汤锅类', '配菜类', '凉菜类', '主食点心', '炒菜类', '干锅铁板', '啤酒类', '白酒类', '饮料类', '临时菜'];
             
             let text = `${tableNumber} ${time}\n`;
             
@@ -3150,11 +3656,8 @@
                 copyReceiptText();
             });
         }
-        
-        /* ===== 小票功能区域结束 ===== */
 
-        /* ===== 临时菜品功能 ===== */
-        
+        /* 临时菜品功能（小票页） */
         function openTempDishModal(defaultName) {
             document.getElementById('tempDishName').value = defaultName || '';
             document.getElementById('tempDishPrice').value = '';
@@ -3209,7 +3712,7 @@
             
             showToast('临时菜品添加成功');
         }
-        
+
         function addDishWithQuantity(globalId, quantity) {
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
@@ -3236,9 +3739,12 @@
             updateTicketPreview();
             renderTableCards();
         }
-        
-        /* ===== 菜品管理区域开始 ===== */
-        
+
+        /* ============================================================
+           第八部分：业务模块 - 8.1 菜品管理模块
+           功能：菜品增删改查、分类折叠
+           ============================================================ */
+
         function toggleEditCategory(category) {
             const header = document.getElementById(`edit-cat-header-${category}`);
             const content = document.getElementById(`edit-cat-content-${category}`);
@@ -3254,7 +3760,7 @@
                 arrow.classList.add('expanded');
             }
         }
-        
+
         function renderDishEditList() {
             const containerEl = document.getElementById('dishEditCategoryContainer');
             let html = "";
@@ -3294,6 +3800,8 @@
 
             containerEl.innerHTML = html;
         }
+
+        /* 8.1.1 修改菜品功能 */
 
         function openSearchDishModal() {
             document.getElementById('modifyDishSearchInput').value = '';
@@ -3390,11 +3898,15 @@
                 isDrink: isDrink
             };
             
+            dishData[index].pinyinInitials = getPinyinInitial(dishName);
+            
             saveToLocal();
             renderDishEditList();
             closeEditDishModal();
             showToast("菜品修改成功！");
         }
+
+        /* 8.1.2 添加菜品功能 */
 
         function openAddDishStep1() {
             const grid = document.getElementById('addDishCategoryGrid');
@@ -3442,19 +3954,22 @@
                 return;
             }
             
-            // 生成新的globalId（取当前最大值+1）
             const maxGlobalId = Math.max(...dishData.map(d => d.globalId), 0);
             const newGlobalId = maxGlobalId + 1;
             
             const isDrink = isDrinkCategory(dishCategory);
             
-            dishData.push({
+            const newDish = {
                 globalId: newGlobalId,
                 name: dishName,
                 price: dishPrice,
                 category: dishCategory,
                 isDrink: isDrink
-            });
+            };
+            
+            newDish.pinyinInitials = getPinyinInitial(dishName);
+            
+            dishData.push(newDish);
             
             saveToLocal();
             renderDishEditList();
@@ -3473,13 +3988,89 @@
                 showToast("菜品删除成功！");
             }
         }
-        
-        /* ===== 菜品管理区域结束 ===== */
 
-        /* ===== 初始化入口区域开始 ===== */
-        
+        /* ============================================================
+           第九部分：全局路由与初始化
+           功能：页面切换、全局事件监听、应用启动
+           ============================================================ */
+
+        function switchPage(pageId) {
+            saveToLocal();
+            
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(pageId);
+            targetPage.classList.add('active');
+            targetPage.scrollTop = 0;
+            
+            switch(pageId) {
+                case "dishEditPage":
+                    renderDishEditList();
+                    break;
+                case "tablePage":
+                    renderTableCards();
+                    break;
+                case "ticketPage":
+                    prepareTicketPage();
+                    break;
+                case "orderPage":
+                    const drawer = document.getElementById('orderDrawer');
+                    const expandBtn = document.getElementById('expandBtn');
+                    if (drawer) {
+                        drawer.classList.remove('active');
+                    }
+                    if (expandBtn) {
+                        expandBtn.classList.remove('expanded');
+                    }
+                    renderOrderPage();
+                    break;
+            }
+            
+            document.querySelectorAll('.search-results').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        /* 全局事件监听 */
+        document.addEventListener('click', function(e) {
+            const ticketSearchWrapper = document.getElementById('ticketDishSearch');
+            if (ticketSearchWrapper && !ticketSearchWrapper.parentElement.contains(e.target)) {
+                const ticketSearchResult = document.getElementById('ticketSearchResult');
+                if (ticketSearchResult) ticketSearchResult.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeQuantityModal();
+                closeTempDishModal();
+                closeChangeTableModal();
+                closePresetManageModal();
+                closeSearchDishModal();
+                closeEditDishModal();
+                closeAddDishStep1();
+                closeAddDishStep2();
+                closeBeerQuantityModal();
+            }
+            
+            if (e.key === 'Enter') {
+                if (document.getElementById('quantityModal').classList.contains('active')) {
+                    confirmQuantityModal();
+                } else if (document.getElementById('tempDishModal').classList.contains('active')) {
+                    confirmAddTempDish();
+                } else if (document.getElementById('editDishModal').classList.contains('active')) {
+                    saveEditDishFromModal();
+                } else if (document.getElementById('addDishStep2Modal').classList.contains('active')) {
+                    saveAddDishFromModal();
+                } else if (document.getElementById('beerQuantityModal').classList.contains('active')) {
+                    confirmBeerQuantityModal();
+                }
+            }
+        });
+
+        /* 应用初始化入口 */
         window.onload = function() {
             loadFromLocal();
+            initDishPinyinInitials();
             
             TABLE_LIST.forEach(table => {
                 if (!tableDishesMap[table]) tableDishesMap[table] = [];
@@ -3487,46 +4078,8 @@
             
             initTableCards();
             
-            document.addEventListener('click', function(e) {
-                const ticketSearchWrapper = document.getElementById('ticketDishSearch');
-                if (ticketSearchWrapper && !ticketSearchWrapper.parentElement.contains(e.target)) {
-                    const ticketSearchResult = document.getElementById('ticketSearchResult');
-                    if (ticketSearchResult) ticketSearchResult.style.display = 'none';
-                }
-            });
-            
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeQuantityModal();
-                    closeTempDishModal();
-                    closeChangeTableModal();
-                    closePresetManageModal();
-                    closeSearchDishModal();
-                    closeEditDishModal();
-                    closeAddDishStep1();
-                    closeAddDishStep2();
-                    closeBeerQuantityModal();
-                }
-                
-                if (e.key === 'Enter') {
-                    if (document.getElementById('quantityModal').classList.contains('active')) {
-                        confirmQuantityModal();
-                    } else if (document.getElementById('tempDishModal').classList.contains('active')) {
-                        confirmAddTempDish();
-                    } else if (document.getElementById('editDishModal').classList.contains('active')) {
-                        saveEditDishFromModal();
-                    } else if (document.getElementById('addDishStep2Modal').classList.contains('active')) {
-                        saveAddDishFromModal();
-                    } else if (document.getElementById('beerQuantityModal').classList.contains('active')) {
-                        confirmBeerQuantityModal();
-                    }
-                }
-            });
-            
             console.log("点菜收银系统已加载完成！");
         };
-        
-        /* ===== 初始化入口区域结束 ===== */
     </script>
 </body>
 </html>
