@@ -1640,7 +1640,7 @@
         <div id="tablePage" class="page active">
             <div class="table-page-header">
                 <h2>桌号选择</h2>
-                <button class="edit-dish-btn" onclick="switchPage('dishEditPage')">📝 菜品管理</button>
+                <button class="edit-dish-btn" onclick="navigateToPage('dishEditPage')">📝 菜品管理</button>
             </div>
             <div class="table-list" id="tableList"></div>
         </div>
@@ -1654,7 +1654,7 @@
                 <div class="order-header-actions">
                     <button class="header-btn-small" onclick="clearTableDishes()">新桌</button>
                     <button class="header-btn-small" onclick="openChangeTableModal()">换桌</button>
-                    <button class="header-btn-small" onclick="switchPage('tablePage')">返回</button>
+                    <button class="header-btn-small" onclick="navigateToPage('tablePage')">返回</button>
                 </div>
             </div>
             
@@ -1693,7 +1693,7 @@
         <div id="dishEditPage" class="page">
             <div class="dish-edit-header">
                 <h2>菜品管理</h2>
-                <button class="back-table-btn" onclick="switchPage('tablePage')">返回桌号</button>
+                <button class="back-table-btn" onclick="navigateToPage('tablePage')">返回桌号</button>
             </div>
             
             <div class="dish-edit-actions">
@@ -1710,11 +1710,11 @@
         <div id="ticketPage" class="page">
             <div class="ticket-page-header">
                 <h2>收银小票</h2>
-                <button class="back-order-btn" onclick="switchPage('orderPage')" style="background: white; color: #f5576c;">返回点菜</button>
+                <button class="back-order-btn" onclick="navigateToPage('orderPage')" style="background: white; color: #f5576c;">返回点菜</button>
             </div>
             
             <div class="ticket-float-bar">
-                <button class="order-btn-bar" onclick="switchPage('orderPage')">📝 点菜</button>
+                <button class="order-btn-bar" onclick="navigateToPage('orderPage')">📝 点菜</button>
                 <button class="generate-btn" onclick="generateTicket()">🧾 生成小票</button>
             </div>
             
@@ -1998,7 +1998,7 @@
             '老': 'l', '妈': 'm', '子': 'z', '炒': 'c', '饭': 'f', '三': 's', '丝': 's',
             '河': 'h', '南': 'n', '饼': 'b', '地': 'd', '银': 'y', '馒': 'm',
             '头': 't', '脆': 'c', '蕉': 'j', '卷': 'j', '虾': 'x', '粥': 'z', '瘦': 's',
-            '瓜': 'g',
+            '瓜': 'g', '南': 'n',
             // 炒菜类
             '爆': 'b', '腰': 'y', '椒': 'j', '回': 'h', '农': 'n', '家': 'j',
             '梅': 'm', '扣': 'k', '孜': 'z', '然': 'r', '清': 'q',
@@ -2019,6 +2019,7 @@
             '可': 'k', '乐': 'l', '碧': 'b', '矿': 'k', '矿': 'k', '泉': 'q',
             // 其他可能出现的
             '料': 'l', '酒': 'j', '饮': 'y', '餐': 'c', '厅': 't', '临': 'l', '时': 's'
+        
         };
 
         /* 业务常量 */
@@ -2039,7 +2040,7 @@
            功能：应用全局状态与初始数据
            ============================================================ */
         
-        /* 初始菜品数据 */
+        /* 初始菜品数据 - 用户说已复制，这里省略具体内容 */
         let dishData = [
             // 烤鱼类
             { globalId: 101, name: '清江鱼', price: 69, category: '烤鱼类', isDrink: false },
@@ -2202,6 +2203,7 @@
             { globalId: 1010, name: '小雪碧', price: 4, category: '饮料类', isDrink: true },
             { globalId: 1011, name: '大雪碧', price: 10, category: '饮料类', isDrink: true },
             { globalId: 1012, name: '矿泉水', price: 3, category: '饮料类', isDrink: true }
+        
         ];
 
         /* 全局状态变量 */
@@ -2219,6 +2221,138 @@
         let changeTableTarget = null;
         let activeCategory = CATEGORY_ORDER[0];
         let currentBeerDish = null;
+        
+        /* 新增：IntersectionObserver 全局引用，防止内存泄漏 */
+        let categoryObserver = null;
+
+        /* ============================================================
+           新增：路由历史管理（解决安卓返回键问题）
+           ============================================================ */
+        let isNavigatingByPopstate = false;
+        let currentPageId = 'tablePage';
+
+        const PAGE_HIERARCHY = {
+            'tablePage': { parent: null, title: '桌号选择' },
+            'orderPage': { parent: 'tablePage', title: '点菜' },
+            'ticketPage': { parent: 'orderPage', title: '小票' },
+            'dishEditPage': { parent: 'tablePage', title: '菜品管理' }
+        };
+
+        const MODAL_IDS = [
+            'quantityModal', 'beerQuantityModal', 'changeTableModal',
+            'tempDishModal', 'presetManageModal', 'searchDishModal',
+            'editDishModal', 'addDishStep1Modal', 'addDishStep2Modal'
+        ];
+
+        /**
+         * 检查是否有弹窗处于打开状态
+         */
+        function isAnyModalOpen() {
+            return MODAL_IDS.some(id => {
+                const el = document.getElementById(id);
+                return el && el.classList.contains('active');
+            });
+        }
+
+        /**
+         * 关闭所有打开的弹窗
+         */
+        function closeAllModals() {
+            MODAL_IDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.classList.contains('active')) {
+                    switch(id) {
+                        case 'quantityModal': closeQuantityModal(); break;
+                        case 'beerQuantityModal': closeBeerQuantityModal(); break;
+                        case 'changeTableModal': closeChangeTableModal(); break;
+                        case 'tempDishModal': closeTempDishModal(); break;
+                        case 'presetManageModal': closePresetManageModal(); break;
+                        case 'searchDishModal': closeSearchDishModal(); break;
+                        case 'editDishModal': closeEditDishModal(); break;
+                        case 'addDishStep1Modal': closeAddDishStep1(); break;
+                        case 'addDishStep2Modal': closeAddDishStep2(); break;
+                        default:
+                            el.classList.remove('active');
+                    }
+                }
+            });
+        }
+
+        /**
+         * 带历史记录管理的页面切换函数
+         */
+        function navigateToPage(pageId, skipHistory = false) {
+            if (pageId === currentPageId) return;
+            
+            const prevPageId = currentPageId;
+            currentPageId = pageId;
+            
+            switchPage(pageId);
+            
+            if (!skipHistory && !isNavigatingByPopstate) {
+                const state = {
+                    pageId: pageId,
+                    prevPageId: prevPageId,
+                    currentTable: currentTable,
+                    timestamp: Date.now()
+                };
+                window.history.pushState(state, '', `#${pageId}`);
+            }
+            
+            isNavigatingByPopstate = false;
+        }
+
+        /**
+         * 处理浏览器返回键（popstate事件）
+         */
+        function handlePopstate(event) {
+            isNavigatingByPopstate = true;
+            
+            if (isAnyModalOpen()) {
+                closeAllModals();
+                const state = {
+                    pageId: currentPageId,
+                    currentTable: currentTable,
+                    timestamp: Date.now()
+                };
+                window.history.pushState(state, '', `#${currentPageId}`);
+                return;
+            }
+            
+            const state = event.state;
+            if (state && state.pageId) {
+                if (currentPageId === 'orderPage' && state.pageId === 'tablePage') {
+                    navigateToPage('tablePage', true);
+                }
+                else if (currentPageId === 'ticketPage' && state.pageId === 'orderPage') {
+                    navigateToPage('orderPage', true);
+                }
+                else if (currentPageId === 'dishEditPage' && state.pageId === 'tablePage') {
+                    navigateToPage('tablePage', true);
+                }
+                else if (state.pageId !== currentPageId) {
+                    navigateToPage(state.pageId, true);
+                }
+            } else {
+                if (currentPageId !== 'tablePage') {
+                    navigateToPage('tablePage', true);
+                }
+            }
+        }
+
+        /**
+         * 初始化路由历史（页面加载时调用）
+         */
+        function initRouter() {
+            const initialState = {
+                pageId: 'tablePage',
+                currentTable: '',
+                timestamp: Date.now()
+            };
+            window.history.replaceState(initialState, '', '#tablePage');
+            
+            window.addEventListener('popstate', handlePopstate);
+        }
 
         /* ============================================================
            第三部分：工具函数
@@ -2282,10 +2416,7 @@
                 const tableDataForSave = {};
                 for (let table of TABLE_LIST) {
                     if (tableDishesMap[table]) {
-                        tableDataForSave[table] = {
-                            dishes: tableDishesMap[table],
-                            extraFees: tableDishesMap[table].extraFees || []
-                        };
+                        tableDataForSave[table] = tableDishesMap[table];
                     }
                 }
                 
@@ -2315,12 +2446,18 @@
                     for (let table of TABLE_LIST) {
                         const savedTableData = data.tableDishesMap[table];
                         if (savedTableData) {
+                            // 兼容旧数据格式：如果是数组，转换为对象
                             if (Array.isArray(savedTableData)) {
-                                tableDishesMap[table] = savedTableData;
-                                tableDishesMap[table].extraFees = [];
+                                tableDishesMap[table] = {
+                                    dishes: savedTableData,
+                                    extraFees: savedTableData.extraFees || []
+                                };
                             } else {
-                                tableDishesMap[table] = savedTableData.dishes || [];
-                                tableDishesMap[table].extraFees = savedTableData.extraFees || [];
+                                // 新格式：确保有 dishes 和 extraFees
+                                tableDishesMap[table] = {
+                                    dishes: savedTableData.dishes || [],
+                                    extraFees: savedTableData.extraFees || []
+                                };
                             }
                         }
                     }
@@ -2361,10 +2498,18 @@
         function initTableCards() {
             TABLE_LIST.forEach(table => {
                 if (!tableDishesMap[table]) {
-                    tableDishesMap[table] = [];
-                    tableDishesMap[table].extraFees = [];
-                } else if (!tableDishesMap[table].extraFees) {
-                    tableDishesMap[table].extraFees = [];
+                    tableDishesMap[table] = { dishes: [], extraFees: [] };
+                } else if (Array.isArray(tableDishesMap[table])) {
+                    // 兼容内存中的旧数据（数组格式）
+                    const oldArray = tableDishesMap[table];
+                    tableDishesMap[table] = {
+                        dishes: oldArray,
+                        extraFees: oldArray.extraFees || []
+                    };
+                } else {
+                    // 确保结构完整
+                    if (!tableDishesMap[table].dishes) tableDishesMap[table].dishes = [];
+                    if (!tableDishesMap[table].extraFees) tableDishesMap[table].extraFees = [];
                 }
             });
             
@@ -2378,7 +2523,9 @@
             
             let html = "";
             TABLE_LIST.forEach(table => {
-                const isActive = tableDishesMap[table] && tableDishesMap[table].length > 0;
+                const tableData = tableDishesMap[table];
+                const dishes = tableData?.dishes || [];
+                const isActive = dishes.length > 0;
                 const btnText = isActive ? "要加菜吗" : "开始点菜";
                 const btnClass = isActive ? "enter-table-btn active-table-btn" : "enter-table-btn";
                 
@@ -2395,7 +2542,7 @@
                 const recentCircle = isRecent ? '<div class="recent-circle">刚</div>' : '';
                 
                 const clearBtnHtml = isActive 
-                    ? `<button class="new-table-card-btn" onclick="newTableFromCard('${table}')" title="清空桌台">🗑️</button>`
+                    ? `<button class="new-table-card-btn" onclick="event.stopPropagation(); newTableFromCard('${table}')" title="清空桌台">🗑️</button>`
                     : '';
                 
                 html += `
@@ -2418,14 +2565,13 @@
             document.getElementById("currentTableDisplay").textContent = table;
             activeCategory = CATEGORY_ORDER[0];
             renderOrderPage();
-            switchPage("orderPage");
+            navigateToPage("orderPage");
         }
 
         function newTableFromCard(table) {
             if (!confirm(`【${table}】新的一桌？\n\n将清空该桌所有菜品`)) return;
             
-            tableDishesMap[table] = [];
-            tableDishesMap[table].extraFees = [];
+            tableDishesMap[table] = { dishes: [], extraFees: [] };
             saveToLocal();
             renderTableCards();
             
@@ -2437,8 +2583,7 @@
         function clearTableDishes() {
             if (!confirm(`确定要清空【${currentTable}】的所有菜品并设置为新桌吗？`)) return;
             
-            tableDishesMap[currentTable] = [];
-            tableDishesMap[currentTable].extraFees = [];
+            tableDishesMap[currentTable] = { dishes: [], extraFees: [] };
             
             renderOrderPage();
             updateTicketPreview();
@@ -2451,8 +2596,7 @@
         function clearAllDishes() {
             if (!confirm(`确定要清空【${currentTable}】的所有菜品吗？`)) return;
             
-            tableDishesMap[currentTable] = [];
-            tableDishesMap[currentTable].extraFees = [];
+            tableDishesMap[currentTable] = { dishes: [], extraFees: [] };
             
             renderOrderPage();
             updateTicketPreview();
@@ -2464,8 +2608,9 @@
         }
 
         function openChangeTableModal() {
-            const currentDishes = tableDishesMap[currentTable];
-            if (!currentDishes || currentDishes.length === 0) {
+            const currentData = tableDishesMap[currentTable];
+            const currentDishes = currentData?.dishes || [];
+            if (currentDishes.length === 0) {
                 showToast('当前桌没有菜品，无需换桌！');
                 return;
             }
@@ -2478,7 +2623,9 @@
                 if (table === currentTable) {
                     html += `<div class="change-table-item disabled" data-table="${table}">${table}<br>(当前)</div>`;
                 } else {
-                    const hasDishes = tableDishesMap[table] && tableDishesMap[table].length > 0;
+                    const targetData = tableDishesMap[table];
+                    const targetDishes = targetData?.dishes || [];
+                    const hasDishes = targetDishes.length > 0;
                     const status = hasDishes ? '<br>(有菜)' : '';
                     html += `<div class="change-table-item" data-table="${table}" onclick="selectChangeTable('${table}', this)">${table}${status}</div>`;
                 }
@@ -2510,10 +2657,14 @@
                 return;
             }
             
-            const sourceDishes = tableDishesMap[currentTable] || [];
-            const targetDishes = tableDishesMap[changeTableTarget] || [];
-            const sourceExtraFees = tableDishesMap[currentTable].extraFees || [];
-            const targetExtraFees = tableDishesMap[changeTableTarget].extraFees || [];
+            const sourceData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const targetData = tableDishesMap[changeTableTarget] || { dishes: [], extraFees: [] };
+            
+            // 兼容旧数据格式
+            const sourceDishes = Array.isArray(sourceData) ? sourceData : sourceData.dishes;
+            const targetDishes = Array.isArray(targetData) ? targetData : targetData.dishes;
+            const sourceExtraFees = Array.isArray(sourceData) ? (sourceData.extraFees || []) : (sourceData.extraFees || []);
+            const targetExtraFees = Array.isArray(targetData) ? (targetData.extraFees || []) : (targetData.extraFees || []);
             
             let confirmMsg = `确定将【${currentTable}】的${sourceDishes.length}个菜品换到【${changeTableTarget}】吗？`;
             if (targetDishes.length > 0) {
@@ -2522,11 +2673,11 @@
             
             if (!confirm(confirmMsg)) return;
             
-            tableDishesMap[changeTableTarget] = [...targetDishes, ...sourceDishes];
-            tableDishesMap[currentTable] = [];
-            
-            tableDishesMap[changeTableTarget].extraFees = [...targetExtraFees, ...sourceExtraFees];
-            tableDishesMap[currentTable].extraFees = [];
+            tableDishesMap[changeTableTarget] = {
+                dishes: [...targetDishes, ...sourceDishes],
+                extraFees: [...targetExtraFees, ...sourceExtraFees]
+            };
+            tableDishesMap[currentTable] = { dishes: [], extraFees: [] };
             
             const oldTable = currentTable;
             currentTable = changeTableTarget;
@@ -2558,7 +2709,8 @@
 
         function renderCategorySidebar() {
             const sidebar = document.getElementById('categorySidebar');
-            const currentDishes = tableDishesMap[currentTable] || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const currentDishes = currentData.dishes || [];
             
             let html = '';
             CATEGORY_ORDER.forEach(category => {
@@ -2596,7 +2748,8 @@
 
         function renderDishesContent() {
             const content = document.getElementById('dishesContent');
-            const currentDishes = tableDishesMap[currentTable] || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const currentDishes = currentData.dishes || [];
             
             let html = '';
             
@@ -2616,7 +2769,7 @@
                     const bgClass = index % 2 === 0 ? 'dish-item-even' : 'dish-item-odd';
                     
                     const isBeer = dish.category === '啤酒类';
-                    const bulkBtn = isBeer ? `<button class="dish-btn-bulk" onclick="openBeerQuantityModal(${dish.globalId})">批量</button>` : '';
+                    const bulkBtn = isBeer ? `<button class="dish-btn-bulk" onclick="event.stopPropagation(); openBeerQuantityModal(${dish.globalId})">批量</button>` : '';
                     
                     const highlightedName = highlightDishName(dish.name, dish.category);
                     
@@ -2627,10 +2780,10 @@
                                 <div class="dish-price-new">¥${dish.price}</div>
                             </div>
                             <div class="dish-actions-new">
-                                ${count > 0 ? `<button class="dish-btn-minus" onclick="updateDishCount(${dish.globalId}, -1)">−</button>` : ''}
+                                ${count > 0 ? `<button class="dish-btn-minus" onclick="event.stopPropagation(); updateDishCount(${dish.globalId}, -1)">−</button>` : ''}
                                 ${count > 0 ? `<span class="dish-quantity">${count}</span>` : ''}
                                 ${bulkBtn}
-                                <button class="dish-btn-plus" onclick="updateDishCount(${dish.globalId}, 1)">+</button>
+                                <button class="dish-btn-plus" onclick="event.stopPropagation(); updateDishCount(${dish.globalId}, 1)">+</button>
                             </div>
                         </div>
                     `;
@@ -2653,13 +2806,19 @@
         function setupScrollSync() {
             const content = document.getElementById('dishesContent');
             
+            // 断开旧的 Observer，防止内存泄漏
+            if (categoryObserver) {
+                categoryObserver.disconnect();
+                categoryObserver = null;
+            }
+            
             const observerOptions = {
                 root: content,
                 threshold: 0,
                 rootMargin: '-10% 0px -80% 0px'
             };
             
-            const observer = new IntersectionObserver((entries) => {
+            categoryObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const category = entry.target.getAttribute('data-category');
@@ -2672,7 +2831,7 @@
             }, observerOptions);
             
             content.querySelectorAll('.dish-category-section').forEach(section => {
-                observer.observe(section);
+                categoryObserver.observe(section);
             });
         }
 
@@ -2684,15 +2843,15 @@
             if (!actionsContainer) return;
             
             const isBeer = dish.category === '啤酒类';
-            const bulkBtn = isBeer ? `<button class="dish-btn-bulk" onclick="openBeerQuantityModal(${dish.globalId})">批量</button>` : '';
+            const bulkBtn = isBeer ? `<button class="dish-btn-bulk" onclick="event.stopPropagation(); openBeerQuantityModal(${dish.globalId})">批量</button>` : '';
             
             let html = '';
             if (count > 0) {
-                html += `<button class="dish-btn-minus" onclick="updateDishCount(${dish.globalId}, -1)">−</button>`;
+                html += `<button class="dish-btn-minus" onclick="event.stopPropagation(); updateDishCount(${dish.globalId}, -1)">−</button>`;
                 html += `<span class="dish-quantity">${count}</span>`;
             }
             html += bulkBtn;
-            html += `<button class="dish-btn-plus" onclick="updateDishCount(${dish.globalId}, 1)">+</button>`;
+            html += `<button class="dish-btn-plus" onclick="event.stopPropagation(); updateDishCount(${dish.globalId}, 1)">+</button>`;
             
             actionsContainer.innerHTML = html;
         }
@@ -2701,7 +2860,8 @@
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
             
-            const currentDishes = tableDishesMap[currentTable];
+            const currentData = tableDishesMap[currentTable];
+            const currentDishes = currentData.dishes;
             const existingIndex = currentDishes.findIndex(d => d.globalId === dish.globalId);
             let newCount = 0;
             
@@ -2737,11 +2897,12 @@
         }
 
         function updateBottomFloatBar() {
-            const currentDishes = tableDishesMap[currentTable] || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const currentDishes = currentData.dishes || [];
             const totalCount = currentDishes.reduce((sum, d) => sum + d.count, 0);
             const itemsTotal = currentDishes.reduce((sum, d) => sum + (d.price * d.count), 0);
             
-            const extraFees = tableDishesMap[currentTable].extraFees || [];
+            const extraFees = currentData.extraFees || [];
             const extraTotal = extraFees.reduce((sum, f) => sum + f.amount, 0);
             
             const totalAmount = itemsTotal + extraTotal;
@@ -2775,7 +2936,8 @@
 
         function renderDrawerContent() {
             const content = document.getElementById('drawerContent');
-            const currentDishes = tableDishesMap[currentTable] || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const currentDishes = currentData.dishes || [];
             
             if (currentDishes.length === 0) {
                 content.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">暂无菜品</div>';
@@ -2801,9 +2963,9 @@
                         </div>
                         <div class="drawer-item-price">¥${(dish.price * dish.count).toFixed(0)}</div>
                         <div class="drawer-item-actions">
-                            <button class="dish-btn-minus" onclick="updateDishCount(${dish.globalId}, -1); renderDrawerContent();" style="width: 24px; height: 24px; font-size: 14px;">−</button>
+                            <button class="dish-btn-minus" onclick="event.stopPropagation(); updateDishCount(${dish.globalId}, -1); renderDrawerContent();" style="width: 24px; height: 24px; font-size: 14px;">−</button>
                             <span class="dish-quantity" style="font-size: 14px;">${dish.count}</span>
-                            <button class="dish-btn-plus" onclick="updateDishCount(${dish.globalId}, 1); renderDrawerContent();" style="width: 24px; height: 24px; font-size: 14px;">+</button>
+                            <button class="dish-btn-plus" onclick="event.stopPropagation(); updateDishCount(${dish.globalId}, 1); renderDrawerContent();" style="width: 24px; height: 24px; font-size: 14px;">+</button>
                         </div>
                     </div>
                 `;
@@ -3073,7 +3235,8 @@
                 return;
             }
             
-            const currentDishes = tableDishesMap[currentTable];
+            const currentData = tableDishesMap[currentTable];
+            const currentDishes = currentData.dishes;
             const existingIndex = currentDishes.findIndex(d => d.globalId === currentBeerDish.globalId);
             
             if (existingIndex > -1) {
@@ -3108,12 +3271,13 @@
            ============================================================ */
 
         function jumpToTicketPage() {
-            const currentDishes = tableDishesMap[currentTable];
-            if (!currentDishes || currentDishes.length === 0) {
+            const currentData = tableDishesMap[currentTable];
+            const currentDishes = currentData?.dishes || [];
+            if (currentDishes.length === 0) {
                 showToast('暂无已点菜品，无法生成小票！');
                 return;
             }
-            switchPage('ticketPage');
+            navigateToPage('ticketPage');
         }
 
         function prepareTicketPage() {
@@ -3121,7 +3285,8 @@
             document.getElementById('ticketDishSearch').value = '';
             document.getElementById('ticketSearchResult').style.display = 'none';
             
-            currentExtraFees = tableDishesMap[currentTable].extraFees || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            currentExtraFees = currentData.extraFees || [];
             document.getElementById('extraFeeName').value = '';
             document.getElementById('extraFeeAmount').value = '';
             
@@ -3339,8 +3504,11 @@
                 }
 
                 let html = "";
+                const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+                const currentDishes = currentData.dishes || [];
+                
                 matchedDishes.forEach(dish => {
-                    const existingDish = tableDishesMap[currentTable].find(d => d.globalId === dish.globalId);
+                    const existingDish = currentDishes.find(d => d.globalId === dish.globalId);
                     const count = existingDish ? existingDish.count : 0;
                     const pinyinTip = dish.pinyinInitials || '';
                     
@@ -3410,7 +3578,8 @@
 
         function updateTicketPreview() {
             const previewListEl = document.getElementById('ticketPreviewList');
-            const currentDishes = tableDishesMap[currentTable] || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const currentDishes = currentData.dishes || [];
             
             if (currentDishes.length === 0) {
                 previewListEl.innerHTML = '<div class="empty-preview">暂无菜品，请搜索添加</div>';
@@ -3465,7 +3634,8 @@
         }
 
         function deleteDishFromTicket(id) {
-            const currentDishes = tableDishesMap[currentTable];
+            const currentData = tableDishesMap[currentTable];
+            const currentDishes = currentData.dishes;
             const dishIndex = currentDishes.findIndex(d => (d.globalId || d.name) == id);
             if (dishIndex === -1) return;
             
@@ -3481,7 +3651,8 @@
 
         function generateTicket() {
             const tableNumber = document.getElementById('ticketTableNumber').value;
-            const currentDishes = tableDishesMap[currentTable] || [];
+            const currentData = tableDishesMap[currentTable] || { dishes: [], extraFees: [] };
+            const currentDishes = currentData.dishes || [];
             const time = new Date().toLocaleString('zh-CN', { 
                 year: '2-digit', month: '2-digit', day: '2-digit',
                 hour: '2-digit', minute: '2-digit'
@@ -3689,10 +3860,10 @@
             }
             
             if (!tableDishesMap[currentTable]) {
-                tableDishesMap[currentTable] = [];
+                tableDishesMap[currentTable] = { dishes: [], extraFees: [] };
             }
             
-            tableDishesMap[currentTable].push({
+            tableDishesMap[currentTable].dishes.push({
                 globalId: null,
                 name: name,
                 price: price,
@@ -3717,11 +3888,13 @@
             const dish = dishData.find(d => d.globalId === globalId);
             if (!dish) return;
 
-            const existingIndex = tableDishesMap[currentTable].findIndex(d => d.globalId === dish.globalId);
+            const currentData = tableDishesMap[currentTable];
+            const currentDishes = currentData.dishes;
+            const existingIndex = currentDishes.findIndex(d => d.globalId === dish.globalId);
             if (existingIndex > -1) {
-                tableDishesMap[currentTable][existingIndex].count += quantity;
+                currentDishes[existingIndex].count += quantity;
             } else {
-                tableDishesMap[currentTable].push({
+                currentDishes.push({
                     globalId: dish.globalId,
                     name: dish.name,
                     price: dish.price,
@@ -3997,6 +4170,12 @@
         function switchPage(pageId) {
             saveToLocal();
             
+            // 清理旧的 IntersectionObserver，防止内存泄漏
+            if (categoryObserver) {
+                categoryObserver.disconnect();
+                categoryObserver = null;
+            }
+            
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             const targetPage = document.getElementById(pageId);
             targetPage.classList.add('active');
@@ -4041,15 +4220,18 @@
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeQuantityModal();
-                closeTempDishModal();
-                closeChangeTableModal();
-                closePresetManageModal();
-                closeSearchDishModal();
-                closeEditDishModal();
-                closeAddDishStep1();
-                closeAddDishStep2();
-                closeBeerQuantityModal();
+                if (isAnyModalOpen()) {
+                    closeAllModals();
+                    return;
+                }
+                
+                if (currentPageId !== 'tablePage') {
+                    const parentPage = PAGE_HIERARCHY[currentPageId]?.parent;
+                    if (parentPage) {
+                        navigateToPage(parentPage);
+                    }
+                    return;
+                }
             }
             
             if (e.key === 'Enter') {
@@ -4072,9 +4254,31 @@
             loadFromLocal();
             initDishPinyinInitials();
             
+            // 确保所有桌台数据结构正确
             TABLE_LIST.forEach(table => {
-                if (!tableDishesMap[table]) tableDishesMap[table] = [];
+                if (!tableDishesMap[table]) {
+                    tableDishesMap[table] = { dishes: [], extraFees: [] };
+                } else if (Array.isArray(tableDishesMap[table])) {
+                    // 加载的是旧格式，转换为新格式
+                    const oldArray = tableDishesMap[table];
+                    tableDishesMap[table] = {
+                        dishes: oldArray,
+                        extraFees: oldArray.extraFees || []
+                    };
+                }
             });
+            
+            // 初始化路由历史管理
+            initRouter();
+            
+            // 添加进程被杀前的保存监听（安卓杀进程保护）
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    saveToLocal();
+                }
+            });
+            
+            window.addEventListener('pagehide', saveToLocal);
             
             initTableCards();
             
