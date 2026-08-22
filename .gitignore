@@ -8,3 +8,6 @@ Desktop.ini
 .idea/
 *.swp
 *.swo
+
+# 打包产物（单文件 HTML 由 scripts\build-single-file.ps1 生成）
+dist/
